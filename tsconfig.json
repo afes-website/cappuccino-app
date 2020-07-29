@@ -1,11 +1,7 @@
 {
+  "extends": "./tsconfig.paths.json",
   "compilerOptions": {
     "baseUrl": "./",
-    "paths": {
-      "@/*": [
-        "src/*"
-      ]
-    },
     "target": "es6",
     "lib": [
       "dom",
