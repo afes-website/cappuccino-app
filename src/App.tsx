@@ -1,6 +1,6 @@
 import React from "react";
 
-const App = () => {
+const App: React.FunctionComponent = () => {
   return <div>It Works!</div>;
 };
 
