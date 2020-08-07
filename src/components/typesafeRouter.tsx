@@ -1,4 +1,4 @@
-import { Route, Router } from "react-router-dom";
+import { Route, Router, Switch } from "react-router-dom";
 import { Route as TypedRoute, PathPart } from "typesafe-react-router";
 import React from "react";
 import { History } from "history";
@@ -32,24 +32,29 @@ export function typedRoute<
 interface Props {
   routes: { [key: string]: TypedRouteWithComponent<PathPartArray, string[]> };
   history: History;
+  fallback: React.FunctionComponent;
 }
 
 const TypesafeRouter: React.FunctionComponent<Props> = (props) => (
   <Router history={props.history}>
-    {Object.values(props.routes).map((route) => (
-      <Route
-        exact
-        key={route.route.template()}
-        path={route.route.template()}
-        component={route.component}
-      />
-    ))}
+    <Switch>
+      {Object.values(props.routes).map((route) => (
+        <Route
+          exact
+          key={route.route.template()}
+          path={route.route.template()}
+          component={route.component}
+        />
+      ))}
+      <Route component={props.fallback} />
+    </Switch>
   </Router>
 );
 
 TypesafeRouter.propTypes = {
   routes: PropTypes.any,
   history: PropTypes.any,
+  fallback: PropTypes.any,
 };
 
 export default TypesafeRouter;
