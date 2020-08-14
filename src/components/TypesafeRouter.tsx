@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type PathPartArray = Array<PathPart<any>>;
 
-export type TypedRouteWithComponent<
+type TypedRouteWithComponent<
   P extends PathPartArray = [],
   Q extends string[] = []
 > = {
