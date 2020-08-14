@@ -8,7 +8,6 @@ import {
   Typography,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { TypedRouteWithComponent } from "@/components/TypesafeRouter";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles({
@@ -29,7 +28,7 @@ const useStyles = makeStyles({
 interface Props {
   title: string;
   paragraphs: string[];
-  buttons: [string, TypedRouteWithComponent][];
+  buttons: [string, string][];
 }
 
 const HomeCard: React.FunctionComponent<Props> = (props) => {
@@ -57,12 +56,7 @@ const HomeCard: React.FunctionComponent<Props> = (props) => {
       <CardActions>
         {props.buttons.map(([label, route]) => {
           return (
-            <Button
-              color="secondary"
-              key={label}
-              component={Link}
-              to={route.route.template()}
-            >
+            <Button color="secondary" key={label} component={Link} to={route}>
               {label}
             </Button>
           );

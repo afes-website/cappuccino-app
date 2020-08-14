@@ -21,14 +21,14 @@ const Home: React.FunctionComponent = () => {
           "画面に案内が出た場合は、表示された内容を来場者に案内してください。",
         ]}
         buttons={[
-          ["入室スキャン", routes.Scan],
-          ["退室スキャン", routes.Scan],
+          ["入室スキャン", routes.Scan.route.create({})],
+          ["退室スキャン", routes.Scan.route.create({})],
         ]}
       />
       <HomeCard
         title="QRコードスキャン履歴"
         paragraphs={["自展示への来場者の入退室履歴を閲覧できます。"]}
-        buttons={[["履歴照会", routes.Scan]]}
+        buttons={[["履歴照会", routes.Scan.route.create({})]]}
       />
     </div>
   );
