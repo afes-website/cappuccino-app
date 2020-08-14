@@ -1,4 +1,4 @@
-import { typedRoute } from "@/components/typesafeRouter";
+import { typedRoute } from "@/components/TypesafeRouter";
 import { route } from "typesafe-react-router";
 import Home from "@/pages/Home";
 import Scan from "@/pages/Scan";

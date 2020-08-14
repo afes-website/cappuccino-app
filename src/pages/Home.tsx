@@ -1,7 +1,7 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import routes from "@/libs/routes";
-import HomeCard from "@/components/homeCard";
+import HomeCard from "@/components/HomeCard";
 
 const useStyles = makeStyles({
   root: {

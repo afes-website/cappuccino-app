@@ -10,7 +10,7 @@ import {
   Theme,
 } from "@material-ui/core";
 import { ArrowBackIos, AccountCircle } from "@material-ui/icons";
-import AccountDrawer from "@/components/accountDrawer";
+import AccountDrawer from "@/components/AccountDrawer";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

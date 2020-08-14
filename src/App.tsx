@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import TypesafeRouter from "@/components/typesafeRouter";
+import TypesafeRouter from "@/components/TypesafeRouter";
 import routes from "@/libs/routes";
 import { createBrowserHistory } from "history";
 import {
@@ -9,8 +9,8 @@ import {
   ThemeProvider,
 } from "@material-ui/core";
 import NotFound from "@/pages/NotFound";
-import TopBar from "@/components/topBar";
-import BottomNav from "@/components/bottomNav";
+import TopBar from "@/components/TopBar";
+import BottomNav from "@/components/BottomNav";
 import themes from "@/assets/styles/theme";
 
 const useStyles = makeStyles(() =>
