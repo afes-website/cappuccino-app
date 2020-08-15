@@ -37,7 +37,7 @@ const props: ComponentsProps = {
 };
 
 const typography = {
-  fontSize: 12,
+  fontFamily: ["Roboto", "'Noto Sans JP'", "sans-serif"].join(","),
   button: {
     textTransform: "none",
   },
