@@ -32,28 +32,35 @@ export function typedRoute<
 interface Props {
   routes: { [key: string]: TypedRouteWithComponent<PathPartArray, string[]> };
   history: History;
+  layout: React.ComponentType<{ children: React.ReactNode }>;
   fallback: React.FunctionComponent;
 }
 
-const TypesafeRouter: React.FunctionComponent<Props> = (props) => (
+const TypesafeRouter: React.FunctionComponent<Props> = ({
+  layout: Layout,
+  ...props
+}) => (
   <Router history={props.history}>
-    <Switch>
-      {Object.values(props.routes).map((route) => (
-        <Route
-          exact
-          key={route.route.template()}
-          path={route.route.template()}
-          component={route.component}
-        />
-      ))}
-      <Route component={props.fallback} />
-    </Switch>
+    <Layout>
+      <Switch>
+        {Object.values(props.routes).map((route) => (
+          <Route
+            exact
+            key={route.route.template()}
+            path={route.route.template()}
+            component={route.component}
+          />
+        ))}
+        <Route component={props.fallback} />
+      </Switch>
+    </Layout>
   </Router>
 );
 
 TypesafeRouter.propTypes = {
   routes: PropTypes.any,
   history: PropTypes.any,
+  layout: PropTypes.any,
   fallback: PropTypes.any,
 };
 
