@@ -4,7 +4,6 @@ import {
   BottomNavigationAction,
   createStyles,
   makeStyles,
-  SvgIconTypeMap,
   Theme,
 } from "@material-ui/core";
 import {
@@ -13,7 +12,6 @@ import {
   RemoveCircleOutline,
   History,
 } from "@material-ui/icons";
-import { OverridableComponent } from "@material-ui/core/OverridableComponent";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -29,11 +27,11 @@ const useStyles = makeStyles((theme: Theme) =>
 const BottomNav: React.FunctionComponent = () => {
   const [value, setValue] = React.useState(0);
   const classes = useStyles();
-  const menus: [string, OverridableComponent<SvgIconTypeMap>][] = [
-    ["Home", Home],
-    ["Enter", AddCircleOutline],
-    ["Exit", RemoveCircleOutline],
-    ["History", History],
+  const menus: [string, React.ReactNode][] = [
+    ["Home", <Home key="Home" />],
+    ["Enter", <AddCircleOutline key="Enter" />],
+    ["Exit", <RemoveCircleOutline key="Exit" />],
+    ["History", <History key="History" />],
   ];
 
   return (
@@ -48,7 +46,7 @@ const BottomNav: React.FunctionComponent = () => {
         return (
           <BottomNavigationAction
             label={label}
-            icon={<Component />}
+            icon={Component}
             classes={{
               selected: classes.selected,
             }}
