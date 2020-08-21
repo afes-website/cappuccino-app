@@ -4,14 +4,12 @@ import {
   BottomNavigationAction,
   createStyles,
   makeStyles,
+  SvgIcon,
   Theme,
 } from "@material-ui/core";
-import {
-  Home,
-  AddCircleOutline,
-  RemoveCircleOutline,
-  History,
-} from "@material-ui/icons";
+import { Home, History } from "@material-ui/icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDoorOpen, faDoorClosed } from "@fortawesome/free-solid-svg-icons";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -29,8 +27,18 @@ const BottomNav: React.FunctionComponent = () => {
   const classes = useStyles();
   const menus: [string, React.ReactNode][] = [
     ["Home", <Home key="Home" />],
-    ["Enter", <AddCircleOutline key="Enter" />],
-    ["Exit", <RemoveCircleOutline key="Exit" />],
+    [
+      "Enter",
+      <SvgIcon key="Enter">
+        <FontAwesomeIcon icon={faDoorOpen} />
+      </SvgIcon>,
+    ],
+    [
+      "Exit",
+      <SvgIcon key="Exit">
+        <FontAwesomeIcon icon={faDoorClosed} />
+      </SvgIcon>,
+    ],
     ["History", <History key="History" />],
   ];
 
@@ -41,6 +49,7 @@ const BottomNav: React.FunctionComponent = () => {
         setValue(newValue);
       }}
       className={classes.root}
+      showLabels={true}
     >
       {menus.map(([label, Component]) => {
         return (
