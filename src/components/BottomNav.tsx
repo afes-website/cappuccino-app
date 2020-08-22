@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const BottomNav: React.FunctionComponent = () => {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState("/");
   const classes = useStyles();
   const menus: [string, string, React.ReactNode][] = [
     ["Home", routes.Home.route.create({}), <Home key="Home" />],
@@ -70,6 +70,7 @@ const BottomNav: React.FunctionComponent = () => {
             key={label}
             component={Link}
             to={route}
+            value={route}
           />
         );
       })}
