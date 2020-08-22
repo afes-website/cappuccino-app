@@ -8,7 +8,7 @@ import {
   Theme,
 } from "@material-ui/core";
 import routes from "@/libs/routes";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Home, History } from "@material-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDoorOpen, faDoorClosed } from "@fortawesome/free-solid-svg-icons";
@@ -28,8 +28,9 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const BottomNav: React.FunctionComponent = () => {
-  const [value, setValue] = React.useState("/");
+  const history = useHistory();
   const classes = useStyles();
+  const [value, setValue] = React.useState(history.location.pathname);
   const menus: [string, string, React.ReactNode][] = [
     ["Home", routes.Home.route.create({}), <Home key="Home" />],
     [
@@ -48,6 +49,10 @@ const BottomNav: React.FunctionComponent = () => {
     ],
     ["History", routes.Scan.route.create({}), <History key="History" />],
   ];
+
+  history.listen(() => {
+    setValue(history.location.pathname);
+  });
 
   return (
     <BottomNavigation
