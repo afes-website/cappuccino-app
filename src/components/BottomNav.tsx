@@ -7,6 +7,8 @@ import {
   SvgIcon,
   Theme,
 } from "@material-ui/core";
+import routes from "@/libs/routes";
+import { Link } from "react-router-dom";
 import { Home, History } from "@material-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDoorOpen, faDoorClosed } from "@fortawesome/free-solid-svg-icons";
@@ -19,27 +21,32 @@ const useStyles = makeStyles((theme: Theme) =>
     selected: {
       color: theme.palette.secondary.main + " !important",
     },
+    button: {
+      boxSizing: "border-box",
+    },
   })
 );
 
 const BottomNav: React.FunctionComponent = () => {
   const [value, setValue] = React.useState(0);
   const classes = useStyles();
-  const menus: [string, React.ReactNode][] = [
-    ["Home", <Home key="Home" />],
+  const menus: [string, string, React.ReactNode][] = [
+    ["Home", routes.Home.route.create({}), <Home key="Home" />],
     [
       "Enter",
+      routes.Scan.route.create({}),
       <SvgIcon key="Enter">
         <FontAwesomeIcon icon={faDoorOpen} />
       </SvgIcon>,
     ],
     [
       "Exit",
+      routes.Scan.route.create({}),
       <SvgIcon key="Exit">
         <FontAwesomeIcon icon={faDoorClosed} />
       </SvgIcon>,
     ],
-    ["History", <History key="History" />],
+    ["History", routes.Scan.route.create({}), <History key="History" />],
   ];
 
   return (
@@ -51,15 +58,18 @@ const BottomNav: React.FunctionComponent = () => {
       className={classes.root}
       showLabels={true}
     >
-      {menus.map(([label, Component]) => {
+      {menus.map(([label, route, Component]) => {
         return (
           <BottomNavigationAction
             label={label}
             icon={Component}
+            className={classes.button}
             classes={{
               selected: classes.selected,
             }}
             key={label}
+            component={Link}
+            to={route}
           />
         );
       })}
