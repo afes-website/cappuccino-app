@@ -13,7 +13,16 @@ import themes from "@/assets/styles/theme";
 const useStyles = makeStyles(() =>
   createStyles({
     root: {
-      height: "100vh",
+      minHeight: "100vh",
+      height: "max-content",
+    },
+    topBar: {
+      position: "sticky",
+      top: 0,
+      width: "100%",
+    },
+    main: {
+      marginBottom: "56px", // bottom Nav
     },
     bottomNav: {
       position: "fixed",
@@ -32,9 +41,11 @@ const MainLayout: React.FunctionComponent<Props> = (props) => {
 
   return (
     <ThemeProvider theme={themes.light}>
-      <Paper className={classes.root}>
-        <TopBar title="Manager for Exhibition" />
-        {props.children}
+      <Paper className={classes.root} square={true}>
+        <div className={classes.topBar}>
+          <TopBar title="Manager for Exhibition" />
+        </div>
+        <main className={classes.main}>{props.children}</main>
         <div className={classes.bottomNav}>
           <BottomNav />
         </div>
