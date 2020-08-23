@@ -5,20 +5,23 @@ import {
   Toolbar,
   Typography,
   IconButton,
+  SvgIcon,
   createStyles,
   makeStyles,
   Theme,
 } from "@material-ui/core";
-import { ArrowBackIos, AccountCircle } from "@material-ui/icons";
+import { ArrowBackIos } from "@material-ui/icons";
 import { useHistory } from "react-router-dom";
 import AccountDrawer from "@/components/AccountDrawer";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
     },
-    menuButton: {
+    menuIcon: {
       marginRight: theme.spacing(2),
       position: "absolute",
     },
@@ -62,7 +65,7 @@ const TopBar: React.FunctionComponent<Props> = (props) => {
           {isNeedBackButton ? (
             <IconButton
               edge="start"
-              className={classes.menuButton}
+              className={classes.menuIcon}
               color="inherit"
               onClick={() => {
                 history.goBack();
@@ -73,13 +76,15 @@ const TopBar: React.FunctionComponent<Props> = (props) => {
           ) : (
             <IconButton
               edge="start"
-              className={classes.menuButton}
+              className={classes.menuIcon}
               color="inherit"
               onClick={() => {
                 setIsDrawerOpen(true);
               }}
             >
-              <AccountCircle />
+              <SvgIcon>
+                <FontAwesomeIcon icon={faUser} />
+              </SvgIcon>
             </IconButton>
           )}
           <Typography variant="h6" align="center" className={classes.title}>
