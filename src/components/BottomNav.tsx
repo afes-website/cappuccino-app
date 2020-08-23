@@ -50,8 +50,14 @@ const BottomNav: React.FunctionComponent = () => {
     ["History", routes.Scan.route.create({}), <History key="History" />],
   ];
 
-  history.listen(() => {
+  const unListen = history.listen(() => {
     setValue(history.location.pathname);
+  });
+
+  React.useEffect(() => {
+    return () => {
+      unListen();
+    };
   });
 
   return (
