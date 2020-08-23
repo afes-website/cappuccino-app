@@ -10,6 +10,7 @@ import {
   Theme,
 } from "@material-ui/core";
 import { ArrowBackIos, AccountCircle } from "@material-ui/icons";
+import { useHistory } from "react-router-dom";
 import AccountDrawer from "@/components/AccountDrawer";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -29,32 +30,46 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface Props {
   title: string;
-  isNeedBackButton: boolean;
 }
 
 const TopBar: React.FunctionComponent<Props> = (props) => {
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const classes = useStyles();
+  const history = useHistory();
+  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
+  const [isNeedBackButton, setIsNeedBackButton] = React.useState(
+    history.location.pathname !== "/"
+  );
 
   function onDrawerClose(): undefined {
     setIsDrawerOpen(false);
     return undefined;
   }
 
+  const unListen = history.listen(() => {
+    setIsNeedBackButton(history.location.pathname !== "/");
+  });
+
+  React.useEffect(() => {
+    return () => {
+      unListen();
+    };
+  });
+
   return (
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          {props.isNeedBackButton ? (
-            <div>
-              <IconButton
-                edge="start"
-                className={classes.menuButton}
-                color="inherit"
-              >
-                <ArrowBackIos />
-              </IconButton>
-            </div>
+          {isNeedBackButton ? (
+            <IconButton
+              edge="start"
+              className={classes.menuButton}
+              color="inherit"
+              onClick={() => {
+                history.goBack();
+              }}
+            >
+              <ArrowBackIos />
+            </IconButton>
           ) : (
             <IconButton
               edge="start"
@@ -79,7 +94,6 @@ const TopBar: React.FunctionComponent<Props> = (props) => {
 
 TopBar.propTypes = {
   title: PropTypes.any,
-  isNeedBackButton: PropTypes.any,
 };
 
 export default TopBar;

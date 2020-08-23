@@ -33,7 +33,7 @@ const MainLayout: React.FunctionComponent<Props> = (props) => {
   return (
     <ThemeProvider theme={themes.light}>
       <Paper className={classes.root}>
-        <TopBar title="Manager for Exhibition" isNeedBackButton={false} />
+        <TopBar title="Manager for Exhibition" />
         {props.children}
         <div className={classes.bottomNav}>
           <BottomNav />
