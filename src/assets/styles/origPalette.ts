@@ -11,7 +11,7 @@ export const afesBlue: PaletteColorOptions = {
 };
 
 export const afesLight: PaletteColorOptions = {
-  main: "#def",
+  main: "#89bdde",
 };
 
 export default { afesDark, afesBlue, afesLight };
