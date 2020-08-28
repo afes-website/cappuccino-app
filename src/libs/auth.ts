@@ -3,6 +3,7 @@ import axios from "@aspida/axios";
 import JWT from "@/libs/jwt";
 
 const storage_key_users = "users";
+const storage_key_current_user = "current_user";
 
 type StorageUsers = { [user_id: string]: StorageUserInfo };
 
@@ -59,7 +60,10 @@ export async function update_user(user_id: string): Promise<void> {
   if (user === undefined) return;
   const data = await _update_user(user);
   if (data === undefined) logout(user_id);
-  else save_user(user_id, data);
+  else {
+    save_user(data);
+    get_current_user_id(); // reassign current_user if selected user was deleted
+  }
 }
 
 export async function update_users(): Promise<void> {
@@ -86,4 +90,25 @@ export async function update_users(): Promise<void> {
       }, [])
     )
   );
+  get_current_user_id(); // reassign current_user if selected user was deleted
+}
+
+function get_current_user_id(): string {
+  let current_user = localStorage.getitem(storage_key_current_user);
+  if (current_user === null) {
+    current_user = Object.keys(get_users())[0] || "";
+    localStorage.setItem(storage_key_current_user, current_user);
+  }
+  return current_user;
+}
+
+export function get_current_user(): StorageUserInfo | null {
+  const current_user = get_current_user_id();
+  if (current_user === "") return null;
+  return get_user(current_user) || null;
+}
+
+export function switch_user(user_id: string): void {
+  if (get_user(user_id))
+    localStorage.setItem(storage_key_current_user, user_id);
 }
