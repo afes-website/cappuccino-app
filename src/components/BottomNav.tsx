@@ -35,19 +35,23 @@ const BottomNav: React.FunctionComponent = () => {
     ["Home", routes.Home.route.create({}), <Home key="Home" />],
     [
       "Enter",
-      routes.Scan.route.create({}),
+      routes.ExhEnterScan.route.create({}),
       <SvgIcon key="Enter">
         <FontAwesomeIcon icon={faDoorOpen} />
       </SvgIcon>,
     ],
     [
       "Exit",
-      routes.Scan.route.create({}),
+      routes.ExhExitScan.route.create({}),
       <SvgIcon key="Exit">
         <FontAwesomeIcon icon={faDoorClosed} />
       </SvgIcon>,
     ],
-    ["History", routes.Scan.route.create({}), <History key="History" />],
+    [
+      "History",
+      routes.ExhEnterScan.route.create({}),
+      <History key="History" />,
+    ],
   ];
 
   const unListen = history.listen(() => {

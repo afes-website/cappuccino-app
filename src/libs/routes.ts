@@ -1,11 +1,13 @@
 import { typedRoute } from "@/components/TypesafeRouter";
 import { route } from "typesafe-react-router";
 import Home from "@/pages/Home";
-import Scan from "@/pages/Scan";
+import EnterScan from "@/pages/exh/EnterScan";
+import ExitScan from "@/pages/exh/ExitScan";
 
 const routes = {
   Home: typedRoute(route(""), Home),
-  Scan: typedRoute(route("scan"), Scan),
+  ExhEnterScan: typedRoute(route("exh/enter"), EnterScan),
+  ExhExitScan: typedRoute(route("exh/exit"), ExitScan),
 };
 
 export default routes;

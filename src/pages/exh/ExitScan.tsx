@@ -30,7 +30,7 @@ const useStyles = makeStyles({
   },
 });
 
-const Scan: React.FunctionComponent = () => {
+const ExitScan: React.FunctionComponent = () => {
   const classes = useStyles();
   const [guestId, setGuestId] = React.useState("");
   const [open, setOpen] = React.useState(false);
@@ -76,7 +76,6 @@ const Scan: React.FunctionComponent = () => {
           <Typography variant="h6" component="span" className={classes.guestId}>
             Guest ID: {guestId}
           </Typography>
-          <Alert severity="warning">退場まで残り 15 分です。</Alert>
           <Alert severity="error">{getErrorMessage(statusCode)}</Alert>
         </CardContent>
       </Card>
@@ -94,7 +93,7 @@ const Scan: React.FunctionComponent = () => {
         className={classes.snackBar}
       >
         <Alert severity="success" variant="filled" onClick={handleClose}>
-          {guestId} 入室完了
+          {guestId} 退室完了
         </Alert>
       </Snackbar>
     </div>
@@ -105,15 +104,9 @@ const getErrorMessage = (status_code: string) => {
   switch (status_code) {
     case "GUEST_NOT_FOUND":
       return "来場者が存在しません。";
-    case "GUEST_ALREADY_ENTERED":
-      return "来場者は既に入室済みです。";
-    case "PEOPLE_LIMIT_EXCEEDED":
-      return "展示の人数制限に達しています。";
     case "GUEST_ALREADY_EXITED":
       return "来場者は既に退場済みです。";
-    case "EXIT_TIME_EXCEEDED":
-      return "退場予定時刻を過ぎています。";
   }
 };
 
-export default Scan;
+export default ExitScan;
