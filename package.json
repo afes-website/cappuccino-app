@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@afes-website/docs": "git+https://github.com/afes-website/docs.git#2.0.2",
     "@aspida/axios": "^0.10.2",
     "@fortawesome/fontawesome-svg-core": "^1.2.30",
     "@fortawesome/free-brands-svg-icons": "^5.14.0",
@@ -22,7 +23,6 @@
     "axios": "^0.20.0",
     "classnames": "^2.2.6",
     "deepmerge": "^4.2.2",
-    "docs": "git+https://github.com/afes-website/docs.git#2.0.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.20.5",
