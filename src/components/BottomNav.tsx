@@ -49,7 +49,7 @@ const BottomNav: React.FunctionComponent = () => {
     ],
     [
       "History",
-      routes.ExhEnterScan.route.create({}),
+      routes.ExhScanHistory.route.create({}),
       <History key="History" />,
     ],
   ];
