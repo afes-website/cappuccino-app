@@ -20,6 +20,7 @@ const useStyles = makeStyles(() =>
       position: "sticky",
       top: 0,
       width: "100%",
+      zIndex: 600,
     },
     main: {
       marginBottom: "56px", // bottom Nav
@@ -28,6 +29,7 @@ const useStyles = makeStyles(() =>
       position: "fixed",
       bottom: 0,
       width: "100%",
+      zIndex: 600,
     },
   })
 );
