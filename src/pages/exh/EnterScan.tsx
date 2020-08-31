@@ -89,7 +89,7 @@ const EnterScan: React.FunctionComponent = () => {
       </Card>
       <Snackbar
         open={open}
-        autoHideDuration={10000}
+        autoHideDuration={5000}
         onClose={handleClose}
         className={classes.snackBar}
       >
