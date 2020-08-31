@@ -72,17 +72,19 @@ export async function update_users(): Promise<void> {
       (
         await Promise.allSettled(
           Object.entries(get_users()).map<
-            Promise<[string, StorageUserInfo | undefined]>
+            Promise<[string, StorageUserInfo] | undefined>
           >(async ([key, data]) => {
             try {
-              return [key, await _update_user(data)];
+              const ret = await _update_user(data);
+              if (ret === undefined) return undefined;
+              return [key, ret];
             } catch {
-              return [key, data];
+              return undefined;
             }
           })
         )
       ).reduce<[string, StorageUserInfo][]>((prev, ret) => {
-        if (ret.status === "fulfilled") {
+        if (ret.status === "fulfilled" && ret.value !== undefined) {
           const [key, value] = ret.value;
           if (value !== undefined) prev.push([key, value]);
         }
