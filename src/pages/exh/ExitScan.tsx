@@ -54,7 +54,7 @@ const ExitScan: React.FunctionComponent = () => {
     }
   };
 
-  // 仮定義s
+  // TODO: 本実装で置き換え
 
   const exhName = "AZABU GAME CENTER";
   const statusCode = "GUEST_NOT_FOUND";
