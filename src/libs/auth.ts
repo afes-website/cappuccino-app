@@ -38,6 +38,13 @@ export function get_user(user_id: string): StorageUserInfo | undefined {
   return get_users()[user_id];
 }
 
+export async function register_user(token: string): Promise<void> {
+  const ret = await api(axios()).auth.user.$get({
+    headers: { Authorization: "bearer " + token },
+  });
+  save_user({ ...ret, token });
+}
+
 export function logout(user_id: string): void {
   const data = get_users();
   delete data[user_id];
