@@ -2,7 +2,6 @@ import { Route, Router, Switch } from "react-router-dom";
 import { Route as TypedRoute, PathPart } from "typesafe-react-router";
 import React from "react";
 import { History } from "history";
-import PropTypes from "prop-types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type PathPartArray = Array<PathPart<any>>;
@@ -56,12 +55,5 @@ const TypesafeRouter: React.FunctionComponent<Props> = ({
     </Layout>
   </Router>
 );
-
-TypesafeRouter.propTypes = {
-  routes: PropTypes.any,
-  history: PropTypes.any,
-  layout: PropTypes.any,
-  fallback: PropTypes.any,
-};
 
 export default TypesafeRouter;

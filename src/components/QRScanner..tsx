@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import QrReader from "react-qr-reader";
 
 interface Props {
@@ -19,11 +18,6 @@ const QRScanner: React.FunctionComponent<Props> = (props) => {
       delay={props.videoStop ? false : 500}
     />
   );
-};
-
-QRScanner.propTypes = {
-  onScanFunc: PropTypes.func.isRequired,
-  videoStop: PropTypes.bool.isRequired,
 };
 
 export default QRScanner;

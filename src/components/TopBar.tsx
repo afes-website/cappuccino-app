@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import {
   AppBar,
   Toolbar,
@@ -95,10 +94,6 @@ const TopBar: React.FunctionComponent<Props> = (props) => {
       <AccountDrawer isOpen={isDrawerOpen} onDrawerClose={onDrawerClose} />
     </div>
   );
-};
-
-TopBar.propTypes = {
-  title: PropTypes.any,
 };
 
 export default TopBar;
