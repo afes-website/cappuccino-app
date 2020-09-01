@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@afes-website/docs@git+https://github.com/afes-website/docs.git#2.0.2":
-  version "2.0.2"
-  resolved "git+https://github.com/afes-website/docs.git#bb5e338a449e50a04926d0fec5379cbb6d210c94"
+"@afes-website/docs@git+https://github.com/afes-website/docs.git#2.0.3":
+  version "2.0.3"
+  resolved "git+https://github.com/afes-website/docs.git#49c8888ac62803cec10c5c4099de7dbc2fbc1668"
 
 "@aspida/axios@^0.10.2":
   version "0.10.2"
