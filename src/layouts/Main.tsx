@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import {
   createStyles,
   makeStyles,
@@ -54,10 +53,6 @@ const MainLayout: React.FunctionComponent<Props> = (props) => {
       </Paper>
     </ThemeProvider>
   );
-};
-
-MainLayout.propTypes = {
-  children: PropTypes.any,
 };
 
 export default MainLayout;

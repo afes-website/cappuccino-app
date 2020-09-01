@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import {
   Button,
   createStyles,
@@ -143,11 +142,6 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
       </Button>
     </Drawer>
   );
-};
-
-AccountDrawer.propTypes = {
-  isOpen: PropTypes.any,
-  onDrawerClose: PropTypes.any,
 };
 
 export default AccountDrawer;

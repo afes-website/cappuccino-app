@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import {
   Button,
   Card,
@@ -64,12 +63,6 @@ const HomeCard: React.FunctionComponent<Props> = (props) => {
       </CardActions>
     </Card>
   );
-};
-
-HomeCard.propTypes = {
-  title: PropTypes.any,
-  paragraphs: PropTypes.any,
-  buttons: PropTypes.any,
 };
 
 export default HomeCard;
