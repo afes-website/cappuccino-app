@@ -1,4 +1,6 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
+import { History } from "history";
 import {
   Button,
   Card,
@@ -8,6 +10,10 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
+import api from "@afes-website/docs";
+import axios from "@aspida/axios";
+import { register_user } from "@/libs/auth";
+import routes from "@/libs/routes";
 
 const useStyles = makeStyles({
   root: {
@@ -20,8 +26,10 @@ const useStyles = makeStyles({
 
 const Login: React.FunctionComponent = () => {
   const classes = useStyles();
+  const history = useHistory();
   const [id, setId] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [isError, setIsError] = React.useState(false);
 
   return (
     <div className={classes.root}>
@@ -38,6 +46,7 @@ const Login: React.FunctionComponent = () => {
             }}
             className={classes.mb}
             fullWidth={true}
+            error={isError}
           />
           <TextField
             label="パスワード"
@@ -47,16 +56,46 @@ const Login: React.FunctionComponent = () => {
               setPassword(e.target.value);
             }}
             fullWidth={true}
+            error={isError}
           />
         </CardContent>
         <CardActions>
-          <Button variant="contained" color="primary" fullWidth={true}>
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth={true}
+            onClick={() => {
+              login(id, password, history, setIsError);
+            }}
+          >
             ログイン
           </Button>
         </CardActions>
       </Card>
     </div>
   );
+};
+
+const login = (
+  id: string,
+  password: string,
+  history: History,
+  setIsError: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  api(axios())
+    .auth.login.$post({
+      body: {
+        id: id,
+        password: password,
+      },
+    })
+    .then((res) => {
+      register_user(res.token);
+      history.push(routes.Home.route.create({}));
+    })
+    .catch(() => {
+      setIsError(true);
+    });
 };
 
 export default Login;
