@@ -1,6 +1,5 @@
 export default class JWT {
   content: string;
-  uid_key: string;
   constructor(_content: string) {
     this.content = _content;
   }
