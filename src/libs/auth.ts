@@ -106,7 +106,7 @@ export async function update_users(): Promise<void> {
 }
 
 function get_current_user_id(): string {
-  let current_user = localStorage.getitem(storage_key_current_user);
+  let current_user = localStorage.getItem(storage_key_current_user);
   if (current_user === null) {
     current_user = Object.keys(get_users())[0] || "";
     localStorage.setItem(storage_key_current_user, current_user);
