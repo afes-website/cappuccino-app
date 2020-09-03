@@ -1,4 +1,6 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import routes from "@/libs/routes";
 import {
   Button,
   createStyles,
@@ -17,11 +19,18 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
-  faUserCog,
-  faUserShield,
-  IconDefinition,
+  // faUserCog,
+  // faUserShield,
+  // IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
+import {
+  get_current_user,
+  get_users,
+  logout,
+  StorageUserInfo,
+  switch_user,
+} from "@/libs/auth";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -57,32 +66,19 @@ interface Props {
 
 const AccountDrawer: React.FunctionComponent<Props> = (props) => {
   const classes = useStyles();
-  const currentAccount = "agc";
-  const accounts: { id: string; name: string; icon: IconDefinition }[] = [
-    {
-      id: "agc",
-      name: "AZABU GAME CENTER",
-      icon: faUser,
-    },
-    {
-      id: "admin",
-      name: "総務局ウェブサイト班",
-      icon: faUserShield,
-    },
-    {
-      id: "unnei-reception",
-      name: "運営局 入退場口",
-      icon: faUserCog,
-    },
-    {
-      id: "obake",
-      name: "お化け屋敷展 屍臭漂う麻布病",
-      icon: faUser,
-    },
-  ];
-  const currentAccountInfo = accounts.find((account) => {
-    return account.id === currentAccount;
-  });
+  const [accounts, setAccounts] = React.useState<StorageUserInfo[]>([]);
+  const [currentAccount, setCurrentAccount] = React.useState("");
+  // TODO: hook が実装されたらさようなら
+
+  React.useEffect(() => {
+    setAccounts(
+      Object.values(get_users()).map((info) => {
+        return info;
+      })
+    );
+  }, [currentAccount]);
+
+  // TODO: 外部変更を検知できないので、hook が必要です＞＜
 
   return (
     <Drawer
@@ -94,23 +90,29 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
     >
       <Paper className={classes.nowAccount} square={true}>
         <SvgIcon className={classes.menuIcon} color="inherit">
-          <FontAwesomeIcon icon={currentAccountInfo?.icon || faUser} />
+          <FontAwesomeIcon icon={/*get_current_user()?.icon || */ faUser} />
         </SvgIcon>
-        <Typography variant="h6">{currentAccountInfo?.name || ""}</Typography>
-        <Typography variant="body2">@{currentAccountInfo?.id || ""}</Typography>
+        <Typography variant="h6">{get_current_user()?.name || ""}</Typography>
+        <Typography variant="body2">@{get_current_user()?.id || ""}</Typography>
       </Paper>
       <List>
         {accounts
           .filter((account) => {
-            return account.id !== currentAccount;
+            return account.id !== get_current_user()?.id;
           })
           .map((account, index, array) => {
             return (
               <React.Fragment key={account.id}>
-                <ListItem button>
+                <ListItem
+                  button
+                  onClick={() => {
+                    switch_user(account.id);
+                    setCurrentAccount(get_current_user()?.id || "");
+                  }}
+                >
                   <ListItemAvatar>
                     <SvgIcon className={classes.listIcon} color="inherit">
-                      <FontAwesomeIcon icon={account.icon} />
+                      <FontAwesomeIcon icon={faUser} />
                     </SvgIcon>
                   </ListItemAvatar>
                   <ListItemText
@@ -131,14 +133,20 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
         className={classes.actionButton}
         color="secondary"
         startIcon={<AddCircleOutline />}
+        component={Link}
+        to={routes.Login.route.create({})}
       >
         アカウントを追加（ログイン）
       </Button>
       <Button
         className={[classes.actionButton, classes.logoutButton].join(" ")}
         startIcon={<RemoveCircleOutline />}
+        onClick={() => {
+          logout(get_current_user()?.id || "");
+          setCurrentAccount(get_current_user()?.id || "");
+        }}
       >
-        @agc からログアウト
+        @{get_current_user()?.id} からログアウト
       </Button>
     </Drawer>
   );
