@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core";
 import api from "@afes-website/docs";
 import axios from "@aspida/axios";
-import { register_user } from "@/libs/auth";
+import { register_user, switch_user } from "@/libs/auth";
 import routes from "@/libs/routes";
 
 const useStyles = makeStyles({
@@ -67,6 +67,7 @@ const Login: React.FunctionComponent = () => {
             onClick={() => {
               login(id, password, history, setIsError);
             }}
+            disabled={!(id && password)}
           >
             ログイン
           </Button>
@@ -91,6 +92,7 @@ const login = (
     })
     .then((res) => {
       register_user(res.token);
+      switch_user(id); // TODO: これちゃんと更新されてる…？
       history.push(routes.Home.route.create({}));
     })
     .catch(() => {
