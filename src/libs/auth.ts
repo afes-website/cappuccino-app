@@ -7,7 +7,7 @@ const storage_key_current_user = "current_user";
 
 type StorageUsers = { [user_id: string]: StorageUserInfo };
 
-type StorageUserInfo = {
+export type StorageUserInfo = {
   token: string;
 } & UserInfo;
 
