@@ -49,6 +49,9 @@ export function logout(user_id: string): void {
   const data = get_users();
   delete data[user_id];
   save_users(data);
+  if (Object.values(get_users()).length)
+    switch_user(Object.values(get_users())[0].id);
+  else switch_user("");
 }
 
 async function _update_user(
