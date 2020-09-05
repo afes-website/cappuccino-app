@@ -17,8 +17,13 @@ export default class Auth {
   private on_change_hook?: () => void;
 
   constructor() {
+    this.init();
+  }
+
+  private async init(): Promise<void> {
     this.load_all_users();
     this.load_current_user_id();
+    await this.update_all_users();
   }
 
   private load_all_users(): void {
