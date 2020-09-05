@@ -88,10 +88,14 @@ export default class Auth {
   private async update_user_info(
     data: StorageUserInfo
   ): Promise<StorageUserInfo | undefined> {
-    const ret = await api(axios()).auth.user.$get({
-      headers: { Authorization: "bearer " + data.token },
-    });
-    return { ...ret, token: data.token };
+    try {
+      const ret = await api(axios()).auth.user.$get({
+        headers: { Authorization: "bearer " + data.token },
+      });
+      return { ...ret, token: data.token };
+    } catch (e) {
+      return undefined;
+    }
   }
 
   async update_user(user_id: string): Promise<void> {
