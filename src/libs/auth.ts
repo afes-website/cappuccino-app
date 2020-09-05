@@ -44,6 +44,8 @@ export default class Auth {
 
   private save_current_user_id(): void {
     localStorage.setItem(storage_key_current_user, this.current_user_id || "");
+    this.reload_current_user();
+    if (this.on_change_hook) this.on_change_hook();
   }
 
   get_all_users(): StorageUsers {
