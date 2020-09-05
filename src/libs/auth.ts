@@ -1,6 +1,5 @@
 import api, { UserInfo } from "@afes-website/docs";
 import axios from "@aspida/axios";
-import JWT from "@/libs/jwt";
 
 const storage_key_users = "users";
 const storage_key_current_user = "current_user";
@@ -89,8 +88,6 @@ export default class Auth {
   private async update_user_info(
     data: StorageUserInfo
   ): Promise<StorageUserInfo | undefined> {
-    if (!new JWT(data.token).isValidAt()) return undefined;
-
     const ret = await api(axios()).auth.user.$get({
       headers: { Authorization: "bearer " + data.token },
     });
