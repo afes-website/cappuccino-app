@@ -11,116 +11,119 @@ export type StorageUserInfo = {
   token: string;
 } & UserInfo;
 
-export function get_users(): StorageUsers {
-  const str = localStorage.getItem(storage_key_users);
-  if (str === null) {
-    save_users({});
-    return {};
+export default class Auth {
+  private all_users: StorageUsers = {};
+  private current_user_id: string | null = null;
+
+  constructor() {
+    this.load_all_users();
+    this.load_current_user_id();
   }
-  return JSON.parse(str);
-}
 
-function save_users(data: StorageUsers): void {
-  localStorage.setItem(storage_key_users, JSON.stringify(data));
-}
-
-function save_user(data: StorageUserInfo): void {
-  const all = get_users();
-  all[data.id] = data;
-  save_users(all);
-}
-
-export function get_logged_in_users(): string[] {
-  return Object.keys(get_users());
-}
-
-export function get_user(user_id: string): StorageUserInfo | undefined {
-  return get_users()[user_id];
-}
-
-export async function register_user(token: string): Promise<void> {
-  const ret = await api(axios()).auth.user.$get({
-    headers: { Authorization: "bearer " + token },
-  });
-  save_user({ ...ret, token });
-}
-
-export function logout(user_id: string): void {
-  const data = get_users();
-  delete data[user_id];
-  save_users(data);
-  if (Object.values(get_users()).length)
-    switch_user(Object.values(get_users())[0].id);
-  else switch_user("");
-}
-
-async function _update_user(
-  data: StorageUserInfo
-): Promise<StorageUserInfo | undefined> {
-  if (!new JWT(data.token).isValidAt()) return undefined;
-
-  const ret = await api(axios()).auth.user.$get({
-    headers: { Authorization: "bearer " + data.token },
-  });
-  return { ...ret, token: data.token };
-}
-
-export async function update_user(user_id: string): Promise<void> {
-  const user = get_user(user_id);
-  if (user === undefined) return;
-  const data = await _update_user(user);
-  if (data === undefined) logout(user_id);
-  else {
-    save_user(data);
-    get_current_user_id(); // reassign current_user if selected user was deleted
+  private load_all_users(): void {
+    this.all_users = JSON.parse(
+      localStorage.getItem(storage_key_users) || "{}"
+    );
   }
-}
 
-export async function update_users(): Promise<void> {
-  save_users(
-    Object.fromEntries(
-      (
-        await Promise.allSettled(
-          Object.entries(get_users()).map<
-            Promise<[string, StorageUserInfo] | undefined>
-          >(async ([key, data]) => {
-            try {
-              const ret = await _update_user(data);
-              if (ret === undefined) return undefined;
-              return [key, ret];
-            } catch {
-              return undefined;
-            }
-          })
-        )
-      ).reduce<[string, StorageUserInfo][]>((prev, ret) => {
-        if (ret.status === "fulfilled" && ret.value !== undefined) {
-          const [key, value] = ret.value;
-          if (value !== undefined) prev.push([key, value]);
+  private load_current_user_id(): void {
+    const val = localStorage.getItem(storage_key_current_user);
+    this.current_user_id = val === "" ? null : val;
+  }
+
+  private save_all_users(): void {
+    localStorage.setItem(storage_key_users, JSON.stringify(this.all_users));
+    this.reload_current_user();
+  }
+
+  private save_current_user_id(): void {
+    localStorage.setItem(storage_key_current_user, this.current_user_id || "");
+  }
+
+  get_all_users(): StorageUsers {
+    return this.all_users;
+  }
+
+  get_all_user_ids(): string[] {
+    return Object.keys(this.all_users);
+  }
+
+  get_user(user_id: string): StorageUserInfo | undefined {
+    return this.all_users[user_id];
+  }
+
+  get_current_user_id(): string | null {
+    this.reload_current_user();
+    return this.current_user_id;
+  }
+
+  get_current_user(): StorageUserInfo | null {
+    if (this.current_user_id === null) return null;
+    return this.all_users[this.current_user_id] || null;
+  }
+
+  async register_user(token: string): Promise<void> {
+    const ret = await api(axios()).auth.user.$get({
+      headers: { Authorization: "bearer " + token },
+    });
+    this.all_users[ret.id] = {
+      ...ret,
+      token,
+    };
+    this.save_all_users();
+  }
+
+  remove_user(user_id: string): void {
+    delete this.all_users[user_id];
+    this.save_all_users();
+  }
+
+  private async update_user_info(
+    data: StorageUserInfo
+  ): Promise<StorageUserInfo | undefined> {
+    if (!new JWT(data.token).isValidAt()) return undefined;
+
+    const ret = await api(axios()).auth.user.$get({
+      headers: { Authorization: "bearer " + data.token },
+    });
+    return { ...ret, token: data.token };
+  }
+
+  async update_user(user_id: string): Promise<void> {
+    if (user_id in this.all_users) return;
+    const data = await this.update_user_info(this.all_users[user_id]);
+    if (data === undefined) this.remove_user(user_id);
+    else {
+      this.all_users[user_id] = data;
+      this.save_all_users();
+    }
+  }
+
+  async update_all_users(): Promise<void> {
+    await Promise.allSettled(
+      Object.keys(this.all_users).map(async (user_id) => {
+        try {
+          const ret = await this.update_user_info(this.all_users[user_id]);
+          if (ret === undefined) delete this.all_users[user_id];
+          else this.all_users[user_id] = ret;
+        } catch {
+          delete this.all_users[user_id];
         }
-        return prev;
-      }, [])
-    )
-  );
-  get_current_user_id(); // reassign current_user if selected user was deleted
-}
-
-function get_current_user_id(): string {
-  let current_user = localStorage.getItem(storage_key_current_user);
-  if (current_user === null) {
-    current_user = Object.keys(get_users())[0] || "";
-    localStorage.setItem(storage_key_current_user, current_user);
+      })
+    );
+    this.save_all_users();
+    this.reload_current_user();
   }
-  return current_user;
-}
 
-export function get_current_user(): StorageUserInfo | null {
-  const current_user = get_current_user_id();
-  if (current_user === "") return null;
-  return get_user(current_user) || null;
-}
+  private reload_current_user(): void {
+    if (this.current_user_id === null) {
+      this.current_user_id = Object.keys(this.all_users)[0] || null;
+      this.save_current_user_id();
+    }
+  }
 
-export function switch_user(user_id: string): void {
-  if (get_user(user_id))
-    localStorage.setItem(storage_key_current_user, user_id);
+  switch_user(user_id: string): void {
+    if (user_id in this.all_users)
+      localStorage.setItem(storage_key_current_user, user_id);
+  }
 }
