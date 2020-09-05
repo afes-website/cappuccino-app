@@ -128,7 +128,10 @@ export default class Auth {
   }
 
   private reload_current_user(): void {
-    if (this.current_user_id === null) {
+    if (
+      this.current_user_id === null ||
+      !(this.current_user_id in this.all_users)
+    ) {
       this.current_user_id = Object.keys(this.all_users)[0] || null;
       this.save_current_user_id();
     }
