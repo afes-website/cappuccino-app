@@ -16,8 +16,9 @@ export default class Auth {
   private current_user_id: string | null = null;
   private on_change_hook?: () => void;
 
-  constructor() {
+  constructor(_on_change_hook?: () => void) {
     this.init();
+    if (this.on_change_hook) this.on_change_hook = _on_change_hook;
   }
 
   private async init(): Promise<void> {
