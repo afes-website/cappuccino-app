@@ -133,8 +133,10 @@ export default class Auth {
   }
 
   switch_user(user_id: string): void {
-    if (user_id in this.all_users)
-      localStorage.setItem(storage_key_current_user, user_id);
+    if (user_id in this.all_users) {
+      this.current_user_id = user_id;
+      this.save_current_user_id();
+    }
   }
 
   on_change(hook: () => void): void {
