@@ -1,5 +1,6 @@
 import api, { UserInfo } from "@afes-website/docs";
 import axios from "@aspida/axios";
+import { createContext } from "react";
 
 const storage_key_users = "users";
 const storage_key_current_user = "current_user";
@@ -143,3 +144,8 @@ export default class Auth {
     this.on_change_hook = hook;
   }
 }
+
+export const AuthContext = createContext<{ val: Auth; _cnt: number }>({
+  val: new Auth(),
+  _cnt: 0,
+});
