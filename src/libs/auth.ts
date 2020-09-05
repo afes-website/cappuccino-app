@@ -14,6 +14,7 @@ export type StorageUserInfo = {
 export default class Auth {
   private all_users: StorageUsers = {};
   private current_user_id: string | null = null;
+  private on_change_hook?: () => void;
 
   constructor() {
     this.load_all_users();
@@ -34,6 +35,7 @@ export default class Auth {
   private save_all_users(): void {
     localStorage.setItem(storage_key_users, JSON.stringify(this.all_users));
     this.reload_current_user();
+    if (this.on_change_hook) this.on_change_hook();
   }
 
   private save_current_user_id(): void {
@@ -54,6 +56,7 @@ export default class Auth {
 
   get_current_user_id(): string | null {
     this.reload_current_user();
+    if (this.on_change_hook) this.on_change_hook();
     return this.current_user_id;
   }
 
@@ -112,7 +115,6 @@ export default class Auth {
       })
     );
     this.save_all_users();
-    this.reload_current_user();
   }
 
   private reload_current_user(): void {
@@ -125,5 +127,9 @@ export default class Auth {
   switch_user(user_id: string): void {
     if (user_id in this.all_users)
       localStorage.setItem(storage_key_current_user, user_id);
+  }
+
+  on_change(hook: () => void): void {
+    this.on_change_hook = hook;
   }
 }
