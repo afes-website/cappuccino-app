@@ -17,8 +17,8 @@ export default class Auth {
   private on_change_hook?: () => void;
 
   constructor(_on_change_hook?: () => void) {
-    this.init();
-    if (this.on_change_hook) this.on_change_hook = _on_change_hook;
+    this.on_change_hook = _on_change_hook;
+    if (axios().baseURL) this.init();
   }
 
   private async init(): Promise<void> {
@@ -149,7 +149,6 @@ export default class Auth {
   }
 }
 
-export const AuthContext = createContext<{ val: Auth; _cnt: number }>({
+export const AuthContext = createContext<{ val: Auth }>({
   val: new Auth(),
-  _cnt: 0,
 });
