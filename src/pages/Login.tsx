@@ -95,8 +95,8 @@ const login = (
     .then((res) => {
       auth.val.register_user(res.token).then(() => {
         auth.val.switch_user(id);
+        history.push(routes.Home.route.create({}));
       });
-      history.push(routes.Home.route.create({}));
     })
     .catch(() => {
       setIsError(true);

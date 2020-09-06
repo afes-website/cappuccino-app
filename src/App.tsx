@@ -17,6 +17,20 @@ const App: React.FunctionComponent = () => {
     });
   }, []);
 
+  const redirect_to_login = () => {
+    if (
+      !provideVal.val.get_current_user_id() &&
+      history.location.pathname !== routes.Login.route.create({})
+    ) {
+      history.push(routes.Login.route.create({}));
+    }
+  };
+  React.useEffect(redirect_to_login, [provideVal]);
+  const unListen = history.listen(redirect_to_login);
+  React.useEffect(() => {
+    return unListen;
+  });
+
   return (
     <AuthContext.Provider value={provideVal}>
       <TypesafeRouter
