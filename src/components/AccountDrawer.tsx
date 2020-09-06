@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface Props {
   isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onDrawerClose: () => undefined;
 }
 
@@ -117,6 +118,9 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
         startIcon={<AddCircleOutline />}
         component={Link}
         to={routes.Login.route.create({})}
+        onClick={() => {
+          props.setIsOpen(false);
+        }}
       >
         アカウントを追加（ログイン）
       </Button>
@@ -125,6 +129,7 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
         startIcon={<RemoveCircleOutline />}
         onClick={() => {
           auth.val.remove_user(auth.val.get_current_user_id() || "");
+          if (!auth.val.get_current_user_id()) props.setIsOpen(false);
         }}
       >
         @{auth.val.get_current_user_id()} からログアウト

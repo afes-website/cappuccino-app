@@ -92,7 +92,11 @@ const TopBar: React.FunctionComponent<Props> = (props) => {
           </Typography>
         </Toolbar>
       </AppBar>
-      <AccountDrawer isOpen={isDrawerOpen} onDrawerClose={onDrawerClose} />
+      <AccountDrawer
+        isOpen={isDrawerOpen}
+        setIsOpen={setIsDrawerOpen}
+        onDrawerClose={onDrawerClose}
+      />
     </div>
   );
 };
