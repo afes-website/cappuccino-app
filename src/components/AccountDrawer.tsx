@@ -24,13 +24,7 @@ import {
   // IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
-import {
-  get_current_user,
-  get_users,
-  logout,
-  StorageUserInfo,
-  switch_user,
-} from "@/libs/auth";
+import { AuthContext } from "@/libs/auth";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -66,19 +60,7 @@ interface Props {
 
 const AccountDrawer: React.FunctionComponent<Props> = (props) => {
   const classes = useStyles();
-  const [accounts, setAccounts] = React.useState<StorageUserInfo[]>([]);
-  const [currentAccount, setCurrentAccount] = React.useState("");
-  // TODO: hook が実装されたらさようなら
-
-  React.useEffect(() => {
-    setAccounts(
-      Object.values(get_users()).map((info) => {
-        return info;
-      })
-    );
-  }, [currentAccount]);
-
-  // TODO: 外部変更を検知できないので、hook が必要です＞＜
+  const auth = React.useContext(AuthContext);
 
   return (
     <Drawer
@@ -92,13 +74,20 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
         <SvgIcon className={classes.menuIcon} color="inherit">
           <FontAwesomeIcon icon={/*get_current_user()?.icon || */ faUser} />
         </SvgIcon>
-        <Typography variant="h6">{get_current_user()?.name || ""}</Typography>
-        <Typography variant="body2">@{get_current_user()?.id || ""}</Typography>
+        <Typography variant="h6">
+          {auth.val.get_current_user()?.name || ""}
+        </Typography>
+        <Typography variant="body2">
+          @{auth.val.get_current_user()?.id || ""}
+        </Typography>
       </Paper>
       <List>
-        {accounts
+        {Object.values(auth.val.get_all_users())
+          .map((info) => {
+            return info;
+          })
           .filter((account) => {
-            return account.id !== get_current_user()?.id;
+            return account.id !== auth.val.get_current_user()?.id;
           })
           .map((account, index, array) => {
             return (
@@ -106,8 +95,7 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
                 <ListItem
                   button
                   onClick={() => {
-                    switch_user(account.id);
-                    setCurrentAccount(get_current_user()?.id || "");
+                    auth.val.switch_user(account.id);
                   }}
                 >
                   <ListItemAvatar>
@@ -142,11 +130,10 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
         className={[classes.actionButton, classes.logoutButton].join(" ")}
         startIcon={<RemoveCircleOutline />}
         onClick={() => {
-          logout(get_current_user()?.id || "");
-          setCurrentAccount(get_current_user()?.id || "");
+          auth.val.remove_user(auth.val.get_current_user_id() || "");
         }}
       >
-        @{get_current_user()?.id} からログアウト
+        @{auth.val.get_current_user_id()} からログアウト
       </Button>
     </Drawer>
   );
