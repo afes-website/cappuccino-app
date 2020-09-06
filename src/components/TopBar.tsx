@@ -49,7 +49,6 @@ const TopBar: React.FunctionComponent<Props> = (props) => {
   const unListen = history.listen(() => {
     setIsNeedBackButton(history.location.pathname !== "/");
   });
-
   React.useEffect(() => {
     return () => {
       unListen();
@@ -60,33 +59,34 @@ const TopBar: React.FunctionComponent<Props> = (props) => {
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          {isNeedBackButton ? (
-            <IconButton
-              edge="start"
-              className={classes.menuIcon}
-              color="inherit"
-              onClick={() => {
-                history.goBack();
-              }}
-            >
-              <ArrowBackIos />
-            </IconButton>
-          ) : (
-            <IconButton
-              edge="start"
-              className={classes.menuIcon}
-              color="inherit"
-              onClick={() => {
-                setIsDrawerOpen(true);
-              }}
-            >
-              <SvgIcon>
-                <FontAwesomeIcon
-                  icon={get_user_icon(auth.val.get_current_user())}
-                />
-              </SvgIcon>
-            </IconButton>
-          )}
+          {auth.val.get_current_user_id() &&
+            (isNeedBackButton ? (
+              <IconButton
+                edge="start"
+                className={classes.menuIcon}
+                color="inherit"
+                onClick={() => {
+                  history.goBack();
+                }}
+              >
+                <ArrowBackIos />
+              </IconButton>
+            ) : (
+              <IconButton
+                edge="start"
+                className={classes.menuIcon}
+                color="inherit"
+                onClick={() => {
+                  setIsDrawerOpen(true);
+                }}
+              >
+                <SvgIcon>
+                  <FontAwesomeIcon
+                    icon={get_user_icon(auth.val.get_current_user())}
+                  />
+                </SvgIcon>
+              </IconButton>
+            ))}
           <Typography variant="h6" align="center" className={classes.title}>
             {props.title}
           </Typography>
