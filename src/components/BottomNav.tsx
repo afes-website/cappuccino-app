@@ -9,9 +9,10 @@ import {
 } from "@material-ui/core";
 import routes from "@/libs/routes";
 import { Link, useHistory } from "react-router-dom";
-import { Home, History } from "@material-ui/icons";
+import { Assignment, Home, History } from "@material-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDoorOpen, faDoorClosed } from "@fortawesome/free-solid-svg-icons";
+import { AuthContext } from "@/libs/auth";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -27,12 +28,18 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
+type menuItem = [string, string, React.ReactNode];
+
 const BottomNav: React.FunctionComponent = () => {
   const history = useHistory();
   const classes = useStyles();
   const [value, setValue] = React.useState(history.location.pathname);
-  const menus: [string, string, React.ReactNode][] = [
+  const auth = React.useContext(AuthContext);
+
+  const commonMenus: menuItem[] = [
     ["Home", routes.Home.route.create({}), <Home key="Home" />],
+  ];
+  const exhMenus: menuItem[] = [
     [
       "Enter",
       routes.ExhEnterScan.route.create({}),
@@ -53,6 +60,37 @@ const BottomNav: React.FunctionComponent = () => {
       <History key="History" />,
     ],
   ];
+  const generalMenus: menuItem[] = [
+    [
+      "Enter",
+      "/general/enter",
+      <SvgIcon key="Enter">
+        <FontAwesomeIcon icon={faDoorOpen} />
+      </SvgIcon>,
+    ],
+    [
+      "Exit",
+      "/general/exit",
+      <SvgIcon key="Exit">
+        <FontAwesomeIcon icon={faDoorClosed} />
+      </SvgIcon>,
+    ],
+    ["History", "/general/history", <History key="History" />],
+  ];
+  const adminMenus: menuItem[] = [
+    ["Reservation", "/admin/reservations", <Assignment key="reservation" />],
+  ];
+
+  const get_menus = () => {
+    const menus: menuItem[] = commonMenus;
+    if (auth.val.get_current_user()?.permissions.exhibition)
+      commonMenus.push(...exhMenus);
+    if (auth.val.get_current_user()?.permissions.general)
+      commonMenus.push(...generalMenus);
+    if (auth.val.get_current_user()?.permissions.admin)
+      commonMenus.push(...adminMenus);
+    return menus;
+  };
 
   const unListen = history.listen(() => {
     setValue(history.location.pathname);
@@ -73,7 +111,7 @@ const BottomNav: React.FunctionComponent = () => {
       className={classes.root}
       showLabels={true}
     >
-      {menus.map(([label, route, Component]) => {
+      {get_menus().map(([label, route, Component]) => {
         return (
           <BottomNavigationAction
             label={label}
