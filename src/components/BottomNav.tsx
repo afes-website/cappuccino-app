@@ -102,33 +102,35 @@ const BottomNav: React.FunctionComponent = () => {
     };
   });
 
-  return (
-    <BottomNavigation
-      value={value}
-      onChange={(event, newValue) => {
-        setValue(newValue);
-      }}
-      className={classes.root}
-      showLabels={true}
-    >
-      {get_menus().map(([label, route, Component]) => {
-        return (
-          <BottomNavigationAction
-            label={label}
-            icon={Component}
-            className={classes.button}
-            classes={{
-              selected: classes.selected,
-            }}
-            key={label}
-            component={Link}
-            to={route}
-            value={route}
-          />
-        );
-      })}
-    </BottomNavigation>
-  );
+  if (auth.val.get_current_user_id())
+    return (
+      <BottomNavigation
+        value={value}
+        onChange={(event, newValue) => {
+          setValue(newValue);
+        }}
+        className={classes.root}
+        showLabels={true}
+      >
+        {get_menus().map(([label, route, Component]) => {
+          return (
+            <BottomNavigationAction
+              label={label}
+              icon={Component}
+              className={classes.button}
+              classes={{
+                selected: classes.selected,
+              }}
+              key={label}
+              component={Link}
+              to={route}
+              value={route}
+            />
+          );
+        })}
+      </BottomNavigation>
+    );
+  else return <React.Fragment />;
 };
 
 export default BottomNav;
