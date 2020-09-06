@@ -1,6 +1,12 @@
 import api, { UserInfo } from "@afes-website/docs";
 import axios from "@aspida/axios";
 import { createContext } from "react";
+import {
+  faUser,
+  faUserCog,
+  faUserShield,
+  IconDefinition,
+} from "@fortawesome/free-solid-svg-icons";
 
 const storage_key_users = "users";
 const storage_key_current_user = "current_user";
@@ -150,3 +156,12 @@ export default class Auth {
 export const AuthContext = createContext<{ val: Auth }>({
   val: new Auth(),
 });
+
+export const get_user_icon = (
+  account: StorageUserInfo | null
+): IconDefinition => {
+  if (account?.permissions.admin) return faUserShield;
+  if (account?.permissions.general) return faUserCog;
+  if (account?.permissions.exhibition) return faUser;
+  return faUser;
+};

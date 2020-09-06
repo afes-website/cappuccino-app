@@ -17,14 +17,8 @@ import {
   Typography,
 } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUser,
-  // faUserCog,
-  // faUserShield,
-  // IconDefinition,
-} from "@fortawesome/free-solid-svg-icons";
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
-import { AuthContext } from "@/libs/auth";
+import { AuthContext, get_user_icon } from "@/libs/auth";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -72,7 +66,7 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
     >
       <Paper className={classes.nowAccount} square={true}>
         <SvgIcon className={classes.menuIcon} color="inherit">
-          <FontAwesomeIcon icon={/*get_current_user()?.icon || */ faUser} />
+          <FontAwesomeIcon icon={get_user_icon(auth.val.get_current_user())} />
         </SvgIcon>
         <Typography variant="h6">
           {auth.val.get_current_user()?.name || ""}
@@ -100,7 +94,7 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
                 >
                   <ListItemAvatar>
                     <SvgIcon className={classes.listIcon} color="inherit">
-                      <FontAwesomeIcon icon={faUser} />
+                      <FontAwesomeIcon icon={get_user_icon(account)} />
                     </SvgIcon>
                   </ListItemAvatar>
                   <ListItemText
