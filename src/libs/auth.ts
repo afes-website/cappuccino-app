@@ -40,14 +40,10 @@ export default class Auth {
 
   private save_all_users(): void {
     localStorage.setItem(storage_key_users, JSON.stringify(this.all_users));
-    this.reload_current_user();
-    if (this.on_change_hook) this.on_change_hook();
   }
 
   private save_current_user_id(): void {
     localStorage.setItem(storage_key_current_user, this.current_user_id || "");
-    this.reload_current_user();
-    if (this.on_change_hook) this.on_change_hook();
   }
 
   get_all_users(): StorageUsers {
@@ -63,8 +59,6 @@ export default class Auth {
   }
 
   get_current_user_id(): string | null {
-    this.reload_current_user();
-    if (this.on_change_hook) this.on_change_hook();
     return this.current_user_id;
   }
 
@@ -82,11 +76,14 @@ export default class Auth {
       token,
     };
     this.save_all_users();
+    if (this.on_change_hook) this.on_change_hook();
   }
 
   remove_user(user_id: string): void {
     delete this.all_users[user_id];
     this.save_all_users();
+    this.reload_current_user();
+    if (this.on_change_hook) this.on_change_hook();
   }
 
   private async update_user_info(
@@ -142,6 +139,7 @@ export default class Auth {
       this.current_user_id = user_id;
       this.save_current_user_id();
     }
+    if (this.on_change_hook) this.on_change_hook();
   }
 
   on_change(hook: () => void): void {
