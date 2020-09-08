@@ -18,6 +18,11 @@ const useStyles = makeStyles({
   root: {
     padding: "10px",
   },
+  form: {
+    display: "block",
+    margin: 0,
+    padding: 0,
+  },
   mb: {
     marginBottom: "10px",
   },
@@ -31,7 +36,7 @@ const Login: React.FunctionComponent = () => {
   const [isError, setIsError] = React.useState(false);
   const auth = React.useContext(AuthContext);
 
-  const login = () => {
+  const login = (e?: React.FormEvent<HTMLFormElement>) => {
     api(axios())
       .auth.login.$post({
         body: {
@@ -48,47 +53,50 @@ const Login: React.FunctionComponent = () => {
       .catch(() => {
         setIsError(true);
       });
+    if (e) e.preventDefault();
   };
 
   return (
     <div className={classes.root}>
       <Card>
-        <CardContent>
-          <Typography variant="body2" className={classes.mb}>
-            配布されたアカウントを追加
-          </Typography>
-          <TextField
-            label="ID"
-            value={id}
-            onChange={(e) => {
-              setId(e.target.value);
-            }}
-            className={classes.mb}
-            fullWidth={true}
-            error={isError}
-          />
-          <TextField
-            label="パスワード"
-            type="password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-            }}
-            fullWidth={true}
-            error={isError}
-          />
-        </CardContent>
-        <CardActions>
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth={true}
-            onClick={login}
-            disabled={!(id && password)}
-          >
-            ログイン
-          </Button>
-        </CardActions>
+        <form onSubmit={login} className={classes.form}>
+          <CardContent>
+            <Typography variant="body2" className={classes.mb}>
+              配布されたアカウントを追加
+            </Typography>
+            <TextField
+              label="ID"
+              value={id}
+              onChange={(e) => {
+                setId(e.target.value);
+              }}
+              className={classes.mb}
+              fullWidth={true}
+              error={isError}
+            />
+            <TextField
+              label="パスワード"
+              type="password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+              fullWidth={true}
+              error={isError}
+            />
+          </CardContent>
+          <CardActions>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth={true}
+              disabled={!(id && password)}
+              type="submit"
+            >
+              ログイン
+            </Button>
+          </CardActions>
+        </form>
       </Card>
     </div>
   );
