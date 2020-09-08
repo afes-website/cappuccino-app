@@ -32,6 +32,7 @@ export default class Auth {
     this.load_all_users();
     this.load_current_user_id();
     await this.update_all_users();
+    this.reload_current_user();
   }
 
   private load_all_users(): void {
