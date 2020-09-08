@@ -26,9 +26,8 @@ const App: React.FunctionComponent = () => {
     }
   };
   React.useEffect(redirect_to_login, [provideVal]);
-  const unListen = history.listen(redirect_to_login);
   React.useEffect(() => {
-    return unListen;
+    return history.listen(redirect_to_login);
   });
 
   return (
