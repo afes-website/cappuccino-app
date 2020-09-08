@@ -29,7 +29,8 @@ export function typedRoute<
 }
 
 interface Props {
-  routes: { [key: string]: TypedRouteWithComponent<PathPartArray, string[]> };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  routes: { [key: string]: TypedRouteWithComponent<any, any> };
   history: History;
   layout: React.ComponentType<{ children: React.ReactNode }>;
   fallback: React.FunctionComponent;
