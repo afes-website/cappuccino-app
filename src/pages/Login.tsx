@@ -5,6 +5,7 @@ import {
   Card,
   CardActions,
   CardContent,
+  CircularProgress,
   makeStyles,
   TextField,
   Typography,
@@ -34,9 +35,13 @@ const Login: React.FunctionComponent = () => {
   const [id, setId] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [isError, setIsError] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
   const auth = React.useContext(AuthContext);
 
   const login = (e?: React.FormEvent<HTMLFormElement>) => {
+    setTimeout(() => {
+      setIsLoading(true);
+    }, 500);
     api(axios())
       .auth.login.$post({
         body: {
@@ -52,6 +57,9 @@ const Login: React.FunctionComponent = () => {
       })
       .catch(() => {
         setIsError(true);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
     if (e) e.preventDefault();
   };
@@ -93,7 +101,11 @@ const Login: React.FunctionComponent = () => {
               disabled={!(id && password)}
               type="submit"
             >
-              ログイン
+              {isLoading ? (
+                <CircularProgress color="inherit" size={24} thickness={5} />
+              ) : (
+                "ログイン"
+              )}
             </Button>
           </CardActions>
         </form>
