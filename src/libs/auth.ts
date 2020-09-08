@@ -1,6 +1,7 @@
 import api, { UserInfo } from "@afes-website/docs";
 import axios from "@aspida/axios";
 import { createContext } from "react";
+import isAxiosError from "@/libs/isAxiosError";
 import {
   faUser,
   faUserCog,
@@ -101,7 +102,8 @@ export default class Auth {
       });
       return { ...ret, token: data.token };
     } catch (e) {
-      return undefined;
+      if (isAxiosError(e) && e.response?.status === 401) return undefined;
+      else return data;
     }
   }
 
