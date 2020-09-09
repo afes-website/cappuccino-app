@@ -6,6 +6,8 @@ import {
   CardActions,
   CardContent,
   CircularProgress,
+  FormGroup,
+  FormHelperText,
   makeStyles,
   TextField,
   Typography,
@@ -14,6 +16,7 @@ import api from "@afes-website/docs";
 import axios from "@aspida/axios";
 import { AuthContext } from "@/libs/auth";
 import routes from "@/libs/routes";
+import isAxiosError from "@/libs/isAxiosError";
 
 const useStyles = makeStyles({
   root: {
@@ -36,6 +39,7 @@ const Login: React.FunctionComponent = () => {
   const [password, setPassword] = React.useState("");
   const [isError, setIsError] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [errorText, setErrorText] = React.useState<string[]>([]);
   const auth = React.useContext(AuthContext);
 
   const login = (e?: React.FormEvent<HTMLFormElement>) => {
@@ -55,8 +59,17 @@ const Login: React.FunctionComponent = () => {
           history.push(routes.Home.route.create({}));
         });
       })
-      .catch(() => {
+      .catch((e) => {
         setIsError(true);
+        if (e.response?.status == 401)
+          setErrorText(["ID またはパスワードが間違っています。"]);
+        else
+          setErrorText([
+            "不明なエラーです。もう一度お試しください。",
+            `Message: ${
+              (isAxiosError(e) && e.response?.data.message) || e.message
+            }`,
+          ]);
       })
       .finally(() => {
         setIsLoading(false);
@@ -72,6 +85,17 @@ const Login: React.FunctionComponent = () => {
             <Typography variant="body2" className={classes.mb}>
               配布されたアカウントを追加
             </Typography>
+            <FormGroup className={classes.mb}>
+              {isError
+                ? errorText.map((error, index) => {
+                    return (
+                      <FormHelperText key={index} error={true}>
+                        {error}
+                      </FormHelperText>
+                    );
+                  })
+                : ""}
+            </FormGroup>
             <TextField
               label="ID"
               value={id}
