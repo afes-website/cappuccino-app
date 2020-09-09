@@ -118,20 +118,6 @@ const exhMenus: menuItem[] = [
 ];
 
 const generalMenus: menuItem[] = [
-  [
-    "Enter",
-    "/general/enter",
-    <SvgIcon key="Enter">
-      <FontAwesomeIcon icon={faDoorOpen} />
-    </SvgIcon>,
-  ],
-  [
-    "Exit",
-    "/general/exit",
-    <SvgIcon key="Exit">
-      <FontAwesomeIcon icon={faDoorClosed} />
-    </SvgIcon>,
-  ],
   ["History", "/general/history", <History key="History" />],
 ];
 
