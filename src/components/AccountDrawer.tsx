@@ -4,6 +4,11 @@ import routes from "@/libs/routes";
 import {
   Button,
   createStyles,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
   Divider,
   Drawer,
   List,
@@ -56,6 +61,7 @@ interface Props {
 const AccountDrawer: React.FunctionComponent<Props> = (props) => {
   const classes = useStyles();
   const auth = React.useContext(AuthContext);
+  const [isLogoutAlertVisible, setIsLogoutAlertVisible] = React.useState(false);
 
   return (
     <Drawer
@@ -128,12 +134,42 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
         className={[classes.actionButton, classes.logoutButton].join(" ")}
         startIcon={<RemoveCircleOutline />}
         onClick={() => {
-          auth.val.remove_user(auth.val.get_current_user_id() || "");
-          if (!auth.val.get_current_user_id()) props.setIsOpen(false);
+          setIsLogoutAlertVisible(true);
         }}
       >
         @{auth.val.get_current_user_id()} からログアウト
       </Button>
+      <Dialog open={isLogoutAlertVisible}>
+        <DialogTitle>ログアウトしますか？</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            @{auth.val.get_current_user_id()} からログアウトしますか？
+          </DialogContentText>
+          <DialogContentText>
+            {`ログアウト後、再び @${auth.val.get_current_user_id()} を使用するにはパスワードが必要です。`}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setIsLogoutAlertVisible(false);
+            }}
+            color="secondary"
+          >
+            キャンセル
+          </Button>
+          <Button
+            onClick={() => {
+              auth.val.remove_user(auth.val.get_current_user_id() || "");
+              if (!auth.val.get_current_user_id()) props.setIsOpen(false);
+              setIsLogoutAlertVisible(false);
+            }}
+            color="secondary"
+          >
+            ログアウト
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Drawer>
   );
 };
