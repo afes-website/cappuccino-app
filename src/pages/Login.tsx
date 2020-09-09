@@ -6,6 +6,7 @@ import {
   CardActions,
   CardContent,
   CircularProgress,
+  Fade,
   FormGroup,
   FormHelperText,
   makeStyles,
@@ -43,9 +44,7 @@ const Login: React.FunctionComponent = () => {
   const auth = React.useContext(AuthContext);
 
   const login = (e?: React.FormEvent<HTMLFormElement>) => {
-    setTimeout(() => {
-      setIsLoading(true);
-    }, 500);
+    setIsLoading(true);
     api(axios())
       .auth.login.$post({
         body: {
@@ -126,7 +125,13 @@ const Login: React.FunctionComponent = () => {
               type="submit"
             >
               {isLoading ? (
-                <CircularProgress color="inherit" size={24} thickness={5} />
+                <Fade
+                  in={isLoading}
+                  style={{ transitionDelay: "500ms" }}
+                  unmountOnExit
+                >
+                  <CircularProgress color="inherit" size={24} thickness={5} />
+                </Fade>
               ) : (
                 "ログイン"
               )}
