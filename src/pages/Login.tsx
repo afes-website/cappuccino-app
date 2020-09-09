@@ -60,7 +60,7 @@ const Login: React.FunctionComponent = () => {
       })
       .catch((e) => {
         setIsError(true);
-        if (e.response?.status == 401)
+        if (e.response?.status === 401)
           setErrorText(["ID またはパスワードが間違っています。"]);
         else
           setErrorText([
