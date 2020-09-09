@@ -15,6 +15,7 @@ const App: React.FunctionComponent = () => {
     provideVal.val.on_change(() => {
       setProvideVal((old) => ({ ...old }));
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const redirect_to_login = () => {
@@ -25,6 +26,7 @@ const App: React.FunctionComponent = () => {
       history.push(routes.Login.route.create({}));
     }
   };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   React.useEffect(redirect_to_login, [provideVal]);
   React.useEffect(() => {
     return history.listen(redirect_to_login);
