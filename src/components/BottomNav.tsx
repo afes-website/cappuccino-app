@@ -82,13 +82,14 @@ const BottomNav: React.FunctionComponent = () => {
   ];
 
   const get_menus = () => {
-    const menus: menuItem[] = commonMenus;
+    const menus: menuItem[] = [];
+    menus.push(...commonMenus);
     if (auth.val.get_current_user()?.permissions.exhibition)
-      commonMenus.push(...exhMenus);
+      menus.push(...exhMenus);
     if (auth.val.get_current_user()?.permissions.general)
-      commonMenus.push(...generalMenus);
+      menus.push(...generalMenus);
     if (auth.val.get_current_user()?.permissions.admin)
-      commonMenus.push(...adminMenus);
+      menus.push(...adminMenus);
     return menus;
   };
 
