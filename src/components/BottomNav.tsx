@@ -36,51 +36,6 @@ const BottomNav: React.FunctionComponent = () => {
   const [value, setValue] = React.useState(history.location.pathname);
   const auth = React.useContext(AuthContext);
 
-  const commonMenus: menuItem[] = [
-    ["Home", routes.Home.route.create({}), <Home key="Home" />],
-  ];
-  const exhMenus: menuItem[] = [
-    [
-      "Enter",
-      routes.ExhEnterScan.route.create({}),
-      <SvgIcon key="Enter">
-        <FontAwesomeIcon icon={faDoorOpen} />
-      </SvgIcon>,
-    ],
-    [
-      "Exit",
-      routes.ExhExitScan.route.create({}),
-      <SvgIcon key="Exit">
-        <FontAwesomeIcon icon={faDoorClosed} />
-      </SvgIcon>,
-    ],
-    [
-      "History",
-      routes.ExhScanHistory.route.create({}),
-      <History key="History" />,
-    ],
-  ];
-  const generalMenus: menuItem[] = [
-    [
-      "Enter",
-      "/general/enter",
-      <SvgIcon key="Enter">
-        <FontAwesomeIcon icon={faDoorOpen} />
-      </SvgIcon>,
-    ],
-    [
-      "Exit",
-      "/general/exit",
-      <SvgIcon key="Exit">
-        <FontAwesomeIcon icon={faDoorClosed} />
-      </SvgIcon>,
-    ],
-    ["History", "/general/history", <History key="History" />],
-  ];
-  const adminMenus: menuItem[] = [
-    ["Reservation", "/admin/reservations", <Assignment key="reservation" />],
-  ];
-
   const get_menus = () => {
     const menus: menuItem[] = [];
     menus.push(...commonMenus);
@@ -135,3 +90,51 @@ const BottomNav: React.FunctionComponent = () => {
 };
 
 export default BottomNav;
+
+const commonMenus: menuItem[] = [
+  ["Home", routes.Home.route.create({}), <Home key="Home" />],
+];
+
+const exhMenus: menuItem[] = [
+  [
+    "Enter",
+    routes.ExhEnterScan.route.create({}),
+    <SvgIcon key="Enter">
+      <FontAwesomeIcon icon={faDoorOpen} />
+    </SvgIcon>,
+  ],
+  [
+    "Exit",
+    routes.ExhExitScan.route.create({}),
+    <SvgIcon key="Exit">
+      <FontAwesomeIcon icon={faDoorClosed} />
+    </SvgIcon>,
+  ],
+  [
+    "History",
+    routes.ExhScanHistory.route.create({}),
+    <History key="History" />,
+  ],
+];
+
+const generalMenus: menuItem[] = [
+  [
+    "Enter",
+    "/general/enter",
+    <SvgIcon key="Enter">
+      <FontAwesomeIcon icon={faDoorOpen} />
+    </SvgIcon>,
+  ],
+  [
+    "Exit",
+    "/general/exit",
+    <SvgIcon key="Exit">
+      <FontAwesomeIcon icon={faDoorClosed} />
+    </SvgIcon>,
+  ],
+  ["History", "/general/history", <History key="History" />],
+];
+
+const adminMenus: menuItem[] = [
+  ["Reservation", "/admin/reservations", <Assignment key="reservation" />],
+];
