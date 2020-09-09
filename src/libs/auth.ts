@@ -94,7 +94,7 @@ export default class Auth {
     if (this.on_change_hook) this.on_change_hook();
   }
 
-  private async update_user_info(
+  private static async update_user_info(
     data: StorageUserInfo
   ): Promise<StorageUserInfo | undefined> {
     try {
@@ -110,7 +110,7 @@ export default class Auth {
 
   async update_user(user_id: string): Promise<void> {
     if (user_id in this.all_users) return;
-    const data = await this.update_user_info(this.all_users[user_id]);
+    const data = await Auth.update_user_info(this.all_users[user_id]);
     if (data === undefined) this.remove_user(user_id);
     else {
       this.all_users[user_id] = data;
@@ -122,7 +122,7 @@ export default class Auth {
     await Promise.allSettled(
       Object.keys(this.all_users).map(async (user_id) => {
         try {
-          const ret = await this.update_user_info(this.all_users[user_id]);
+          const ret = await Auth.update_user_info(this.all_users[user_id]);
           if (ret === undefined) delete this.all_users[user_id];
           else this.all_users[user_id] = ret;
         } catch {
