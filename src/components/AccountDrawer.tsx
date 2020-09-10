@@ -1,7 +1,14 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import routes from "@/libs/routes";
 import {
   Button,
   createStyles,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
   Divider,
   Drawer,
   List,
@@ -15,13 +22,8 @@ import {
   Typography,
 } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faUser,
-  faUserCog,
-  faUserShield,
-  IconDefinition,
-} from "@fortawesome/free-solid-svg-icons";
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
+import { AuthContext, get_user_icon } from "@/libs/auth";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -52,37 +54,14 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface Props {
   isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onDrawerClose: () => undefined;
 }
 
 const AccountDrawer: React.FunctionComponent<Props> = (props) => {
   const classes = useStyles();
-  const currentAccount = "agc";
-  const accounts: { id: string; name: string; icon: IconDefinition }[] = [
-    {
-      id: "agc",
-      name: "AZABU GAME CENTER",
-      icon: faUser,
-    },
-    {
-      id: "admin",
-      name: "総務局ウェブサイト班",
-      icon: faUserShield,
-    },
-    {
-      id: "unnei-reception",
-      name: "運営局 入退場口",
-      icon: faUserCog,
-    },
-    {
-      id: "obake",
-      name: "お化け屋敷展 屍臭漂う麻布病",
-      icon: faUser,
-    },
-  ];
-  const currentAccountInfo = accounts.find((account) => {
-    return account.id === currentAccount;
-  });
+  const auth = React.useContext(AuthContext);
+  const [isLogoutAlertVisible, setIsLogoutAlertVisible] = React.useState(false);
 
   return (
     <Drawer
@@ -94,23 +73,35 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
     >
       <Paper className={classes.nowAccount} square={true}>
         <SvgIcon className={classes.menuIcon} color="inherit">
-          <FontAwesomeIcon icon={currentAccountInfo?.icon || faUser} />
+          <FontAwesomeIcon icon={get_user_icon(auth.val.get_current_user())} />
         </SvgIcon>
-        <Typography variant="h6">{currentAccountInfo?.name || ""}</Typography>
-        <Typography variant="body2">@{currentAccountInfo?.id || ""}</Typography>
+        <Typography variant="h6">
+          {auth.val.get_current_user()?.name || ""}
+        </Typography>
+        <Typography variant="body2">
+          @{auth.val.get_current_user()?.id || ""}
+        </Typography>
       </Paper>
       <List>
-        {accounts
+        {Object.values(auth.val.get_all_users())
+          .map((info) => {
+            return info;
+          })
           .filter((account) => {
-            return account.id !== currentAccount;
+            return account.id !== auth.val.get_current_user()?.id;
           })
           .map((account, index, array) => {
             return (
               <React.Fragment key={account.id}>
-                <ListItem button>
+                <ListItem
+                  button
+                  onClick={() => {
+                    auth.val.switch_user(account.id);
+                  }}
+                >
                   <ListItemAvatar>
                     <SvgIcon className={classes.listIcon} color="inherit">
-                      <FontAwesomeIcon icon={account.icon} />
+                      <FontAwesomeIcon icon={get_user_icon(account)} />
                     </SvgIcon>
                   </ListItemAvatar>
                   <ListItemText
@@ -131,15 +122,54 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
         className={classes.actionButton}
         color="secondary"
         startIcon={<AddCircleOutline />}
+        component={Link}
+        to={routes.Login.route.create({})}
+        onClick={() => {
+          props.setIsOpen(false);
+        }}
       >
         アカウントを追加（ログイン）
       </Button>
       <Button
         className={[classes.actionButton, classes.logoutButton].join(" ")}
         startIcon={<RemoveCircleOutline />}
+        onClick={() => {
+          setIsLogoutAlertVisible(true);
+        }}
       >
-        @agc からログアウト
+        @{auth.val.get_current_user_id()} からログアウト
       </Button>
+      <Dialog open={isLogoutAlertVisible}>
+        <DialogTitle>ログアウトしますか？</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            @{auth.val.get_current_user_id()} からログアウトしますか？
+          </DialogContentText>
+          <DialogContentText>
+            {`ログアウト後、再び @${auth.val.get_current_user_id()} を使用するにはパスワードが必要です。`}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              setIsLogoutAlertVisible(false);
+            }}
+            color="secondary"
+          >
+            キャンセル
+          </Button>
+          <Button
+            onClick={() => {
+              auth.val.remove_user(auth.val.get_current_user_id() || "");
+              if (!auth.val.get_current_user_id()) props.setIsOpen(false);
+              setIsLogoutAlertVisible(false);
+            }}
+            color="secondary"
+          >
+            ログアウト
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Drawer>
   );
 };

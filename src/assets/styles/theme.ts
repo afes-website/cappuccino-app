@@ -32,7 +32,7 @@ const props: ComponentsProps = {
     size: "small",
   },
   MuiTextField: {
-    variant: "outlined",
+    variant: "standard",
   },
 };
 

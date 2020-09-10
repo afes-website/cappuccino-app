@@ -9,9 +9,11 @@ import {
 } from "@material-ui/core";
 import routes from "@/libs/routes";
 import { Link, useHistory } from "react-router-dom";
-import { Home, History } from "@material-ui/icons";
+import { Assignment, Home, History } from "@material-ui/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDoorOpen, faDoorClosed } from "@fortawesome/free-solid-svg-icons";
+import { AuthContext } from "@/libs/auth";
+import { UserInfo } from "@afes-website/docs";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -31,8 +33,68 @@ const BottomNav: React.FunctionComponent = () => {
   const history = useHistory();
   const classes = useStyles();
   const [value, setValue] = React.useState(history.location.pathname);
-  const menus: [string, string, React.ReactNode][] = [
-    ["Home", routes.Home.route.create({}), <Home key="Home" />],
+  const auth = React.useContext(AuthContext);
+
+  const get_menus = () => {
+    const menus: MenuItem[] = [];
+    menus.push(...commonMenus);
+    const _perm:
+      | { [name: string]: boolean }
+      | undefined = auth.val.get_current_user()?.permissions;
+    if (!_perm) return menus;
+    Object.entries(menuItems).forEach(([key, items]) => {
+      if (items && _perm[key]) menus.push(...items);
+    });
+    return menus;
+  };
+
+  const unListen = history.listen(() => {
+    setValue(history.location.pathname);
+  });
+
+  React.useEffect(() => {
+    return () => {
+      unListen();
+    };
+  });
+
+  if (auth.val.get_current_user_id())
+    return (
+      <BottomNavigation
+        value={value}
+        onChange={(event, newValue) => {
+          setValue(newValue);
+        }}
+        className={classes.root}
+        showLabels={true}
+      >
+        {get_menus().map(([label, route, Component]) => {
+          return (
+            <BottomNavigationAction
+              label={label}
+              icon={Component}
+              className={classes.button}
+              classes={{
+                selected: classes.selected,
+              }}
+              key={label}
+              component={Link}
+              to={route}
+              value={route}
+            />
+          );
+        })}
+      </BottomNavigation>
+    );
+  else return <React.Fragment />;
+};
+
+export default BottomNav;
+
+type MenuItem = [string, string, React.ReactNode];
+
+const menuItems: { [key in keyof UserInfo["permissions"]]?: MenuItem[] } = {
+  exhibition: [
     [
       "Enter",
       routes.ExhEnterScan.route.create({}),
@@ -52,45 +114,13 @@ const BottomNav: React.FunctionComponent = () => {
       routes.ExhScanHistory.route.create({}),
       <History key="History" />,
     ],
-  ];
-
-  const unListen = history.listen(() => {
-    setValue(history.location.pathname);
-  });
-
-  React.useEffect(() => {
-    return () => {
-      unListen();
-    };
-  });
-
-  return (
-    <BottomNavigation
-      value={value}
-      onChange={(event, newValue) => {
-        setValue(newValue);
-      }}
-      className={classes.root}
-      showLabels={true}
-    >
-      {menus.map(([label, route, Component]) => {
-        return (
-          <BottomNavigationAction
-            label={label}
-            icon={Component}
-            className={classes.button}
-            classes={{
-              selected: classes.selected,
-            }}
-            key={label}
-            component={Link}
-            to={route}
-            value={route}
-          />
-        );
-      })}
-    </BottomNavigation>
-  );
+  ],
+  general: [["History", "/general/history", <History key="History" />]],
+  admin: [
+    ["Reservation", "/admin/reservations", <Assignment key="reservation" />],
+  ],
 };
 
-export default BottomNav;
+const commonMenus: MenuItem[] = [
+  ["Home", routes.Home.route.create({}), <Home key="Home" />],
+];
