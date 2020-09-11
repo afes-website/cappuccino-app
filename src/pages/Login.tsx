@@ -18,6 +18,7 @@ import axios from "@aspida/axios";
 import { AuthContext } from "@/libs/auth";
 import routes from "@/libs/routes";
 import isAxiosError from "@/libs/isAxiosError";
+import TitleContext from "@/libs/title";
 
 const useStyles = makeStyles({
   root: {
@@ -42,6 +43,12 @@ const Login: React.FunctionComponent = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [errorText, setErrorText] = React.useState<string[]>([]);
   const auth = React.useContext(AuthContext);
+  const title = React.useContext(TitleContext);
+
+  React.useEffect(() => {
+    title.set("ログイン");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const login = (e?: React.FormEvent<HTMLFormElement>) => {
     setIsLoading(true);

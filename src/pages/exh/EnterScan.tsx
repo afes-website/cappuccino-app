@@ -9,6 +9,7 @@ import {
   Paper,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
+import TitleContext from "@/libs/title";
 
 const useStyles = makeStyles({
   root: {
@@ -34,6 +35,12 @@ const EnterScan: React.FunctionComponent = () => {
   const classes = useStyles();
   const [guestId, setGuestId] = React.useState("");
   const [open, setOpen] = React.useState(false);
+  const title = React.useContext(TitleContext);
+
+  React.useEffect(() => {
+    title.set("入室スキャン");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
     if (reason === "clickaway") {
