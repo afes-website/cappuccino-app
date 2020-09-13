@@ -9,6 +9,7 @@ import TopBar from "@/components/TopBar";
 import BottomNav from "@/components/BottomNav";
 import themes from "@/assets/styles/theme";
 import TitleContext from "@/libs/title";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -40,10 +41,14 @@ interface Props {
 
 const MainLayout: React.FunctionComponent<Props> = (props) => {
   const classes = useStyles();
+  const history = useHistory();
   const [titleProvideVal, setTitleProvideVal] = React.useState({
     title: "",
     set: (_title: string) => {
       setTitleProvideVal((old) => ({ ...old, title: _title }));
+      document.title = _title + " - " + TITLE_SUFFIX;
+      if (_title === "" || history.location.pathname === "/")
+        document.title = TOP_TITLE;
     },
   });
 
@@ -63,5 +68,8 @@ const MainLayout: React.FunctionComponent<Props> = (props) => {
     </ThemeProvider>
   );
 };
+
+const TITLE_SUFFIX = "73rd Afes Manage App";
+const TOP_TITLE = "73rd Afes Manage App";
 
 export default MainLayout;
