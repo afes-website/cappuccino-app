@@ -8,7 +8,7 @@ import {
 import TopBar from "@/components/TopBar";
 import BottomNav from "@/components/BottomNav";
 import themes from "@/assets/styles/theme";
-import TitleContext from "@/libs/title";
+import TitleContext from "@/libs/titleContext";
 import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(() =>

@@ -18,7 +18,7 @@ import axios from "@aspida/axios";
 import { AuthContext } from "@/libs/auth";
 import routes from "@/libs/routes";
 import isAxiosError from "@/libs/isAxiosError";
-import TitleContext from "@/libs/title";
+import TitleContext from "@/libs/titleContext";
 
 const useStyles = makeStyles({
   root: {

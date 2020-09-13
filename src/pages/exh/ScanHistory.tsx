@@ -1,6 +1,6 @@
 import React from "react";
 import { createStyles, makeStyles, Typography } from "@material-ui/core";
-import TitleContext from "@/libs/title";
+import TitleContext from "@/libs/titleContext";
 
 const useStyles = makeStyles(() =>
   createStyles({

@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import routes from "@/libs/routes";
 import HomeCard from "@/components/HomeCard";
-import TitleContext from "@/libs/title";
+import TitleContext from "@/libs/titleContext";
 
 const useStyles = makeStyles({
   root: {

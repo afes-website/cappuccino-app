@@ -9,7 +9,7 @@ import {
   Paper,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import TitleContext from "@/libs/title";
+import TitleContext from "@/libs/titleContext";
 
 const useStyles = makeStyles({
   root: {

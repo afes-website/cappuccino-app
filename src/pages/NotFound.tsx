@@ -1,5 +1,5 @@
 import React from "react";
-import TitleContext from "@/libs/title";
+import TitleContext from "@/libs/titleContext";
 
 const NotFound: React.FunctionComponent = () => {
   const title = React.useContext(TitleContext);
