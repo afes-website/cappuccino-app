@@ -39,7 +39,6 @@ const ExitScan: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     title.set("退室スキャン");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {

@@ -16,7 +16,6 @@ const Home: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     title.set("Manager for Exhibition");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

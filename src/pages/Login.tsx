@@ -47,7 +47,6 @@ const Login: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     title.set("ログイン");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const login = (e?: React.FormEvent<HTMLFormElement>) => {

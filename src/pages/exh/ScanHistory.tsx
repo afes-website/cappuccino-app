@@ -16,7 +16,6 @@ const ScanHistory: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     title.set("スキャン履歴");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

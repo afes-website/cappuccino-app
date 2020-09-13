@@ -6,7 +6,6 @@ const NotFound: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     title.set("404 Not Found");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return <h1>404 Not Found</h1>;

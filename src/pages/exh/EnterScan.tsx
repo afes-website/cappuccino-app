@@ -39,7 +39,6 @@ const EnterScan: React.FunctionComponent = () => {
 
   React.useEffect(() => {
     title.set("入室スキャン");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
