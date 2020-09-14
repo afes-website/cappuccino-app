@@ -1,6 +1,6 @@
 import React from "react";
 import { createStyles, makeStyles, Typography } from "@material-ui/core";
-import TitleContext from "@/libs/titleContext";
+import { useTitleSet } from "@/libs/title";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -12,11 +12,7 @@ const useStyles = makeStyles(() =>
 
 const ScanHistory: React.FunctionComponent = () => {
   const classes = useStyles();
-  const title = React.useContext(TitleContext);
-
-  React.useEffect(() => {
-    title.set("スキャン履歴");
-  }, []);
+  useTitleSet("スキャン履歴");
 
   return (
     <div className={classes.root}>

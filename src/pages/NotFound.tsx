@@ -1,12 +1,8 @@
 import React from "react";
-import TitleContext from "@/libs/titleContext";
+import { useTitleSet } from "@/libs/title";
 
 const NotFound: React.FunctionComponent = () => {
-  const title = React.useContext(TitleContext);
-
-  React.useEffect(() => {
-    title.set("404 Not Found");
-  }, []);
+  useTitleSet("404 Not Found");
 
   return <h1>404 Not Found</h1>;
 };

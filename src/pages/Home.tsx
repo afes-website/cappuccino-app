@@ -2,7 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import routes from "@/libs/routes";
 import HomeCard from "@/components/HomeCard";
-import TitleContext from "@/libs/titleContext";
+import { useTitleSet } from "@/libs/title";
 
 const useStyles = makeStyles({
   root: {
@@ -12,11 +12,7 @@ const useStyles = makeStyles({
 
 const Home: React.FunctionComponent = () => {
   const classes = useStyles();
-  const title = React.useContext(TitleContext);
-
-  React.useEffect(() => {
-    title.set("Manager for Exhibition");
-  }, []);
+  useTitleSet("Manager for Exhibition");
 
   return (
     <div className={classes.root}>
