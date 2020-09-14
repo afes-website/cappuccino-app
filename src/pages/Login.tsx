@@ -18,6 +18,7 @@ import axios from "@aspida/axios";
 import { AuthContext } from "@/libs/auth";
 import routes from "@/libs/routes";
 import isAxiosError from "@/libs/isAxiosError";
+import { useTitleSet } from "@/libs/title";
 
 const useStyles = makeStyles({
   root: {
@@ -42,6 +43,7 @@ const Login: React.FunctionComponent = () => {
   const [isLoading, setIsLoading] = React.useState(false);
   const [errorText, setErrorText] = React.useState<string[]>([]);
   const auth = React.useContext(AuthContext);
+  useTitleSet("ログイン");
 
   const login = (e?: React.FormEvent<HTMLFormElement>) => {
     setIsLoading(true);

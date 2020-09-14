@@ -9,6 +9,7 @@ import {
   Paper,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
+import { useTitleSet } from "@/libs/title";
 
 const useStyles = makeStyles({
   root: {
@@ -34,6 +35,7 @@ const EnterScan: React.FunctionComponent = () => {
   const classes = useStyles();
   const [guestId, setGuestId] = React.useState("");
   const [open, setOpen] = React.useState(false);
+  useTitleSet("入室スキャン");
 
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
     if (reason === "clickaway") {

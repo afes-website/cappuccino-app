@@ -1,5 +1,6 @@
 import React from "react";
 import { createStyles, makeStyles, Typography } from "@material-ui/core";
+import { useTitleSet } from "@/libs/title";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -11,6 +12,7 @@ const useStyles = makeStyles(() =>
 
 const ScanHistory: React.FunctionComponent = () => {
   const classes = useStyles();
+  useTitleSet("スキャン履歴");
 
   return (
     <div className={classes.root}>
