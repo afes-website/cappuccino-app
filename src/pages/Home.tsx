@@ -2,6 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import routes from "@/libs/routes";
 import HomeCard from "@/components/HomeCard";
+import { useTitleSet } from "@/libs/title";
 
 const useStyles = makeStyles({
   root: {
@@ -11,6 +12,7 @@ const useStyles = makeStyles({
 
 const Home: React.FunctionComponent = () => {
   const classes = useStyles();
+  useTitleSet("Manager for Exhibition");
 
   return (
     <div className={classes.root}>
@@ -21,14 +23,14 @@ const Home: React.FunctionComponent = () => {
           "画面に案内が出た場合は、表示された内容を来場者に案内してください。",
         ]}
         buttons={[
-          ["入室スキャン", routes.Scan.route.create({})],
-          ["退室スキャン", routes.Scan.route.create({})],
+          ["入室スキャン", routes.ExhEnterScan.route.create({})],
+          ["退室スキャン", routes.ExhEnterScan.route.create({})],
         ]}
       />
       <HomeCard
         title="QRコードスキャン履歴"
         paragraphs={["自展示への来場者の入退室履歴を閲覧できます。"]}
-        buttons={[["履歴照会", routes.Scan.route.create({})]]}
+        buttons={[["履歴照会", routes.ExhEnterScan.route.create({})]]}
       />
     </div>
   );

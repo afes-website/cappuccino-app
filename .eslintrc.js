@@ -21,7 +21,10 @@ module.exports = {
     sourceType: "module",
   },
   plugins: ["react", "prettier", "react-hooks"],
-  rules: {},
+  rules: {
+    "react/prop-types": "off",
+    "react-hooks/exhaustive-deps": "off",
+  },
   settings: {
     react: {
       version: "detect",

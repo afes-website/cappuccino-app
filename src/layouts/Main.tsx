@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import {
   createStyles,
   makeStyles,
@@ -9,6 +8,8 @@ import {
 import TopBar from "@/components/TopBar";
 import BottomNav from "@/components/BottomNav";
 import themes from "@/assets/styles/theme";
+import { TitleContextProvider } from "@/libs/title";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -20,6 +21,7 @@ const useStyles = makeStyles(() =>
       position: "sticky",
       top: 0,
       width: "100%",
+      zIndex: 600,
     },
     main: {
       marginBottom: "56px", // bottom Nav
@@ -28,6 +30,7 @@ const useStyles = makeStyles(() =>
       position: "fixed",
       bottom: 0,
       width: "100%",
+      zIndex: 600,
     },
   })
 );
@@ -35,27 +38,39 @@ const useStyles = makeStyles(() =>
 interface Props {
   children: React.ReactNode;
 }
+const TITLE_SUFFIX = "73rd Afes Manage App";
+const TOP_TITLE = "73rd Afes Manage App";
 
 const MainLayout: React.FunctionComponent<Props> = (props) => {
   const classes = useStyles();
+  const history = useHistory();
+  const [titleState, _setTitleState] = React.useState({
+    title: "",
+    _setTitle,
+  });
+
+  function _setTitle(_new_title: string) {
+    _setTitleState((old) => ({ ...old, title: _new_title }));
+    document.title = _new_title + " - " + TITLE_SUFFIX;
+    if (_new_title === "" || history.location.pathname === "/")
+      document.title = TOP_TITLE;
+  }
 
   return (
     <ThemeProvider theme={themes.light}>
-      <Paper className={classes.root} square={true}>
-        <div className={classes.topBar}>
-          <TopBar title="Manager for Exhibition" />
-        </div>
-        <main className={classes.main}>{props.children}</main>
-        <div className={classes.bottomNav}>
-          <BottomNav />
-        </div>
-      </Paper>
+      <TitleContextProvider value={titleState}>
+        <Paper className={classes.root} square={true}>
+          <div className={classes.topBar}>
+            <TopBar title={titleState.title} />
+          </div>
+          <main className={classes.main}>{props.children}</main>
+          <div className={classes.bottomNav}>
+            <BottomNav />
+          </div>
+        </Paper>
+      </TitleContextProvider>
     </ThemeProvider>
   );
-};
-
-MainLayout.propTypes = {
-  children: PropTypes.any,
 };
 
 export default MainLayout;
