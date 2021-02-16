@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "@afes-website/docs": "git+https://github.com/afes-website/docs.git#2.0.3",
+    "@afes-website/docs": "~2.2",
     "@aspida/axios": "^0.10.2",
     "@fortawesome/fontawesome-svg-core": "^1.2.30",
     "@fortawesome/free-brands-svg-icons": "^5.14.0",
