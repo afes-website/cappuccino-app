@@ -24,7 +24,7 @@ const Home: React.FunctionComponent = () => {
         ]}
         buttons={[
           ["入場スキャン", routes.GeneralEnterScan.route.create({})],
-          // ["退場スキャン", routes.ExhEnterScan.route.create({})],
+          ["退場スキャン", routes.GeneralExitScan.route.create({})],
         ]}
       />
       <HomeCard
