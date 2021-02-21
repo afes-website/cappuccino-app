@@ -1,21 +1,14 @@
 import React, { useState, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import QRScanner from "@/components/QRScanner.";
 import {
   Button,
   Card,
   CardContent,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   IconButton,
   List,
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
-  TextField,
   Typography,
   Stepper,
   Step,
@@ -24,6 +17,8 @@ import {
 import { CheckCircle, Edit, Error, Replay } from "@material-ui/icons";
 import { QrCodeScanner } from "@/components/MaterialSvgIcons";
 import { Alert } from "@material-ui/lab";
+import QRScanner from "@/components/QRScanner.";
+import DirectInputModal from "@/components/DirectInputModal";
 import { useTitleSet } from "@/libs/title";
 import api from "@afes-website/docs";
 import aspida from "@aspida/axios";
@@ -58,7 +53,7 @@ const useStyles = makeStyles({
     margin: "0 auto",
     marginBottom: "10px",
   },
-  restartButton: {
+  bottomButton: {
     marginTop: "10px",
     width: "100%",
   },
@@ -283,7 +278,7 @@ const EnterScan: React.FC = () => {
             }
           }}
           startIcon={<Edit />}
-          className={classes.restartButton}
+          className={classes.bottomButton}
         >
           直接入力する
         </Button>
@@ -300,7 +295,7 @@ const EnterScan: React.FC = () => {
             setActiveStep(0);
           }}
           startIcon={<Replay />}
-          className={classes.restartButton}
+          className={classes.bottomButton}
         >
           最初からやり直す
         </Button>
@@ -347,62 +342,6 @@ const ResultIcon: React.FC<{
         </Typography>
       </CardContent>
     </Card>
-  );
-};
-
-const DirectInputModal: React.FC<{
-  open: boolean;
-  setOpen: (val: boolean) => void;
-  onIdChange: (val: string) => void;
-  currentId: string;
-  type: "guest" | "rsv";
-}> = (props) => {
-  const [id, setId] = useState(props.currentId);
-  const handleClose = () => {
-    props.setOpen(false);
-    setId("");
-  };
-
-  return (
-    <Dialog
-      open={props.open}
-      onClose={handleClose}
-      aria-labelledby="form-dialog-title"
-    >
-      <DialogTitle id="form-dialog-title">
-        {props.type === "rsv" ? "予約" : "ゲスト"} ID 直接入力
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          QRコードがない場合や読み取れない場合は、下のフォームに直接入力してください。
-        </DialogContentText>
-        <TextField
-          autoFocus
-          margin="dense"
-          label={`${props.type === "rsv" ? "予約" : "ゲスト"} ID`}
-          value={id}
-          onChange={(event) => {
-            setId(event.target.value);
-          }}
-          fullWidth
-          placeholder={props.type === "rsv" ? "R-00000" : "GX-00000"}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose} color="primary">
-          キャンセル
-        </Button>
-        <Button
-          onClick={() => {
-            handleClose();
-            props.onIdChange(id);
-          }}
-          color="primary"
-        >
-          決定
-        </Button>
-      </DialogActions>
-    </Dialog>
   );
 };
 
