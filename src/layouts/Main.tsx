@@ -24,7 +24,7 @@ const useStyles = makeStyles(() =>
       zIndex: 600,
     },
     main: {
-      marginBottom: "56px", // bottom Nav
+      paddingBottom: "56px", // bottom Nav
     },
     bottomNav: {
       position: "fixed",

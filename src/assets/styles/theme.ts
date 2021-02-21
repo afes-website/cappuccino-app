@@ -3,6 +3,7 @@ import { afesDark, afesLight } from "@/assets/styles/origPalette";
 import { PaletteOptions } from "@material-ui/core/styles/createPalette";
 import deepmerge from "deepmerge";
 import { ComponentsProps } from "@material-ui/core/styles/props";
+import { Overrides } from "@material-ui/core/styles/overrides";
 
 const lightPalette: PaletteOptions = {
   primary: afesDark,
@@ -34,6 +35,17 @@ const props: ComponentsProps = {
   MuiTextField: {
     variant: "standard",
   },
+  MuiCard: {
+    variant: "outlined",
+  },
+};
+
+const overrides: Overrides = {
+  MuiCard: {
+    root: {
+      marginTop: "10px",
+    },
+  },
 };
 
 const typography = {
@@ -46,16 +58,18 @@ const typography = {
 export const themeLight: Theme = createMuiTheme(
   deepmerge.all([
     { palette: lightPalette },
-    { props: props },
-    { typography: typography },
+    { props },
+    { overrides },
+    { typography },
   ])
 );
 
 export const themeDark: Theme = createMuiTheme(
   deepmerge.all([
     { palette: darkPalette },
-    { props: props },
-    { typography: typography },
+    { props },
+    { overrides },
+    { typography },
   ])
 );
 
