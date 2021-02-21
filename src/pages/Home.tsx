@@ -19,6 +19,17 @@ const Home: React.FunctionComponent = () => {
       <HomeCard
         title="入退場 QRコードスキャン"
         paragraphs={[
+          "文化祭入退場門にてリストバンドのQRコードを読み取ることで、入退場処理を行えます。",
+          "画面に案内が出た場合は、表示された内容を来場者に案内してください。",
+        ]}
+        buttons={[
+          ["入場スキャン", routes.GeneralEnterScan.route.create({})],
+          // ["退場スキャン", routes.ExhEnterScan.route.create({})],
+        ]}
+      />
+      <HomeCard
+        title="入退室 QRコードスキャン"
+        paragraphs={[
           "自展示への入退室者のリストバンドのQRコードを読み取ることで、入退室処理を行えます。",
           "画面に案内が出た場合は、表示された内容を来場者に案内してください。",
         ]}
