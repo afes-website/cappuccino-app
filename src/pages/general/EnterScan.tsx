@@ -19,6 +19,7 @@ import { QrCodeScanner } from "@/components/MaterialSvgIcons";
 import { Alert } from "@material-ui/lab";
 import QRScanner from "@/components/QRScanner.";
 import DirectInputModal from "@/components/DirectInputModal";
+import DirectInputFab from "@/components/DirectInputFab";
 import { useTitleSet } from "@/libs/title";
 import api from "@afes-website/docs";
 import aspida from "@aspida/axios";
@@ -213,8 +214,8 @@ const EnterScan: React.FC = () => {
                 primary={latestRsvId ? latestRsvId : "-"}
                 secondary="予約 ID"
               />
-              <ListItemSecondaryAction>
-                {activeStep > 0 && (
+              {activeStep > 0 && (
+                <ListItemSecondaryAction>
                   <IconButton
                     onClick={() => {
                       setActiveStep(0);
@@ -222,32 +223,30 @@ const EnterScan: React.FC = () => {
                   >
                     <QrCodeScanner />
                   </IconButton>
-                )}
-                <IconButton
-                  onClick={() => {
-                    setOpensRsvInputModal(true);
-                  }}
-                >
-                  <Edit />
-                </IconButton>
-              </ListItemSecondaryAction>
+                  <IconButton
+                    onClick={() => {
+                      setOpensRsvInputModal(true);
+                    }}
+                  >
+                    <Edit />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              )}
             </ListItem>
             <ListItem>
               <ListItemText
                 primary={latestGuestId ? latestGuestId : "-"}
                 secondary="ゲスト ID (リストバンド ID)"
               />
-              {activeStep > 0 && (
+              {activeStep > 1 && (
                 <ListItemSecondaryAction>
-                  {activeStep > 1 && (
-                    <IconButton
-                      onClick={() => {
-                        setActiveStep(1);
-                      }}
-                    >
-                      <QrCodeScanner />
-                    </IconButton>
-                  )}
+                  <IconButton
+                    onClick={() => {
+                      setActiveStep(1);
+                    }}
+                  >
+                    <QrCodeScanner />
+                  </IconButton>
                   <IconButton
                     onClick={() => {
                       setOpensGuestInputModal(true);
@@ -264,9 +263,7 @@ const EnterScan: React.FC = () => {
 
       {/* 直接入力するボタン */}
       {(activeStep === 0 || activeStep === 1) && (
-        <Button
-          variant="contained"
-          color="primary"
+        <DirectInputFab
           onClick={() => {
             switch (activeStep) {
               case 0:
@@ -277,11 +274,7 @@ const EnterScan: React.FC = () => {
                 break;
             }
           }}
-          startIcon={<Edit />}
-          className={classes.bottomButton}
-        >
-          直接入力する
-        </Button>
+        />
       )}
 
       {/* 最初からやり直すボタン */}
@@ -289,6 +282,7 @@ const EnterScan: React.FC = () => {
         <Button
           variant="contained"
           color="primary"
+          size="large"
           onClick={() => {
             setLatestRsvId("");
             setLatestGuestId("");

@@ -7,12 +7,11 @@ import {
   List,
   ListItem,
   ListItemText,
-  Button,
 } from "@material-ui/core";
-import { Edit } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import QRScanner from "@/components/QRScanner.";
 import DirectInputModal from "@/components/DirectInputModal";
+import DirectInputFab from "@/components/DirectInputFab";
 import { useTitleSet } from "@/libs/title";
 import api from "@afes-website/docs";
 import aspida from "@aspida/axios";
@@ -35,11 +34,16 @@ const useStyles = makeStyles({
     marginBottom: "10px",
   },
   snackBar: {
-    bottom: "64px",
+    bottom: "136px",
+    maxWidth: "100%",
   },
-  restartButton: {
-    marginTop: "10px",
-    width: "100%",
+  bottomButton: {
+    position: "fixed",
+    right: "16px",
+    bottom: "72px",
+  },
+  fabIcon: {
+    marginRight: "8px",
   },
 });
 
@@ -133,25 +137,19 @@ const ExitScan: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Button
-        variant="contained"
-        color="primary"
+      <DirectInputFab
         onClick={() => {
           setOpensGuestInputModal(true);
         }}
-        startIcon={<Edit />}
-        className={classes.restartButton}
-      >
-        直接入力する
-      </Button>
+      />
 
       {/* Snack Bar */}
       <Snackbar
         open={snackBarOpen}
         key={latestGuestId}
-        autoHideDuration={isSuccess ? 3000 : undefined}
+        autoHideDuration={isSuccess ? 3000 : null}
         onClose={handleSnackBarClose}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
         className={classes.snackBar}
       >
         <Alert
