@@ -45,10 +45,11 @@ const DirectInputModal: React.FC<{
           }}
           fullWidth
           placeholder={props.type === "rsv" ? "R-00000" : "GX-00000"}
+          color="secondary"
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="primary">
+        <Button onClick={handleClose} color="secondary">
           キャンセル
         </Button>
         <Button
@@ -56,7 +57,7 @@ const DirectInputModal: React.FC<{
             handleClose();
             props.onIdChange(id);
           }}
-          color="primary"
+          color="secondary"
         >
           決定
         </Button>
