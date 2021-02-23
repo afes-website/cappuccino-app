@@ -20,11 +20,13 @@ import { Alert } from "@material-ui/lab";
 import QRScanner from "@/components/QRScanner.";
 import DirectInputModal from "@/components/DirectInputModal";
 import DirectInputFab from "@/components/DirectInputFab";
+import ResultChip, { ResultColor } from "@/components/ResultChip";
 import { useTitleSet } from "@/libs/title";
 import api from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import { AuthContext } from "@/libs/auth";
 import isAxiosError from "@/libs/isAxiosError";
+import clsx from "clsx";
 
 const useStyles = makeStyles({
   root: {
@@ -34,18 +36,11 @@ const useStyles = makeStyles({
     padding: "0 !important",
     objectFit: "cover",
   },
-  guestId: {
-    display: "inline-block",
-    marginBottom: "10px",
-  },
   stepper: {
     padding: "12px 18px 6px 18px",
   },
   step: {
     padding: 0,
-  },
-  snackBar: {
-    bottom: "64px",
   },
   statusIcon: {
     display: "block",
@@ -57,6 +52,16 @@ const useStyles = makeStyles({
   bottomButton: {
     marginTop: "10px",
     width: "100%",
+  },
+  resultChipBase: {
+    position: "relative",
+  },
+  resultChip: {
+    position: "absolute",
+    bottom: "8px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    zIndex: 10,
   },
 });
 
@@ -70,7 +75,8 @@ const EnterScan: React.FC = () => {
   const [errorStatusCode, setErrorStatusCode] = useState<StatusCode | null>(
     null
   );
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [guestResult, setGuestResult] = useState<ResultColor | null>(null);
+  const [rsvResult, setRsvResult] = useState<ResultColor | null>(null);
   useTitleSet("入場処理");
   const auth = useContext(AuthContext);
 
@@ -87,6 +93,7 @@ const EnterScan: React.FC = () => {
           })
           .then((res) => {
             if (res.valid) {
+              setRsvResult("success");
               setErrorStatusCode(null);
               setActiveStep((s) => ++s);
             } else if (
@@ -95,6 +102,7 @@ const EnterScan: React.FC = () => {
                 res.status_code
               )
             ) {
+              setRsvResult("error");
               setErrorStatusCode(res.status_code as StatusCode);
             }
           })
@@ -131,11 +139,11 @@ const EnterScan: React.FC = () => {
         },
       })
       .then(() => {
-        setIsSuccess(true);
+        setGuestResult("success");
         setErrorStatusCode(null);
       })
       .catch((e) => {
-        setIsSuccess(false);
+        setGuestResult("error");
         if (
           isAxiosError(e) &&
           typeof e.response?.data.error_code === "string"
@@ -151,8 +159,24 @@ const EnterScan: React.FC = () => {
         return (
           <>
             <Card>
-              <CardContent className={classes.noPadding}>
+              <CardContent
+                className={clsx(classes.noPadding, classes.resultChipBase)}
+              >
                 <QRScanner onScanFunc={handleRsvIdScan} videoStop={false} />
+                {/* Result Chip */}
+                {rsvResult && (
+                  <span className={classes.resultChip}>
+                    <ResultChip
+                      color={rsvResult}
+                      message={`予約確認${
+                        rsvResult === "success" ? "成功" : "失敗"
+                      } / 予約 ID: ${latestRsvId}`}
+                      onDelete={() => {
+                        setRsvResult(null);
+                      }}
+                    />
+                  </span>
+                )}
               </CardContent>
             </Card>
           </>
@@ -161,8 +185,24 @@ const EnterScan: React.FC = () => {
         return (
           <>
             <Card>
-              <CardContent className={classes.noPadding}>
+              <CardContent
+                className={clsx(classes.noPadding, classes.resultChipBase)}
+              >
                 <QRScanner onScanFunc={handleGuestIdScan} videoStop={false} />
+                {/* Result Chip */}
+                {guestResult && (
+                  <span className={classes.resultChip}>
+                    <ResultChip
+                      color={guestResult}
+                      message={`ゲストスキャン${
+                        guestResult === "success" ? "成功" : "失敗"
+                      } / ゲスト ID: ${latestGuestId}`}
+                      onDelete={() => {
+                        setGuestResult(null);
+                      }}
+                    />
+                  </span>
+                )}
               </CardContent>
             </Card>
           </>
@@ -170,7 +210,9 @@ const EnterScan: React.FC = () => {
       case 2:
         return (
           <>
-            <ResultIcon success={isSuccess} />
+            <ResultIcon
+              success={rsvResult === "success" && guestResult === "success"}
+            />
           </>
         );
     }
@@ -198,9 +240,7 @@ const EnterScan: React.FC = () => {
       {errorStatusCode && (
         <Card>
           <CardContent className={classes.noPadding}>
-            <Alert severity="error" variant="filled">
-              {getErrorMessage(errorStatusCode)}
-            </Alert>
+            <Alert severity="error">{getErrorMessage(errorStatusCode)}</Alert>
           </CardContent>
         </Card>
       )}
@@ -286,6 +326,8 @@ const EnterScan: React.FC = () => {
           onClick={() => {
             setLatestRsvId("");
             setLatestGuestId("");
+            setRsvResult(null);
+            setGuestResult(null);
             setActiveStep(0);
           }}
           startIcon={<Replay />}
