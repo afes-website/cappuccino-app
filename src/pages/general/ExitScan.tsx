@@ -3,7 +3,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import {
   Card,
   CardContent,
-  Snackbar,
   List,
   ListItem,
   ListItemText,
@@ -12,11 +11,13 @@ import { Alert } from "@material-ui/lab";
 import QRScanner from "@/components/QRScanner.";
 import DirectInputModal from "@/components/DirectInputModal";
 import DirectInputFab from "@/components/DirectInputFab";
+import ResultChip, { ResultColor } from "@/components/ResultChip";
 import { useTitleSet } from "@/libs/title";
 import api from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import { AuthContext } from "@/libs/auth";
 import isAxiosError from "@/libs/isAxiosError";
+import clsx from "clsx";
 
 const useStyles = makeStyles({
   root: {
@@ -29,21 +30,15 @@ const useStyles = makeStyles({
     padding: "0 !important",
     objectFit: "cover",
   },
-  guestId: {
-    display: "inline-block",
-    marginBottom: "10px",
+  resultChipBase: {
+    position: "relative",
   },
-  snackBar: {
-    bottom: "136px",
-    maxWidth: "100%",
-  },
-  bottomButton: {
-    position: "fixed",
-    right: "16px",
-    bottom: "72px",
-  },
-  fabIcon: {
-    marginRight: "8px",
+  resultChip: {
+    position: "absolute",
+    bottom: "8px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    zIndex: 10,
   },
 });
 
@@ -54,28 +49,15 @@ const ExitScan: React.FC = () => {
   const [errorStatusCode, setErrorStatusCode] = useState<StatusCode | null>(
     null
   );
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [snackBarOpen, setSnackBarOpen] = useState(false);
+  const [result, setResult] = useState<ResultColor | null>(null);
   useTitleSet("退場スキャン");
   const auth = useContext(AuthContext);
 
   const handleGuestIdScan = (guestId: string | null) => {
     if (guestId && latestGuestId !== guestId) {
       setLatestGuestId(guestId);
-      post(guestId).finally(() => {
-        setSnackBarOpen(true);
-      });
+      post(guestId);
     }
-  };
-
-  const handleSnackBarClose = (
-    event?: React.SyntheticEvent,
-    reason?: string
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSnackBarOpen(false);
   };
 
   const post = (guestId: string): Promise<void> => {
@@ -89,11 +71,11 @@ const ExitScan: React.FC = () => {
         },
       })
       .then(() => {
-        setIsSuccess(true);
+        setResult("success");
         setErrorStatusCode(null);
       })
       .catch((e) => {
-        setIsSuccess(false);
+        setResult("error");
         if (isAxiosError(e)) {
           if (e.response?.status === 404) {
             setErrorStatusCode("GUEST_NOT_FOUND");
@@ -109,8 +91,24 @@ const ExitScan: React.FC = () => {
     <div className={classes.root}>
       {/* QR Scanner */}
       <Card className={classes.card}>
-        <CardContent className={classes.noPadding}>
+        <CardContent
+          className={clsx(classes.noPadding, classes.resultChipBase)}
+        >
           <QRScanner onScanFunc={handleGuestIdScan} videoStop={false} />
+          {/* Result Chip */}
+          {result && (
+            <span className={classes.resultChip}>
+              <ResultChip
+                color={result}
+                message={`退場${
+                  result === "success" ? "成功" : "失敗"
+                } / ゲスト ID: ${latestGuestId}`}
+                onDelete={() => {
+                  setResult(null);
+                }}
+              />
+            </span>
+          )}
         </CardContent>
       </Card>
 
@@ -142,25 +140,6 @@ const ExitScan: React.FC = () => {
           setOpensGuestInputModal(true);
         }}
       />
-
-      {/* Snack Bar */}
-      <Snackbar
-        open={snackBarOpen}
-        key={latestGuestId}
-        autoHideDuration={isSuccess ? 3000 : null}
-        onClose={handleSnackBarClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        className={classes.snackBar}
-      >
-        <Alert
-          severity={isSuccess ? "success" : "error"}
-          variant="filled"
-          onClick={handleSnackBarClose}
-          onClose={handleSnackBarClose}
-        >
-          {latestGuestId} {`退場${isSuccess ? "完了" : "失敗"}`}
-        </Alert>
-      </Snackbar>
 
       {/* 直接入力モーダル */}
       <DirectInputModal
