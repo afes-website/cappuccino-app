@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { Chip, Fade, SvgIcon } from "@material-ui/core";
 import { CheckCircleOutline, ErrorOutline } from "@material-ui/icons";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 
-const useStyles = makeStyles({
-  root: {
-    color: "#fff",
-    "& .MuiChip-icon, .MuiChip-deleteIcon": {
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    root: {
       color: "#fff",
+      "& .MuiChip-icon, .MuiChip-deleteIcon": {
+        color: "#fff",
+      },
     },
-  },
-  success: {
-    backgroundColor: "#4caf50",
-  },
-  error: {
-    backgroundColor: "#f44336",
-  },
-});
+    success: {
+      backgroundColor: theme.palette.success.main,
+    },
+    error: {
+      backgroundColor: theme.palette.error.main,
+    },
+  })
+);
 
 export type ResultColor = "success" | "error";
 
