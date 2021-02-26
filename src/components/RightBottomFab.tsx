@@ -7,6 +7,7 @@ const useStyles = makeStyles({
     position: "fixed",
     right: "16px",
     bottom: "72px",
+    zIndex: 500,
   },
   fabLabel: {
     marginLeft: "8px",
