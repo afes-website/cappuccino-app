@@ -20,7 +20,7 @@ import { Alert } from "@material-ui/lab";
 import QRScanner from "@/components/QRScanner.";
 import DirectInputModal from "@/components/DirectInputModal";
 import DirectInputFab from "@/components/DirectInputFab";
-import ResultChip from "@/components/ResultChip";
+import ResultChip, { ResultChipRefs } from "@/components/ResultChip";
 import ResultPopup, {
   ResultPopupRefs,
   ResultPopupColors,
@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme) =>
       // "& > * + *": {
       //   marginTop: "10px",
       // },
+      marginBottom: theme.spacing(2) + 48,
     },
     noPadding: {
       padding: "0 !important",
@@ -47,7 +48,6 @@ const useStyles = makeStyles((theme) =>
     },
     bottomButton: {
       marginTop: "10px",
-      marginBottom: theme.spacing(3) + 48,
       width: "100%",
     },
     resultChipBase: {
@@ -80,6 +80,7 @@ const EnterScan: React.FC = () => {
   const classes = useStyles();
   const auth = useContext(AuthContext);
   const resultPopupRef = useRef<ResultPopupRefs>(null);
+  const resultChipRef = useRef<ResultChipRefs>(null);
 
   // ==== state ====
 
@@ -132,6 +133,7 @@ const EnterScan: React.FC = () => {
     setErrorStatusCode(null);
     setRsvCheckStatus(null);
     setGuestCheckStatus(null);
+    if (resultChipRef.current) resultChipRef.current.close();
   };
 
   const handleScan = (data: string | null) => {
@@ -157,6 +159,8 @@ const EnterScan: React.FC = () => {
       setRsvCheckStatus("loading");
       // error alert 非表示
       setErrorStatusCode(null);
+      // result chip 非表示
+      if (resultChipRef.current) resultChipRef.current.close();
       // rsv id 検証
       api(aspida())
         .onsite.reservation._id(rsvId)
@@ -170,18 +174,33 @@ const EnterScan: React.FC = () => {
             // 有効 : 次に進む
             setRsvCheckStatus("success");
             setActiveScanner("guest");
-            // TODO: 自動消滅する ResultChip を表示する
+            if (resultChipRef.current)
+              resultChipRef.current.open(
+                "success",
+                `予約確認成功 / 予約 ID: ${rsvId}`,
+                3000
+              );
           } else if (
             res.status_code &&
             (statusCodeList as ReadonlyArray<string>).includes(res.status_code)
           ) {
             // 無効 : 止める
             setRsvCheckStatus("error");
+            if (resultChipRef.current)
+              resultChipRef.current.open(
+                "error",
+                `予約確認失敗 / 予約 ID: ${rsvId}`
+              );
             setErrorStatusCode(res.status_code as StatusCode);
           }
         })
         .catch((e) => {
           setRsvCheckStatus("error");
+          if (resultChipRef.current)
+            resultChipRef.current.open(
+              "error",
+              `予約確認失敗 / 予約 ID: ${rsvId}`
+            );
           // 404 の場合
           if (isAxiosError(e) && e.response?.status === 404)
             setErrorStatusCode("RESERVATION_NOT_FOUND");
@@ -202,6 +221,8 @@ const EnterScan: React.FC = () => {
       setGuestCheckStatus("loading");
       // error alert 非表示
       setErrorStatusCode(null);
+      // result chip 非表示
+      if (resultChipRef.current) resultChipRef.current.close();
       // ポップアップを開く
       if (resultPopupRef.current) resultPopupRef.current.open();
       // guest id 検証 (rsv id は有効性を確認済)
@@ -218,6 +239,11 @@ const EnterScan: React.FC = () => {
         .then(() => {
           setRsvCheckStatus("success");
           setGuestCheckStatus("success");
+          if (resultChipRef.current)
+            resultChipRef.current.open(
+              "success",
+              `入場成功 / ゲスト ID: ${guestId}`
+            );
         })
         .catch((e) => {
           if (
@@ -228,49 +254,12 @@ const EnterScan: React.FC = () => {
           }
           // TODO: 不明なエラーハンドリング
           setGuestCheckStatus("error");
+          if (resultChipRef.current)
+            resultChipRef.current.open(
+              "error",
+              `入場失敗 / ゲスト ID: ${guestId}`
+            );
         });
-    }
-  };
-
-  const ResultChipWithProps: React.FC = () => {
-    switch (activeScanner) {
-      case "rsv":
-        return (
-          <>
-            {(rsvCheckStatus === "success" || rsvCheckStatus === "error") && (
-              <span className={classes.resultChip}>
-                <ResultChip
-                  color={rsvCheckStatus}
-                  message={`予約確認${
-                    rsvCheckStatus === "success" ? "成功" : "失敗"
-                  } / 予約 ID: ${latestRsvId}`}
-                  onDelete={() => {
-                    setRsvCheckStatus(null);
-                  }}
-                />
-              </span>
-            )}
-          </>
-        );
-      case "guest":
-        return (
-          <>
-            {(guestCheckStatus === "success" ||
-              guestCheckStatus === "error") && (
-              <span className={classes.resultChip}>
-                <ResultChip
-                  color={guestCheckStatus}
-                  message={`ゲストスキャン${
-                    guestCheckStatus === "success" ? "成功" : "失敗"
-                  } / ゲスト ID: ${latestGuestId}`}
-                  onDelete={() => {
-                    setGuestCheckStatus(null);
-                  }}
-                />
-              </span>
-            )}
-          </>
-        );
     }
   };
 
@@ -283,7 +272,7 @@ const EnterScan: React.FC = () => {
         >
           <QRScanner onScanFunc={handleScan} videoStop={false} />
           {/* Result Chip */}
-          <ResultChipWithProps />
+          <ResultChip ref={resultChipRef} className={classes.resultChip} />
         </CardContent>
       </Card>
 

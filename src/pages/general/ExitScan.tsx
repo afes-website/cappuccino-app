@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import {
   Card,
@@ -11,7 +11,7 @@ import { Alert } from "@material-ui/lab";
 import QRScanner from "@/components/QRScanner.";
 import DirectInputModal from "@/components/DirectInputModal";
 import DirectInputFab from "@/components/DirectInputFab";
-import ResultChip, { ResultChipColors } from "@/components/ResultChip";
+import ResultChip, { ResultChipRefs } from "@/components/ResultChip";
 import { useTitleSet } from "@/libs/title";
 import api from "@afes-website/docs";
 import aspida from "@aspida/axios";
@@ -49,13 +49,14 @@ const ExitScan: React.FC = () => {
   const [errorStatusCode, setErrorStatusCode] = useState<StatusCode | null>(
     null
   );
-  const [result, setResult] = useState<ResultChipColors | null>(null);
   useTitleSet("退場スキャン");
   const auth = useContext(AuthContext);
+  const resultChipRef = useRef<ResultChipRefs>(null);
 
   const handleGuestIdScan = (guestId: string | null) => {
     if (guestId && latestGuestId !== guestId) {
       setLatestGuestId(guestId);
+      if (resultChipRef.current) resultChipRef.current.close();
       post(guestId);
     }
   };
@@ -71,11 +72,15 @@ const ExitScan: React.FC = () => {
         },
       })
       .then(() => {
-        setResult("success");
         setErrorStatusCode(null);
+        if (resultChipRef.current)
+          resultChipRef.current.open(
+            "success",
+            `退場成功 / ゲスト ID: ${guestId}`,
+            3000
+          );
       })
       .catch((e) => {
-        setResult("error");
         if (isAxiosError(e)) {
           if (e.response?.status === 404) {
             setErrorStatusCode("GUEST_NOT_FOUND");
@@ -84,6 +89,11 @@ const ExitScan: React.FC = () => {
             setErrorStatusCode("GUEST_ALREADY_EXITED");
           }
         }
+        if (resultChipRef.current)
+          resultChipRef.current.open(
+            "error",
+            `退場失敗 / ゲスト ID: ${guestId}`
+          );
       });
   };
 
@@ -96,19 +106,7 @@ const ExitScan: React.FC = () => {
         >
           <QRScanner onScanFunc={handleGuestIdScan} videoStop={false} />
           {/* Result Chip */}
-          {result && (
-            <span className={classes.resultChip}>
-              <ResultChip
-                color={result}
-                message={`退場${
-                  result === "success" ? "成功" : "失敗"
-                } / ゲスト ID: ${latestGuestId}`}
-                onDelete={() => {
-                  setResult(null);
-                }}
-              />
-            </span>
-          )}
+          <ResultChip ref={resultChipRef} className={classes.resultChip} />
         </CardContent>
       </Card>
 
