@@ -40,13 +40,7 @@ const props: ComponentsProps = {
   },
 };
 
-const overrides: Overrides = {
-  MuiCard: {
-    root: {
-      marginTop: "10px",
-    },
-  },
-};
+const overrides: Overrides = {};
 
 const typography = {
   fontFamily: ["Roboto", "'Noto Sans JP'", "sans-serif"].join(","),

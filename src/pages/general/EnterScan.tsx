@@ -17,6 +17,7 @@ import {
   Replay,
 } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
+import CardList from "@/components/CardList";
 import QRScanner from "@/components/QRScanner.";
 import DirectInputModal from "@/components/DirectInputModal";
 import DirectInputFab from "@/components/DirectInputFab";
@@ -34,12 +35,7 @@ import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
-    root: {
-      padding: theme.spacing(1),
-      // TODO: margin 方式の変更
-      // "& > * + *": {
-      //   marginTop: "10px",
-      // },
+    list: {
       marginBottom: theme.spacing(2) + 48,
     },
     noPadding: {
@@ -264,59 +260,74 @@ const EnterScan: React.FC = () => {
   };
 
   return (
-    <div className={classes.root}>
-      {/* QR Scanner */}
-      <Card>
-        <CardContent
-          className={clsx(classes.noPadding, classes.resultChipBase)}
-        >
-          <QRScanner onScanFunc={handleScan} videoStop={false} />
-          {/* Result Chip */}
-          <ResultChip ref={resultChipRef} className={classes.resultChip} />
-        </CardContent>
-      </Card>
-
-      {/* Error Alert */}
-      {errorStatusCode && (
+    <div>
+      <CardList className={classes.list}>
+        {/* QR Scanner */}
         <Card>
-          <CardContent className={classes.noPadding}>
-            <Alert severity="error">{getErrorMessage(errorStatusCode)}</Alert>
+          <CardContent
+            className={clsx(classes.noPadding, classes.resultChipBase)}
+          >
+            <QRScanner onScanFunc={handleScan} videoStop={false} />
+            {/* Result Chip */}
+            <ResultChip ref={resultChipRef} className={classes.resultChip} />
           </CardContent>
         </Card>
-      )}
 
-      {/* ID List */}
-      <Card>
-        <CardContent className={classes.noPadding}>
-          <List>
-            <ListItem disabled={activeScanner !== "rsv"}>
-              <ListItemIcon className={classes.progressWrapper}>
-                {rsvCheckStatus === "success" ? (
-                  <CheckCircle className={classes.successIcon} />
-                ) : (
-                  <Assignment />
-                )}
-                {rsvCheckStatus === "loading" && (
-                  <CircularProgress className={classes.progress} size={36} />
-                )}
-              </ListItemIcon>
-              <ListItemText
-                primary={latestRsvId ? latestRsvId : "-"}
-                secondary="予約 ID"
-              />
-            </ListItem>
-            <ListItem disabled={activeScanner !== "guest"}>
-              <ListItemIcon>
-                <ConfirmationNumber />
-              </ListItemIcon>
-              <ListItemText
-                primary={latestGuestId ? latestGuestId : "-"}
-                secondary="ゲスト ID (リストバンド)"
-              />
-            </ListItem>
-          </List>
-        </CardContent>
-      </Card>
+        {/* Error Alert */}
+        {errorStatusCode && (
+          <Card>
+            <CardContent className={classes.noPadding}>
+              <Alert severity="error">{getErrorMessage(errorStatusCode)}</Alert>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* ID List */}
+        <Card>
+          <CardContent className={classes.noPadding}>
+            <List>
+              <ListItem disabled={activeScanner !== "rsv"}>
+                <ListItemIcon className={classes.progressWrapper}>
+                  {rsvCheckStatus === "success" ? (
+                    <CheckCircle className={classes.successIcon} />
+                  ) : (
+                    <Assignment />
+                  )}
+                  {rsvCheckStatus === "loading" && (
+                    <CircularProgress className={classes.progress} size={36} />
+                  )}
+                </ListItemIcon>
+                <ListItemText
+                  primary={latestRsvId ? latestRsvId : "-"}
+                  secondary="予約 ID"
+                />
+              </ListItem>
+              <ListItem disabled={activeScanner !== "guest"}>
+                <ListItemIcon>
+                  <ConfirmationNumber />
+                </ListItemIcon>
+                <ListItemText
+                  primary={latestGuestId ? latestGuestId : "-"}
+                  secondary="ゲスト ID (リストバンド)"
+                />
+              </ListItem>
+            </List>
+          </CardContent>
+        </Card>
+
+        {/* はじめからやり直すボタン */}
+        {totalCheckStatus === "error" && (
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.bottomButton}
+            startIcon={<Replay />}
+            onClick={clearAll}
+          >
+            はじめからやり直す
+          </Button>
+        )}
+      </CardList>
 
       {/* 結果表示ポップアップ */}
       <ResultPopup
@@ -326,7 +337,7 @@ const EnterScan: React.FC = () => {
         ref={resultPopupRef}
       />
 
-      {/* 直接入力するボタン */}
+      {/* 直接入力ボタン */}
       <DirectInputFab
         onClick={() => {
           switch (activeScanner) {
@@ -339,19 +350,6 @@ const EnterScan: React.FC = () => {
           }
         }}
       />
-
-      {/* はじめからやり直すボタン */}
-      {totalCheckStatus === "error" && (
-        <Button
-          variant="contained"
-          color="primary"
-          className={classes.bottomButton}
-          startIcon={<Replay />}
-          onClick={clearAll}
-        >
-          はじめからやり直す
-        </Button>
-      )}
 
       {/* 直接入力モーダル */}
       <DirectInputModal

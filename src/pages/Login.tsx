@@ -15,24 +15,25 @@ import {
 } from "@material-ui/core";
 import api from "@afes-website/docs";
 import axios from "@aspida/axios";
+import CardList from "@/components/CardList";
 import { AuthContext } from "@/libs/auth";
 import routes from "@/libs/routes";
 import isAxiosError from "@/libs/isAxiosError";
 import { useTitleSet } from "@/libs/title";
+import { createStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles({
-  root: {
-    padding: "10px",
-  },
-  form: {
-    display: "block",
-    margin: 0,
-    padding: 0,
-  },
-  mb: {
-    marginBottom: "10px",
-  },
-});
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    form: {
+      display: "block",
+      margin: 0,
+      padding: 0,
+    },
+    mb: {
+      marginBottom: theme.spacing(1),
+    },
+  })
+);
 
 const Login: React.FunctionComponent = () => {
   const classes = useStyles();
@@ -79,7 +80,7 @@ const Login: React.FunctionComponent = () => {
   };
 
   return (
-    <div className={classes.root}>
+    <CardList>
       <Card>
         <form onSubmit={login} className={classes.form}>
           <CardContent>
@@ -141,7 +142,7 @@ const Login: React.FunctionComponent = () => {
           </CardActions>
         </form>
       </Card>
-    </div>
+    </CardList>
   );
 };
 

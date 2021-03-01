@@ -1,21 +1,14 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import routes from "@/libs/routes";
 import HomeCard from "@/components/HomeCard";
+import CardList from "@/components/CardList";
 import { useTitleSet } from "@/libs/title";
 
-const useStyles = makeStyles({
-  root: {
-    padding: "10px",
-  },
-});
-
 const Home: React.FunctionComponent = () => {
-  const classes = useStyles();
   useTitleSet("Manager for Exhibition");
 
   return (
-    <div className={classes.root}>
+    <CardList>
       <HomeCard
         title="入退場 QRコードスキャン"
         paragraphs={[
@@ -43,7 +36,7 @@ const Home: React.FunctionComponent = () => {
         paragraphs={["自展示への来場者の入退室履歴を閲覧できます。"]}
         buttons={[["履歴照会", routes.ExhEnterScan.route.create({})]]}
       />
-    </div>
+    </CardList>
   );
 };
 

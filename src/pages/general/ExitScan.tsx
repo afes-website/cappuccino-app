@@ -1,5 +1,5 @@
 import React, { useContext, useRef, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
 import {
   Card,
   CardContent,
@@ -8,6 +8,7 @@ import {
   ListItemText,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
+import CardList from "@/components/CardList";
 import QRScanner from "@/components/QRScanner.";
 import DirectInputModal from "@/components/DirectInputModal";
 import DirectInputFab from "@/components/DirectInputFab";
@@ -19,28 +20,24 @@ import { AuthContext } from "@/libs/auth";
 import isAxiosError from "@/libs/isAxiosError";
 import clsx from "clsx";
 
-const useStyles = makeStyles({
-  root: {
-    padding: "10px",
-  },
-  card: {
-    marginBottom: "10px",
-  },
-  noPadding: {
-    padding: "0 !important",
-    objectFit: "cover",
-  },
-  resultChipBase: {
-    position: "relative",
-  },
-  resultChip: {
-    position: "absolute",
-    bottom: "8px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    zIndex: 10,
-  },
-});
+const useStyles = makeStyles(() =>
+  createStyles({
+    noPadding: {
+      padding: "0 !important",
+      objectFit: "cover",
+    },
+    resultChipBase: {
+      position: "relative",
+    },
+    resultChip: {
+      position: "absolute",
+      bottom: "8px",
+      left: "50%",
+      transform: "translateX(-50%)",
+      zIndex: 10,
+    },
+  })
+);
 
 const ExitScan: React.FC = () => {
   const classes = useStyles();
@@ -98,41 +95,44 @@ const ExitScan: React.FC = () => {
   };
 
   return (
-    <div className={classes.root}>
-      {/* QR Scanner */}
-      <Card className={classes.card}>
-        <CardContent
-          className={clsx(classes.noPadding, classes.resultChipBase)}
-        >
-          <QRScanner onScanFunc={handleGuestIdScan} videoStop={false} />
-          {/* Result Chip */}
-          <ResultChip ref={resultChipRef} className={classes.resultChip} />
-        </CardContent>
-      </Card>
-
-      {/* Error Alert */}
-      {errorStatusCode && (
-        <Card className={classes.card}>
-          <CardContent className={classes.noPadding}>
-            <Alert severity="error">{getErrorMessage(errorStatusCode)}</Alert>
+    <div>
+      <CardList>
+        {/* QR Scanner */}
+        <Card>
+          <CardContent
+            className={clsx(classes.noPadding, classes.resultChipBase)}
+          >
+            <QRScanner onScanFunc={handleGuestIdScan} videoStop={false} />
+            {/* Result Chip */}
+            <ResultChip ref={resultChipRef} className={classes.resultChip} />
           </CardContent>
         </Card>
-      )}
 
-      {/* ID List */}
-      <Card>
-        <CardContent className={classes.noPadding}>
-          <List>
-            <ListItem>
-              <ListItemText
-                primary={latestGuestId ? latestGuestId : "-"}
-                secondary="ゲスト ID (リストバンド ID)"
-              />
-            </ListItem>
-          </List>
-        </CardContent>
-      </Card>
+        {/* Error Alert */}
+        {errorStatusCode && (
+          <Card>
+            <CardContent className={classes.noPadding}>
+              <Alert severity="error">{getErrorMessage(errorStatusCode)}</Alert>
+            </CardContent>
+          </Card>
+        )}
 
+        {/* ID List */}
+        <Card>
+          <CardContent className={classes.noPadding}>
+            <List>
+              <ListItem>
+                <ListItemText
+                  primary={latestGuestId ? latestGuestId : "-"}
+                  secondary="ゲスト ID (リストバンド ID)"
+                />
+              </ListItem>
+            </List>
+          </CardContent>
+        </Card>
+      </CardList>
+
+      {/* 直接入力ボタン */}
       <DirectInputFab
         onClick={() => {
           setOpensGuestInputModal(true);
