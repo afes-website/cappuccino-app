@@ -16,10 +16,9 @@ const DirectInputModal: React.FC<{
   currentId: string;
   type: "guest" | "rsv";
 }> = (props) => {
-  const [id, setId] = useState(props.currentId);
+  const [id, setId] = useState("");
   const handleClose = () => {
     props.setOpen(false);
-    setId("");
   };
 
   return (
@@ -39,7 +38,7 @@ const DirectInputModal: React.FC<{
           autoFocus
           margin="dense"
           label={`${props.type === "rsv" ? "予約" : "ゲスト"} ID`}
-          value={id}
+          defaultValue={props.currentId}
           onChange={(event) => {
             setId(event.target.value);
           }}
