@@ -1,26 +1,30 @@
-import React, { useState, useContext } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import React, { useState, useContext, useEffect, useRef } from "react";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
 import {
   Button,
   Card,
   CardContent,
-  IconButton,
+  CircularProgress,
   List,
   ListItem,
+  ListItemIcon,
   ListItemText,
-  ListItemSecondaryAction,
-  Typography,
-  Stepper,
-  Step,
-  StepLabel,
 } from "@material-ui/core";
-import { CheckCircle, Edit, Error, Replay } from "@material-ui/icons";
-import { QrCodeScanner } from "@/components/MaterialSvgIcons";
+import {
+  Assignment,
+  CheckCircle,
+  ConfirmationNumber,
+  Replay,
+} from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import QRScanner from "@/components/QRScanner.";
 import DirectInputModal from "@/components/DirectInputModal";
 import DirectInputFab from "@/components/DirectInputFab";
-import ResultChip, { ResultColor } from "@/components/ResultChip";
+import ResultChip from "@/components/ResultChip";
+import ResultPopup, {
+  ResultPopupRefs,
+  ResultPopupColors,
+} from "@/components/ResultPopup";
 import { useTitleSet } from "@/libs/title";
 import api from "@afes-website/docs";
 import aspida from "@aspida/axios";
@@ -28,191 +32,243 @@ import { AuthContext } from "@/libs/auth";
 import isAxiosError from "@/libs/isAxiosError";
 import clsx from "clsx";
 
-const useStyles = makeStyles({
-  root: {
-    padding: "10px",
-  },
-  noPadding: {
-    padding: "0 !important",
-    objectFit: "cover",
-  },
-  stepper: {
-    padding: "12px 18px 6px 18px",
-  },
-  step: {
-    padding: 0,
-  },
-  statusIcon: {
-    display: "block",
-    width: "20%",
-    height: "100%",
-    margin: "0 auto",
-    marginBottom: "10px",
-  },
-  bottomButton: {
-    marginTop: "10px",
-    width: "100%",
-  },
-  resultChipBase: {
-    position: "relative",
-  },
-  resultChip: {
-    position: "absolute",
-    bottom: "8px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    zIndex: 10,
-  },
-});
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    root: {
+      padding: theme.spacing(1),
+      // TODO: margin 方式の変更
+      // "& > * + *": {
+      //   marginTop: "10px",
+      // },
+    },
+    noPadding: {
+      padding: "0 !important",
+      objectFit: "cover",
+    },
+    bottomButton: {
+      marginTop: "10px",
+      marginBottom: theme.spacing(3) + 48,
+      width: "100%",
+    },
+    resultChipBase: {
+      position: "relative",
+    },
+    resultChip: {
+      position: "absolute",
+      bottom: theme.spacing(1),
+      left: "50%",
+      transform: "translateX(-50%)",
+      zIndex: 10,
+    },
+    progressWrapper: {
+      position: "relative",
+    },
+    progress: {
+      position: "absolute",
+      top: -6,
+      left: -6,
+      zIndex: 10,
+    },
+    successIcon: {
+      color: theme.palette.success.main,
+    },
+  })
+);
 
 const EnterScan: React.FC = () => {
+  useTitleSet("入場処理");
   const classes = useStyles();
+  const auth = useContext(AuthContext);
+  const resultPopupRef = useRef<ResultPopupRefs>(null);
+
+  // ==== state ====
+
+  // 最後に読み込んだ予約ID・ゲストID
   const [latestRsvId, setLatestRsvId] = useState("");
   const [latestGuestId, setLatestGuestId] = useState("");
+  // 直接入力モーダルの開閉状態
   const [opensRsvInputModal, setOpensRsvInputModal] = useState(false);
   const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
-  const [activeStep, setActiveStep] = useState(0);
+  // ステップ管理
+  const [activeScanner, setActiveScanner] = useState<"rsv" | "guest">("rsv");
+  // 最新のAPI通信で発生したエラーステータスコード
   const [errorStatusCode, setErrorStatusCode] = useState<StatusCode | null>(
     null
   );
-  const [guestResult, setGuestResult] = useState<ResultColor | null>(null);
-  const [rsvResult, setRsvResult] = useState<ResultColor | null>(null);
-  useTitleSet("入場処理");
-  const auth = useContext(AuthContext);
+  // 予約ID・ゲストIDそれぞれのチェック結果
+  const [
+    rsvCheckStatus,
+    setRsvCheckStatus,
+  ] = useState<ResultPopupColors | null>(null);
+  const [
+    guestCheckStatus,
+    setGuestCheckStatus,
+  ] = useState<ResultPopupColors | null>(null);
+  // 予約IDチェック・ゲストIDチェックをマージした全体のチェック結果
+  // useEffect で自動更新
+  const [
+    totalCheckStatus,
+    setTotalCheckStatus,
+  ] = useState<ResultPopupColors | null>(null);
+
+  // 全体のチェック結果の更新処理
+  useEffect(() => {
+    if (rsvCheckStatus === "success" && guestCheckStatus === "success")
+      setTotalCheckStatus("success");
+    else if (rsvCheckStatus === "loading" || guestCheckStatus === "loading")
+      setTotalCheckStatus("loading");
+    else if (rsvCheckStatus === "error" || guestCheckStatus === "error")
+      setTotalCheckStatus("error");
+    else setTotalCheckStatus(null);
+  }, [rsvCheckStatus, guestCheckStatus]);
+
+  // 全リセット
+  const clearAll = () => {
+    setLatestRsvId("");
+    setLatestGuestId("");
+    setOpensRsvInputModal(false);
+    setOpensGuestInputModal(false);
+    setActiveScanner("rsv");
+    setErrorStatusCode(null);
+    setRsvCheckStatus(null);
+    setGuestCheckStatus(null);
+  };
+
+  const handleScan = (data: string | null) => {
+    switch (activeScanner) {
+      case "rsv":
+        handleRsvIdScan(data);
+        break;
+      case "guest":
+        handleGuestIdScan(data);
+        break;
+    }
+  };
 
   const handleRsvIdScan = (rsvId: string | null) => {
-    if (rsvId && latestRsvId !== rsvId) {
+    // null check & 二重スキャン防止
+    if (
+      rsvId !== null &&
+      rsvId !== latestRsvId &&
+      (rsvCheckStatus === null || rsvCheckStatus === "error")
+    ) {
       setLatestRsvId(rsvId);
-      if (latestGuestId === "") {
-        api(aspida())
-          .onsite.reservation._id(rsvId)
-          .check.$get({
-            headers: {
-              Authorization: "bearer " + auth.val.get_current_user()?.token,
-            },
-          })
-          .then((res) => {
-            if (res.valid) {
-              setRsvResult("success");
-              setErrorStatusCode(null);
-              setActiveStep((s) => ++s);
-            } else if (
-              res.status_code &&
-              (statusCodeList as ReadonlyArray<string>).includes(
-                res.status_code
-              )
-            ) {
-              setRsvResult("error");
-              setErrorStatusCode(res.status_code as StatusCode);
-            }
-          })
-          .catch((e) => {
-            if (isAxiosError(e) && e.response?.status === 404)
-              setErrorStatusCode("RESERVATION_NOT_FOUND");
-          });
-      } else {
-        post(rsvId, latestGuestId).finally(() => {
-          setActiveStep(2);
+      // circular loading 表示
+      setRsvCheckStatus("loading");
+      // error alert 非表示
+      setErrorStatusCode(null);
+      // rsv id 検証
+      api(aspida())
+        .onsite.reservation._id(rsvId)
+        .check.$get({
+          headers: {
+            Authorization: "bearer " + auth.val.get_current_user()?.token,
+          },
+        })
+        .then((res) => {
+          if (res.valid) {
+            // 有効 : 次に進む
+            setRsvCheckStatus("success");
+            setActiveScanner("guest");
+            // TODO: 自動消滅する ResultChip を表示する
+          } else if (
+            res.status_code &&
+            (statusCodeList as ReadonlyArray<string>).includes(res.status_code)
+          ) {
+            // 無効 : 止める
+            setRsvCheckStatus("error");
+            setErrorStatusCode(res.status_code as StatusCode);
+          }
+        })
+        .catch((e) => {
+          setRsvCheckStatus("error");
+          // 404 の場合
+          if (isAxiosError(e) && e.response?.status === 404)
+            setErrorStatusCode("RESERVATION_NOT_FOUND");
+          // TODO: 404 以外のエラーハンドリング
         });
-      }
     }
   };
 
   const handleGuestIdScan = (guestId: string | null) => {
-    if (guestId && guestId !== latestGuestId && guestId !== latestRsvId) {
+    // null check & 二重スキャン防止
+    if (
+      guestId !== null &&
+      guestId !== latestGuestId &&
+      guestId !== latestRsvId &&
+      (guestCheckStatus === null || guestCheckStatus === "error")
+    ) {
       setLatestGuestId(guestId);
-      post(latestRsvId, guestId).finally(() => {
-        setActiveStep(2);
-      });
+      setGuestCheckStatus("loading");
+      // error alert 非表示
+      setErrorStatusCode(null);
+      // ポップアップを開く
+      if (resultPopupRef.current) resultPopupRef.current.open();
+      // guest id 検証 (rsv id は有効性を確認済)
+      api(aspida())
+        .onsite.general.enter.$post({
+          body: {
+            reservation_id: latestRsvId,
+            guest_id: guestId,
+          },
+          headers: {
+            Authorization: "bearer " + auth.val.get_current_user()?.token,
+          },
+        })
+        .then(() => {
+          setRsvCheckStatus("success");
+          setGuestCheckStatus("success");
+        })
+        .catch((e) => {
+          if (
+            isAxiosError(e) &&
+            typeof e.response?.data.error_code === "string"
+          ) {
+            setErrorStatusCode(e.response?.data.error_code);
+          }
+          // TODO: 不明なエラーハンドリング
+          setGuestCheckStatus("error");
+        });
     }
   };
 
-  const post = (rsvId: string, guestId: string): Promise<void> => {
-    return api(aspida())
-      .onsite.general.enter.$post({
-        body: {
-          reservation_id: rsvId,
-          guest_id: guestId,
-        },
-        headers: {
-          Authorization: "bearer " + auth.val.get_current_user()?.token,
-        },
-      })
-      .then(() => {
-        setGuestResult("success");
-        setErrorStatusCode(null);
-      })
-      .catch((e) => {
-        setGuestResult("error");
-        if (
-          isAxiosError(e) &&
-          typeof e.response?.data.error_code === "string"
-        ) {
-          setErrorStatusCode(e.response?.data.error_code);
-        }
-      });
-  };
-
-  const getCurrentPageElement = () => {
-    switch (activeStep) {
-      case 0:
+  const ResultChipWithProps: React.FC = () => {
+    switch (activeScanner) {
+      case "rsv":
         return (
           <>
-            <Card>
-              <CardContent
-                className={clsx(classes.noPadding, classes.resultChipBase)}
-              >
-                <QRScanner onScanFunc={handleRsvIdScan} videoStop={false} />
-                {/* Result Chip */}
-                {rsvResult && (
-                  <span className={classes.resultChip}>
-                    <ResultChip
-                      color={rsvResult}
-                      message={`予約確認${
-                        rsvResult === "success" ? "成功" : "失敗"
-                      } / 予約 ID: ${latestRsvId}`}
-                      onDelete={() => {
-                        setRsvResult(null);
-                      }}
-                    />
-                  </span>
-                )}
-              </CardContent>
-            </Card>
+            {(rsvCheckStatus === "success" || rsvCheckStatus === "error") && (
+              <span className={classes.resultChip}>
+                <ResultChip
+                  color={rsvCheckStatus}
+                  message={`予約確認${
+                    rsvCheckStatus === "success" ? "成功" : "失敗"
+                  } / 予約 ID: ${latestRsvId}`}
+                  onDelete={() => {
+                    setRsvCheckStatus(null);
+                  }}
+                />
+              </span>
+            )}
           </>
         );
-      case 1:
+      case "guest":
         return (
           <>
-            <Card>
-              <CardContent
-                className={clsx(classes.noPadding, classes.resultChipBase)}
-              >
-                <QRScanner onScanFunc={handleGuestIdScan} videoStop={false} />
-                {/* Result Chip */}
-                {guestResult && (
-                  <span className={classes.resultChip}>
-                    <ResultChip
-                      color={guestResult}
-                      message={`ゲストスキャン${
-                        guestResult === "success" ? "成功" : "失敗"
-                      } / ゲスト ID: ${latestGuestId}`}
-                      onDelete={() => {
-                        setGuestResult(null);
-                      }}
-                    />
-                  </span>
-                )}
-              </CardContent>
-            </Card>
-          </>
-        );
-      case 2:
-        return (
-          <>
-            <ResultIcon
-              success={rsvResult === "success" && guestResult === "success"}
-            />
+            {(guestCheckStatus === "success" ||
+              guestCheckStatus === "error") && (
+              <span className={classes.resultChip}>
+                <ResultChip
+                  color={guestCheckStatus}
+                  message={`ゲストスキャン${
+                    guestCheckStatus === "success" ? "成功" : "失敗"
+                  } / ゲスト ID: ${latestGuestId}`}
+                  onDelete={() => {
+                    setGuestCheckStatus(null);
+                  }}
+                />
+              </span>
+            )}
           </>
         );
     }
@@ -220,21 +276,16 @@ const EnterScan: React.FC = () => {
 
   return (
     <div className={classes.root}>
-      {/* Stepper */}
-      <Stepper
-        activeStep={activeStep}
-        alternativeLabel
-        className={classes.stepper}
-      >
-        {["予約確認", "リストバンド", "処理実行"].map((label) => (
-          <Step className={classes.step} key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-
-      {/* メイン */}
-      {getCurrentPageElement()}
+      {/* QR Scanner */}
+      <Card>
+        <CardContent
+          className={clsx(classes.noPadding, classes.resultChipBase)}
+        >
+          <QRScanner onScanFunc={handleScan} videoStop={false} />
+          {/* Result Chip */}
+          <ResultChipWithProps />
+        </CardContent>
+      </Card>
 
       {/* Error Alert */}
       {errorStatusCode && (
@@ -249,95 +300,71 @@ const EnterScan: React.FC = () => {
       <Card>
         <CardContent className={classes.noPadding}>
           <List>
-            <ListItem>
+            <ListItem disabled={activeScanner !== "rsv"}>
+              <ListItemIcon className={classes.progressWrapper}>
+                {rsvCheckStatus === "success" ? (
+                  <CheckCircle className={classes.successIcon} />
+                ) : (
+                  <Assignment />
+                )}
+                {rsvCheckStatus === "loading" && (
+                  <CircularProgress className={classes.progress} size={36} />
+                )}
+              </ListItemIcon>
               <ListItemText
                 primary={latestRsvId ? latestRsvId : "-"}
                 secondary="予約 ID"
               />
-              {activeStep > 0 && (
-                <ListItemSecondaryAction>
-                  <IconButton
-                    onClick={() => {
-                      setActiveStep(0);
-                    }}
-                  >
-                    <QrCodeScanner />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => {
-                      setOpensRsvInputModal(true);
-                    }}
-                  >
-                    <Edit />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              )}
             </ListItem>
-            <ListItem>
+            <ListItem disabled={activeScanner !== "guest"}>
+              <ListItemIcon>
+                <ConfirmationNumber />
+              </ListItemIcon>
               <ListItemText
                 primary={latestGuestId ? latestGuestId : "-"}
-                secondary="ゲスト ID (リストバンド ID)"
+                secondary="ゲスト ID (リストバンド)"
               />
-              {activeStep > 1 && (
-                <ListItemSecondaryAction>
-                  <IconButton
-                    onClick={() => {
-                      setActiveStep(1);
-                    }}
-                  >
-                    <QrCodeScanner />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => {
-                      setOpensGuestInputModal(true);
-                    }}
-                  >
-                    <Edit />
-                  </IconButton>
-                </ListItemSecondaryAction>
-              )}
             </ListItem>
           </List>
         </CardContent>
       </Card>
 
-      {/* 直接入力するボタン */}
-      {(activeStep === 0 || activeStep === 1) && (
-        <DirectInputFab
-          onClick={() => {
-            switch (activeStep) {
-              case 0:
-                setOpensRsvInputModal(true);
-                break;
-              case 1:
-                setOpensGuestInputModal(true);
-                break;
-            }
-          }}
-        />
-      )}
+      {/* 結果表示ポップアップ */}
+      <ResultPopup
+        status={totalCheckStatus}
+        duration={2000}
+        handleCloseOnSuccess={clearAll}
+        ref={resultPopupRef}
+      />
 
-      {/* 最初からやり直すボタン */}
-      {activeStep === 2 && (
+      {/* 直接入力するボタン */}
+      <DirectInputFab
+        onClick={() => {
+          switch (activeScanner) {
+            case "rsv":
+              setOpensRsvInputModal(true);
+              break;
+            case "guest":
+              setOpensGuestInputModal(true);
+              break;
+          }
+        }}
+      />
+
+      {/* はじめからやり直すボタン */}
+      {totalCheckStatus === "error" && (
         <Button
           variant="contained"
           color="primary"
-          size="large"
-          onClick={() => {
-            setLatestRsvId("");
-            setLatestGuestId("");
-            setRsvResult(null);
-            setGuestResult(null);
-            setActiveStep(0);
-          }}
-          startIcon={<Replay />}
           className={classes.bottomButton}
+          startIcon={<Replay />}
+          onClick={clearAll}
         >
-          最初からやり直す
+          はじめからやり直す
         </Button>
       )}
 
-      {/* modal */}
+      {/* 直接入力モーダル */}
       <DirectInputModal
         open={opensRsvInputModal}
         setOpen={setOpensRsvInputModal}
@@ -353,31 +380,6 @@ const EnterScan: React.FC = () => {
         type="guest"
       />
     </div>
-  );
-};
-
-const ResultIcon: React.FC<{
-  success: boolean;
-}> = (props) => {
-  const classes = useStyles();
-  return props.success ? (
-    <Card>
-      <CardContent>
-        <CheckCircle color="primary" className={classes.statusIcon} />
-        <Typography variant="h6" align="center" color="primary">
-          入場処理が完了しました
-        </Typography>
-      </CardContent>
-    </Card>
-  ) : (
-    <Card>
-      <CardContent>
-        <Error color="error" className={classes.statusIcon} />
-        <Typography variant="h6" align="center" color="error">
-          入場処理に失敗しました
-        </Typography>
-      </CardContent>
-    </Card>
   );
 };
 
