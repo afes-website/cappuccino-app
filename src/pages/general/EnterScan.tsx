@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) =>
 );
 
 const EnterScan: React.FC = () => {
-  useTitleSet("入場処理");
+  useTitleSet("文化祭 入場スキャン");
   const classes = useStyles();
   const auth = useContext(AuthContext);
   const resultPopupRef = useRef<ResultPopupRefs>(null);

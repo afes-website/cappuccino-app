@@ -46,7 +46,7 @@ const ExitScan: React.FC = () => {
   const [errorStatusCode, setErrorStatusCode] = useState<StatusCode | null>(
     null
   );
-  useTitleSet("退場スキャン");
+  useTitleSet("文化祭 退場スキャン");
   const auth = useContext(AuthContext);
   const resultChipRef = useRef<ResultChipRefs>(null);
 
