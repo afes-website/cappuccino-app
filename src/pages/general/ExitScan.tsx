@@ -11,7 +11,7 @@ import { Alert } from "@material-ui/lab";
 import QRScanner from "@/components/QRScanner.";
 import DirectInputModal from "@/components/DirectInputModal";
 import DirectInputFab from "@/components/DirectInputFab";
-import ResultChip, { ResultColor } from "@/components/ResultChip";
+import ResultChip, { ResultChipColors } from "@/components/ResultChip";
 import { useTitleSet } from "@/libs/title";
 import api from "@afes-website/docs";
 import aspida from "@aspida/axios";
@@ -49,7 +49,7 @@ const ExitScan: React.FC = () => {
   const [errorStatusCode, setErrorStatusCode] = useState<StatusCode | null>(
     null
   );
-  const [result, setResult] = useState<ResultColor | null>(null);
+  const [result, setResult] = useState<ResultChipColors | null>(null);
   useTitleSet("退場スキャン");
   const auth = useContext(AuthContext);
 

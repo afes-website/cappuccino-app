@@ -21,18 +21,18 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-export type ResultColor = "success" | "error";
+export type ResultChipColors = "success" | "error";
 
 export interface ResultChipProps {
   onDelete?: () => void;
-  color: ResultColor;
+  color: ResultChipColors;
   message: string;
 }
 
 const getResultIcon = (
-  color: ResultColor
+  color: ResultChipColors
 ): React.ReactElement<typeof SvgIcon> => {
-  return color == "success" ? <CheckCircleOutline /> : <ErrorOutline />;
+  return color === "success" ? <CheckCircleOutline /> : <ErrorOutline />;
 };
 
 const ResultChip: React.FC<ResultChipProps> = (props) => {
