@@ -5,9 +5,11 @@ import {
   CardContent,
   List,
   ListItem,
+  ListItemIcon,
   ListItemText,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
+import { ConfirmationNumber } from "@material-ui/icons";
 import CardList from "@/components/CardList";
 import QRScanner from "@/components/QRScanner.";
 import DirectInputModal from "@/components/DirectInputModal";
@@ -122,6 +124,9 @@ const ExitScan: React.FC = () => {
           <CardContent className={classes.noPadding}>
             <List>
               <ListItem>
+                <ListItemIcon>
+                  <ConfirmationNumber />
+                </ListItemIcon>
                 <ListItemText
                   primary={latestGuestId ? latestGuestId : "-"}
                   secondary="ゲスト ID (リストバンド ID)"
