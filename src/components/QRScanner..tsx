@@ -45,7 +45,8 @@ interface Props {
   videoStop: boolean;
 }
 
-const errorHandling = (err: unknown) => {
+const errorHandler = (err: unknown) => {
+  // TODO: 画面に表示
   console.log(err);
 };
 
@@ -56,7 +57,7 @@ const QRScanner: React.FunctionComponent<Props> = (props) => {
       <div className={classes.root}>
         <QrReader
           onScan={props.onScanFunc}
-          onError={errorHandling}
+          onError={errorHandler}
           delay={props.videoStop ? false : 500}
           className={classes.hideDefaultStyle}
         />
