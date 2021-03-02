@@ -242,14 +242,14 @@ const EnterScan: React.FC = () => {
             );
         })
         .catch((e) => {
-          if (
-            isAxiosError(e) &&
-            typeof e.response?.data.error_code === "string" &&
-            (statusCodeList as ReadonlyArray<string>).includes(
-              e.response?.data.error_code
-            )
-          ) {
-            setErrorStatusCode(e.response?.data.error_code as StatusCode);
+          if (isAxiosError(e)) {
+            const errorCode: unknown = e.response?.data.error_code;
+            if (
+              typeof errorCode === "string" &&
+              (statusCodeList as ReadonlyArray<string>).includes(errorCode)
+            ) {
+              setErrorStatusCode(errorCode as StatusCode);
+            }
           }
           // TODO: 不明なエラーハンドリング
           setGuestCheckStatus("error");
