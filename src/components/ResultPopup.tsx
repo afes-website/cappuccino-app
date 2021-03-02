@@ -8,9 +8,10 @@ import {
   CircularProgress,
   Dialog,
   DialogContent,
+  Fade,
   Slide,
 } from "@material-ui/core";
-import { CheckCircle, Error } from "@material-ui/icons";
+import { CheckCircleOutline, ErrorOutline } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import { TransitionProps } from "@material-ui/core/transitions";
@@ -107,15 +108,28 @@ const ResultPopupRenderFunction: React.ForwardRefRenderFunction<
     switch (props.status) {
       case "loading":
         return (
-          <CircularProgress
-            className={clsx(classes.icon, classes.progress)}
-            size={54}
-          />
+          <Fade in={true} timeout={{ enter: 1000, exit: 0 }}>
+            <CircularProgress
+              className={clsx(classes.icon, classes.progress)}
+              size={54}
+              thickness={5.1}
+            />
+          </Fade>
         );
       case "success":
-        return <CheckCircle className={clsx(classes.icon, classes.success)} />;
+        return (
+          <Fade in={true} timeout={{ enter: 300, exit: 0 }}>
+            <CheckCircleOutline
+              className={clsx(classes.icon, classes.success)}
+            />
+          </Fade>
+        );
       case "error":
-        return <Error className={clsx(classes.icon, classes.error)} />;
+        return (
+          <Fade in={true} timeout={{ enter: 300, exit: 0 }}>
+            <ErrorOutline className={clsx(classes.icon, classes.error)} />
+          </Fade>
+        );
     }
     return <></>;
   };
