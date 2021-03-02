@@ -14,12 +14,6 @@ const useStyles = makeStyles((theme) =>
         top: 0,
       },
     },
-    hideDefaultStyle: {
-      "& *": {
-        border: "none !important",
-        boxShadow: "none !important",
-      },
-    },
     shadowBox: {
       border: "solid",
       borderColor: "rgba(0, 0, 0, 0.6)",
@@ -59,7 +53,7 @@ const QRScanner: React.FunctionComponent<Props> = (props) => {
           onScan={props.onScanFunc}
           onError={errorHandler}
           delay={props.videoStop ? false : 500}
-          className={classes.hideDefaultStyle}
+          showViewFinder={false}
         />
         <div className={classes.shadowBox}>
           <div className={classes.borderBox} />
