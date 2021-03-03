@@ -1,6 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import QRScanner from "@/components/QRScanner.";
+import QRScanner from "@/components/QRScanner";
 import {
   Card,
   CardContent,

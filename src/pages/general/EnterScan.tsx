@@ -18,7 +18,7 @@ import {
 } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
 import CardList from "@/components/CardList";
-import QRScanner from "@/components/QRScanner.";
+import QRScanner from "@/components/QRScanner";
 import DirectInputModal from "@/components/DirectInputModal";
 import DirectInputFab from "@/components/DirectInputFab";
 import ResultChip, { ResultChipRefs } from "@/components/ResultChip";

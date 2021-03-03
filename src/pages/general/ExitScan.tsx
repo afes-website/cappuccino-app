@@ -12,7 +12,7 @@ import {
 import { Alert } from "@material-ui/lab";
 import { CheckCircle, ConfirmationNumber } from "@material-ui/icons";
 import CardList from "@/components/CardList";
-import QRScanner, { QRScannerColors } from "@/components/QRScanner.";
+import QRScanner, { QRScannerColors } from "@/components/QRScanner";
 import DirectInputModal from "@/components/DirectInputModal";
 import DirectInputFab from "@/components/DirectInputFab";
 import ResultChip, { ResultChipRefs } from "@/components/ResultChip";
