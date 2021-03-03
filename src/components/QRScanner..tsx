@@ -1,6 +1,9 @@
 import React from "react";
+import { CircularProgress, Fade } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
+import clsx from "clsx";
 import QrReader from "react-qr-reader";
+import { ResultPopupColors } from "@/components/ResultPopup";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -22,7 +25,7 @@ const useStyles = makeStyles((theme) =>
     },
     borderBox: {
       border: "solid",
-      borderColor: "#fff",
+      borderColor: "transparent",
       borderWidth: 4,
       borderRadius: 12,
       position: "relative",
@@ -31,12 +34,58 @@ const useStyles = makeStyles((theme) =>
       width: "100%",
       height: "100%",
     },
+    borderSuccess: {
+      borderColor: theme.palette.success.main,
+    },
+    borderError: {
+      animation: "$searching-animation-in-error 1000ms infinite ease-out",
+    },
+    "@keyframes searching-animation-in-error": {
+      "0%": {
+        borderColor: theme.palette.error.main,
+      },
+      "50%": {
+        borderColor: theme.palette.error.light,
+      },
+      "100%": {
+        borderColor: theme.palette.error.main,
+      },
+    },
+    borderLoading: {
+      borderColor: theme.palette.afesLight.main,
+      background: "rgba(0, 0, 0, 0.6)",
+    },
+    borderSearching: {
+      animation: "$searching-animation 1000ms infinite ease-out",
+    },
+    "@keyframes searching-animation": {
+      "0%": {
+        borderColor: theme.palette.primary.main,
+      },
+      "50%": {
+        borderColor: theme.palette.afesLight.main,
+      },
+      "100%": {
+        borderColor: theme.palette.primary.main,
+      },
+    },
+    loadingProgressWrapper: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      "& > *": {
+        color: theme.palette.afesLight.main,
+      },
+    },
   })
 );
 
-interface Props {
+export type QRScannerColors = ResultPopupColors;
+
+export interface QRScannerProps {
   onScanFunc: (data: string | null) => void;
   videoStop: boolean;
+  color?: QRScannerColors;
 }
 
 const errorHandler = (err: unknown) => {
@@ -44,8 +93,22 @@ const errorHandler = (err: unknown) => {
   console.log(err);
 };
 
-const QRScanner: React.FunctionComponent<Props> = (props) => {
+const QRScanner: React.FunctionComponent<QRScannerProps> = (props) => {
   const classes = useStyles();
+
+  const getBorderClassName = (color: QRScannerColors | undefined): string => {
+    switch (color) {
+      case "success":
+        return classes.borderSuccess;
+      case "error":
+        return classes.borderError;
+      case "loading":
+        return classes.borderLoading;
+      default:
+        return classes.borderSearching;
+    }
+  };
+
   return (
     <>
       <div className={classes.root}>
@@ -56,7 +119,23 @@ const QRScanner: React.FunctionComponent<Props> = (props) => {
           showViewFinder={false}
         />
         <div className={classes.shadowBox}>
-          <div className={classes.borderBox} />
+          <div className={classes.borderBox}>
+            <div
+              className={clsx(
+                classes.borderBox,
+                getBorderClassName(props.color)
+              )}
+            />
+          </div>
+        </div>
+
+        <div className={classes.loadingProgressWrapper}>
+          <Fade
+            in={props.color === "loading"}
+            timeout={{ enter: 500, exit: 0 }}
+          >
+            <CircularProgress size={64} />
+          </Fade>
         </div>
       </div>
     </>

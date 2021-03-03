@@ -43,7 +43,6 @@ const useStyles = makeStyles((theme) =>
       objectFit: "cover",
     },
     bottomButton: {
-      marginTop: "10px",
       width: "100%",
     },
     resultChipBase: {
@@ -51,7 +50,7 @@ const useStyles = makeStyles((theme) =>
     },
     resultChip: {
       position: "absolute",
-      bottom: theme.spacing(1),
+      bottom: theme.spacing(2) - 2,
       left: "50%",
       transform: "translateX(-50%)",
       zIndex: 10,
@@ -169,7 +168,9 @@ const EnterScan: React.FC = () => {
           if (res.valid) {
             // 有効 : 次に進む
             setRsvCheckStatus("success");
-            setActiveScanner("guest");
+            setTimeout(() => {
+              setActiveScanner("guest");
+            }, 500);
             if (resultChipRef.current)
               resultChipRef.current.open(
                 "success",
@@ -270,7 +271,15 @@ const EnterScan: React.FC = () => {
           <CardContent
             className={clsx(classes.noPadding, classes.resultChipBase)}
           >
-            <QRScanner onScanFunc={handleScan} videoStop={false} />
+            <QRScanner
+              onScanFunc={handleScan}
+              videoStop={false}
+              color={
+                { rsv: rsvCheckStatus, guest: guestCheckStatus }[
+                  activeScanner
+                ] ?? undefined
+              }
+            />
             {/* Result Chip */}
             <ResultChip ref={resultChipRef} className={classes.resultChip} />
           </CardContent>

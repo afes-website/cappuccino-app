@@ -3,15 +3,16 @@ import { makeStyles, createStyles } from "@material-ui/core/styles";
 import {
   Card,
   CardContent,
+  CircularProgress,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import { ConfirmationNumber } from "@material-ui/icons";
+import { CheckCircle, ConfirmationNumber } from "@material-ui/icons";
 import CardList from "@/components/CardList";
-import QRScanner from "@/components/QRScanner.";
+import QRScanner, { QRScannerColors } from "@/components/QRScanner.";
 import DirectInputModal from "@/components/DirectInputModal";
 import DirectInputFab from "@/components/DirectInputFab";
 import ResultChip, { ResultChipRefs } from "@/components/ResultChip";
@@ -22,7 +23,7 @@ import { AuthContext } from "@/libs/auth";
 import isAxiosError from "@/libs/isAxiosError";
 import clsx from "clsx";
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     noPadding: {
       padding: "0 !important",
@@ -33,67 +34,84 @@ const useStyles = makeStyles(() =>
     },
     resultChip: {
       position: "absolute",
-      bottom: "8px",
+      bottom: theme.spacing(2) - 2,
       left: "50%",
       transform: "translateX(-50%)",
       zIndex: 10,
+    },
+    progressWrapper: {
+      position: "relative",
+    },
+    progress: {
+      position: "absolute",
+      top: -6,
+      left: -6,
+      zIndex: 10,
+    },
+    successIcon: {
+      color: theme.palette.success.main,
     },
   })
 );
 
 const ExitScan: React.FC = () => {
+  useTitleSet("文化祭 退場スキャン");
   const classes = useStyles();
+  const auth = useContext(AuthContext);
+  const resultChipRef = useRef<ResultChipRefs>(null);
+
   const [latestGuestId, setLatestGuestId] = useState("");
   const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
+  const [checkStatus, setCheckStatus] = useState<QRScannerColors | null>(null);
   const [errorStatusCode, setErrorStatusCode] = useState<StatusCode | null>(
     null
   );
-  useTitleSet("文化祭 退場スキャン");
-  const auth = useContext(AuthContext);
-  const resultChipRef = useRef<ResultChipRefs>(null);
 
   const handleGuestIdScan = (guestId: string | null) => {
     if (guestId && latestGuestId !== guestId) {
       setLatestGuestId(guestId);
       if (resultChipRef.current) resultChipRef.current.close();
-      post(guestId);
+      setCheckStatus("loading");
+      setErrorStatusCode(null);
+      api(aspida())
+        .onsite.general.exit.$post({
+          body: {
+            guest_id: guestId,
+          },
+          headers: {
+            Authorization: "bearer " + auth.val.get_current_user()?.token,
+          },
+        })
+        .then(() => {
+          setCheckStatus("success");
+          if (resultChipRef.current)
+            resultChipRef.current.open(
+              "success",
+              `退場成功 / ゲスト ID: ${guestId}`,
+              3000
+            );
+          setTimeout(() => {
+            setCheckStatus(null);
+            setLatestGuestId("");
+          }, 3000);
+        })
+        .catch((e) => {
+          setCheckStatus("error");
+          if (isAxiosError(e)) {
+            if (e.response?.status === 404) {
+              setErrorStatusCode("GUEST_NOT_FOUND");
+            }
+            if (e.response?.status === 409) {
+              setErrorStatusCode("GUEST_ALREADY_EXITED");
+            }
+          }
+          if (resultChipRef.current)
+            resultChipRef.current.open(
+              "error",
+              `退場失敗 / ゲスト ID: ${guestId}`
+            );
+        });
     }
-  };
-
-  const post = (guestId: string): Promise<void> => {
-    return api(aspida())
-      .onsite.general.exit.$post({
-        body: {
-          guest_id: guestId,
-        },
-        headers: {
-          Authorization: "bearer " + auth.val.get_current_user()?.token,
-        },
-      })
-      .then(() => {
-        setErrorStatusCode(null);
-        if (resultChipRef.current)
-          resultChipRef.current.open(
-            "success",
-            `退場成功 / ゲスト ID: ${guestId}`,
-            3000
-          );
-      })
-      .catch((e) => {
-        if (isAxiosError(e)) {
-          if (e.response?.status === 404) {
-            setErrorStatusCode("GUEST_NOT_FOUND");
-          }
-          if (e.response?.status === 409) {
-            setErrorStatusCode("GUEST_ALREADY_EXITED");
-          }
-        }
-        if (resultChipRef.current)
-          resultChipRef.current.open(
-            "error",
-            `退場失敗 / ゲスト ID: ${guestId}`
-          );
-      });
   };
 
   return (
@@ -104,7 +122,11 @@ const ExitScan: React.FC = () => {
           <CardContent
             className={clsx(classes.noPadding, classes.resultChipBase)}
           >
-            <QRScanner onScanFunc={handleGuestIdScan} videoStop={false} />
+            <QRScanner
+              onScanFunc={handleGuestIdScan}
+              videoStop={false}
+              color={checkStatus ?? undefined}
+            />
             {/* Result Chip */}
             <ResultChip ref={resultChipRef} className={classes.resultChip} />
           </CardContent>
@@ -124,8 +146,15 @@ const ExitScan: React.FC = () => {
           <CardContent className={classes.noPadding}>
             <List>
               <ListItem>
-                <ListItemIcon>
-                  <ConfirmationNumber />
+                <ListItemIcon className={classes.progressWrapper}>
+                  {checkStatus === "success" ? (
+                    <CheckCircle className={classes.successIcon} />
+                  ) : (
+                    <ConfirmationNumber />
+                  )}
+                  {checkStatus === "loading" && (
+                    <CircularProgress className={classes.progress} size={36} />
+                  )}
                 </ListItemIcon>
                 <ListItemText
                   primary={latestGuestId ? latestGuestId : "-"}
