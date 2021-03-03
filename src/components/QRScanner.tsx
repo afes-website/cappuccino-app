@@ -1,9 +1,9 @@
 import React from "react";
 import { CircularProgress, Fade } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import clsx from "clsx";
 import QrReader from "react-qr-reader";
 import { ResultPopupColors } from "@/components/ResultPopup";
+import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

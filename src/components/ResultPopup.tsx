@@ -13,8 +13,8 @@ import {
 } from "@material-ui/core";
 import { CheckCircleOutline, ErrorOutline } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
-import clsx from "clsx";
 import { TransitionProps } from "@material-ui/core/transitions";
+import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

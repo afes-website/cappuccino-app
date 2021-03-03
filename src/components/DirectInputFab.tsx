@@ -1,6 +1,6 @@
 import React from "react";
-import RightBottomFab from "@/components/RightBottomFab";
 import { Edit } from "@material-ui/icons";
+import RightBottomFab from "@/components/RightBottomFab";
 
 const DirectInputFab: React.FC<{
   onClick: () => void;
