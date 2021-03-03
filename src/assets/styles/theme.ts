@@ -1,5 +1,5 @@
 import { Theme, createMuiTheme } from "@material-ui/core";
-import { afesDark, afesLight } from "@/assets/styles/origPalette";
+import { afesBlue, afesDark, afesLight } from "@/assets/styles/origPalette";
 import { PaletteOptions } from "@material-ui/core/styles/createPalette";
 import deepmerge from "deepmerge";
 import { ComponentsProps } from "@material-ui/core/styles/props";
@@ -8,12 +8,18 @@ import { Overrides } from "@material-ui/core/styles/overrides";
 const lightPalette: PaletteOptions = {
   primary: afesDark,
   secondary: afesDark,
+  afesBlue,
+  afesDark,
+  afesLight,
 };
 
 const darkPalette: PaletteOptions = {
   type: "dark",
   primary: afesDark,
   secondary: afesLight,
+  afesBlue,
+  afesDark,
+  afesLight,
 };
 
 const props: ComponentsProps = {
