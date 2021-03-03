@@ -25,7 +25,6 @@ const useStyles = makeStyles((theme) =>
     },
     borderBox: {
       border: "solid",
-      borderColor: "transparent",
       borderWidth: 4,
       borderRadius: 12,
       position: "relative",
@@ -119,14 +118,9 @@ const QRScanner: React.FunctionComponent<QRScannerProps> = (props) => {
           showViewFinder={false}
         />
         <div className={classes.shadowBox}>
-          <div className={classes.borderBox}>
-            <div
-              className={clsx(
-                classes.borderBox,
-                getBorderClassName(props.color)
-              )}
-            />
-          </div>
+          <div
+            className={clsx(classes.borderBox, getBorderClassName(props.color))}
+          />
         </div>
 
         <div className={classes.loadingProgressWrapper}>
