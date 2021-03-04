@@ -32,6 +32,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-react": "^7.20.5",
     "eslint-plugin-react-hooks": "^4.0.8",
+    "moment": "^2.29.1",
     "prettier": "^2.0.5",
     "react": "^16.13.1",
     "react-app-rewired": "^2.1.6",
