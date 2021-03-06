@@ -10,13 +10,9 @@ import {
   ListItemText,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import {
-  Assignment,
-  CheckCircle,
-  ConfirmationNumber,
-  Replay,
-} from "@material-ui/icons";
+import { Assignment, CheckCircle, Replay } from "@material-ui/icons";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
+import { WristBand } from "@/components/MaterialSvgIcons";
 import CardList from "@/components/CardList";
 import QRScanner from "@/components/QRScanner";
 import DirectInputModal from "@/components/DirectInputModal";
@@ -316,7 +312,7 @@ const EnterScan: React.FC = () => {
               </ListItem>
               <ListItem disabled={activeScanner !== "guest"}>
                 <ListItemIcon>
-                  <ConfirmationNumber />
+                  <WristBand />
                 </ListItemIcon>
                 <ListItemText
                   primary={latestGuestId ? latestGuestId : "-"}

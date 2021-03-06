@@ -9,8 +9,9 @@ import {
   ListItemText,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import { CheckCircle, ConfirmationNumber } from "@material-ui/icons";
+import { CheckCircle } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
+import { WristBand } from "@/components/MaterialSvgIcons";
 import CardList from "@/components/CardList";
 import QRScanner, { QRScannerColors } from "@/components/QRScanner";
 import DirectInputModal from "@/components/DirectInputModal";
@@ -150,7 +151,7 @@ const ExitScan: React.FC = () => {
                   {checkStatus === "success" ? (
                     <CheckCircle className={classes.successIcon} />
                   ) : (
-                    <ConfirmationNumber />
+                    <WristBand />
                   )}
                   {checkStatus === "loading" && (
                     <CircularProgress className={classes.progress} size={36} />
