@@ -4,13 +4,20 @@ import {
   Card,
   CardContent,
   CircularProgress,
+  Grid,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
+  Typography,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import { Assignment, CheckCircle, Replay } from "@material-ui/icons";
+import {
+  AccessTime,
+  Assignment,
+  CheckCircle,
+  Replay,
+} from "@material-ui/icons";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { WristBand } from "@/components/MaterialSvgIcons";
 import CardList from "@/components/CardList";
@@ -25,7 +32,8 @@ import ResultPopup, {
 import { useTitleSet } from "@/libs/title";
 import { AuthContext } from "@/libs/auth";
 import isAxiosError from "@/libs/isAxiosError";
-import api from "@afes-website/docs";
+import { getStringTime } from "@/libs/stringDate";
+import api, { Guest } from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import clsx from "clsx";
 
@@ -63,6 +71,9 @@ const useStyles = makeStyles((theme) =>
     successIcon: {
       color: theme.palette.success.main,
     },
+    previousGuestInfoTitle: {
+      paddingBottom: 0,
+    },
   })
 );
 
@@ -87,6 +98,8 @@ const EnterScan: React.FC = () => {
   const [errorStatusCode, setErrorStatusCode] = useState<StatusCode | null>(
     null
   );
+  // 入場に成功した Guest の履歴
+  const [previousGuest, setPreviousGuest] = useState<Guest | null>(null);
   // 予約ID・ゲストIDそれぞれのチェック結果
   const [
     rsvCheckStatus,
@@ -229,9 +242,10 @@ const EnterScan: React.FC = () => {
             Authorization: "bearer " + auth.val.get_current_user()?.token,
           },
         })
-        .then(() => {
+        .then((guest) => {
           setRsvCheckStatus("success");
           setGuestCheckStatus("success");
+          setPreviousGuest(guest);
           if (resultChipRef.current)
             resultChipRef.current.open(
               "success",
@@ -335,6 +349,31 @@ const EnterScan: React.FC = () => {
             はじめからやり直す
           </Button>
         )}
+
+        {/* 前回入場したゲスト情報 */}
+        {activeScanner === "rsv" && ["loading", null].includes(rsvCheckStatus) && (
+          <Card>
+            <CardContent
+              className={clsx({
+                [classes.previousGuestInfoTitle]: previousGuest,
+              })}
+            >
+              <Typography
+                style={{ fontSize: 14 }}
+                color="textSecondary"
+                gutterBottom={true}
+              >
+                前回入場したゲスト情報
+              </Typography>
+              {!previousGuest && (
+                <Typography variant="caption" align="center">
+                  まだゲストの文化祭入場処理をしていません。
+                </Typography>
+              )}
+            </CardContent>
+            {previousGuest && <GuestInfoList guest={previousGuest} />}
+          </Card>
+        )}
       </CardList>
 
       {/* 結果表示ポップアップ */}
@@ -377,6 +416,45 @@ const EnterScan: React.FC = () => {
     </div>
   );
 };
+
+const GuestInfoList: React.FC<{ guest: Guest }> = (props) => (
+  <List>
+    <ListItem>
+      <ListItemIcon>
+        <WristBand />
+      </ListItemIcon>
+      <ListItemText primary={props.guest.id} secondary="ゲスト ID" />
+    </ListItem>
+    <Grid container spacing={0}>
+      <Grid item xs={6}>
+        <ListItem>
+          <ListItemIcon>
+            <AccessTime />
+          </ListItemIcon>
+          <ListItemText
+            primary={getStringTime(props.guest.entered_at)}
+            secondary="入場時刻"
+          />
+        </ListItem>
+      </Grid>
+      <Grid item xs={6}>
+        <ListItem>
+          <ListItemIcon>
+            <AccessTime />
+          </ListItemIcon>
+          <ListItemText
+            primary={
+              props.guest.exit_scheduled_time
+                ? getStringTime(props.guest.exit_scheduled_time)
+                : "-"
+            }
+            secondary="退場予定時刻"
+          />
+        </ListItem>
+      </Grid>
+    </Grid>
+  </List>
+);
 
 const getErrorMessage = (status_code: StatusCode): string => {
   switch (status_code) {
