@@ -444,8 +444,8 @@ const GuestInfoList: React.FC<{ guest: Guest }> = (props) => (
           </ListItemIcon>
           <ListItemText
             primary={
-              props.guest.exit_scheduled_time
-                ? getStringTime(props.guest.exit_scheduled_time)
+              props.guest.term.exit_scheduled_time
+                ? getStringTime(props.guest.term.exit_scheduled_time)
                 : "-"
             }
             secondary="退場予定時刻"
