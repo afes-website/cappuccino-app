@@ -458,20 +458,22 @@ const GuestInfoList: React.FC<{ guest: Guest }> = (props) => (
 
 const getErrorMessage = (status_code: StatusCode): string => {
   switch (status_code) {
-    case "INVALID_WRISTBAND_CODE":
-      return "リストバンド ID の形式が間違っています。別のリストバンドを試してください。";
-    case "ALREADY_USED_WRISTBAND":
-      return "このリストバンドはすでに登録済みです。別のリストバンドを試してください。";
+    // reservation
     case "RESERVATION_NOT_FOUND":
       return "該当する予約が見つかりませんでした。予約 ID を再確認し、権限の強い人を呼んでください。";
     case "INVALID_RESERVATION_INFO":
       return "予約情報に問題があります。予約 ID を再確認し、権限の強い人を呼んでください。";
-    case "ALREADY_ENTERED_RESERVATION":
-      return "この予約はすでに入場済みです。予約 ID を再確認し、権限の強い人を呼んでください。";
     case "OUT_OF_RESERVATION_TIME":
       return "この予約は入場時間外です。予約 ID を再確認し、権限の強い人を呼んでください。";
+    case "ALREADY_ENTERED_RESERVATION":
+      return "この予約はすでに入場済みです。予約 ID を再確認し、権限の強い人を呼んでください。";
+    // guest (wristband)
+    case "INVALID_WRISTBAND_CODE":
+      return "リストバンド ID の形式が間違っています。別のリストバンドを試してください。";
+    case "ALREADY_USED_WRISTBAND":
+      return "このリストバンドはすでに登録済みです。別のリストバンドを試してください。";
     case "WRONG_WRISTBAND_COLOR":
-      return "リストバンドの色と退場予定時間が一致しません。リストバンドの種類をもう一度確認してください。";
+      return "リストバンドの色と予約情報が一致しません。リストバンドの種類をもう一度確認してください。";
   }
 };
 
