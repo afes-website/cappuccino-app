@@ -43,7 +43,7 @@ const DirectInputModal: React.FC<{
             setId(event.target.value);
           }}
           fullWidth
-          placeholder={props.type === "rsv" ? "R-00000" : "GX-00000"}
+          placeholder={props.type === "rsv" ? "R-00000-00000" : "GX-00000"}
           color="secondary"
         />
       </DialogContent>
