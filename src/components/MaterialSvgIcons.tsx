@@ -3,7 +3,7 @@ import { SvgIcon, SvgIconProps } from "@material-ui/core";
 
 /* These icons from google/material-design-icons is licensed under the Apache License 2.0. */
 
-const QrCodeScanner: React.FC<SvgIconProps> = (props) => (
+export const QrCodeScanner: React.FC<SvgIconProps> = (props) => (
   <SvgIcon {...props}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -19,7 +19,7 @@ const QrCodeScanner: React.FC<SvgIconProps> = (props) => (
 );
 
 // base: person, badge
-const WristBand: React.FC<SvgIconProps> = (props) => (
+export const WristBand: React.FC<SvgIconProps> = (props) => (
   <SvgIcon {...props}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -36,5 +36,3 @@ const WristBand: React.FC<SvgIconProps> = (props) => (
     </svg>
   </SvgIcon>
 );
-
-export { QrCodeScanner, WristBand };
