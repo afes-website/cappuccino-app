@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { CircularProgress, Fade } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import QrReader from "react-qr-reader";
 import { ResultPopupColors } from "@/components/ResultPopup";
+import UniversalErrorDialog from "@/components/UniversalErrorDialog";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>
@@ -87,13 +88,11 @@ export interface QRScannerProps {
   color?: QRScannerColors;
 }
 
-const errorHandler = (err: unknown) => {
-  // TODO: 画面に表示
-  console.log(err);
-};
-
 const QRScanner: React.FunctionComponent<QRScannerProps> = (props) => {
   const classes = useStyles();
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorDialogTitle, setErrorDialogTitle] = useState("");
+  const [errorDialogMessage, setErrorDialogMessage] = useState<string[]>([]);
 
   const getBorderClassName = (color: QRScannerColors | undefined): string => {
     switch (color) {
@@ -106,6 +105,37 @@ const QRScanner: React.FunctionComponent<QRScannerProps> = (props) => {
       default:
         return classes.borderSearching;
     }
+  };
+
+  const errorHandler = (err: unknown) => {
+    console.error(err);
+    setErrorDialogTitle("カメラ起動失敗");
+    let reason: string[];
+    if (isDOMException(err)) {
+      console.error(err.name, err.message);
+      switch (err.name) {
+        case "NotReadableError":
+          reason = [
+            "カメラが他のアプリケーションで使用されています。",
+            "カメラアプリやビデオ通話を開いていたり、フラッシュライトが点灯していませんか？",
+          ];
+          break;
+        case "NotAllowedError":
+          reason = [
+            "カメラを使用する権限がありません。",
+            "お使いのブラウザの設定を確認してください。",
+          ];
+          break;
+        default:
+          reason = ["原因不明のエラーです。"];
+          break;
+      }
+      reason = [...reason, `[${err.name}]`, err.message];
+      setErrorDialogMessage(reason);
+    } else {
+      setErrorDialogMessage(["原因不明のエラーです。"]);
+    }
+    setErrorDialogOpen(true);
   };
 
   return (
@@ -132,7 +162,25 @@ const QRScanner: React.FunctionComponent<QRScannerProps> = (props) => {
           </Fade>
         </div>
       </div>
+      <UniversalErrorDialog
+        open={errorDialogOpen}
+        title={errorDialogTitle}
+        message={errorDialogMessage}
+        onClose={() => {
+          setErrorDialogOpen(false);
+        }}
+      />
     </>
+  );
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isDOMException = (val: any): val is DOMException => {
+  if (!val) return false;
+  return (
+    typeof val === "object" &&
+    typeof val.name === "string" &&
+    typeof val.message === "string"
   );
 };
 
