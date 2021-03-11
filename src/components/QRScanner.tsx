@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { CircularProgress, Fade } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import QrReader from "react-qr-reader";
+import { CameraOff } from "@/components/MaterialSvgIcons";
 import { ResultPopupColors } from "@/components/ResultPopup";
 import UniversalErrorDialog from "@/components/UniversalErrorDialog";
 import clsx from "clsx";
@@ -77,6 +78,18 @@ const useStyles = makeStyles((theme) =>
         color: theme.palette.afesLight.main,
       },
     },
+    scannerBackground: {
+      background: "rgba(0, 0, 0, 0.7)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      "& > *": {
+        display: "block",
+        width: 64,
+        height: 64,
+        color: "#fff",
+      },
+    },
   })
 );
 
@@ -93,6 +106,9 @@ const QRScanner: React.FunctionComponent<QRScannerProps> = (props) => {
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [errorDialogTitle, setErrorDialogTitle] = useState("");
   const [errorDialogMessage, setErrorDialogMessage] = useState<string[]>([]);
+  const [scannerStatus, setScannerStatus] = useState<
+    "loading" | "waiting" | "error"
+  >("loading");
 
   const getBorderClassName = (color: QRScannerColors | undefined): string => {
     switch (color) {
@@ -109,6 +125,7 @@ const QRScanner: React.FunctionComponent<QRScannerProps> = (props) => {
 
   const errorHandler = (err: unknown) => {
     console.error(err);
+    setScannerStatus("error");
     setErrorDialogTitle("カメラ起動失敗");
     let reason: string[];
     if (isDOMException(err)) {
@@ -141,9 +158,21 @@ const QRScanner: React.FunctionComponent<QRScannerProps> = (props) => {
   return (
     <>
       <div className={classes.root}>
+        {["loading", "error"].includes(scannerStatus) && (
+          <div className={classes.scannerBackground}>
+            {scannerStatus === "error" ? (
+              <CameraOff />
+            ) : (
+              <CircularProgress size={64} />
+            )}
+          </div>
+        )}
         <QrReader
           onScan={props.onScanFunc}
           onError={errorHandler}
+          onLoad={() => {
+            setScannerStatus("waiting");
+          }}
           delay={props.videoStop ? false : 500}
           showViewFinder={false}
         />
@@ -152,7 +181,6 @@ const QRScanner: React.FunctionComponent<QRScannerProps> = (props) => {
             className={clsx(classes.borderBox, getBorderClassName(props.color))}
           />
         </div>
-
         <div className={classes.loadingProgressWrapper}>
           <Fade
             in={props.color === "loading"}
