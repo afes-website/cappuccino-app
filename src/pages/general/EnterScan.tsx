@@ -29,6 +29,7 @@ import ResultPopup, {
   ResultPopupRefs,
   ResultPopupColors,
 } from "@/components/ResultPopup";
+import UniversalErrorDialog from "@/components/UniversalErrorDialog";
 import { useTitleSet } from "@/libs/title";
 import { AuthContext } from "@/libs/auth";
 import isAxiosError from "@/libs/isAxiosError";
@@ -118,6 +119,10 @@ const EnterScan: React.FC = () => {
     totalCheckStatus,
     setTotalCheckStatus,
   ] = useState<ResultPopupColors | null>(null);
+  // エラーダイアログ
+  const [errorDialogTitle, setErrorDialogTitle] = useState("");
+  const [errorDialogMessage, setErrorDialogMessage] = useState<string[]>([]);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
 
   // 全体のチェック結果の更新処理
   useEffect(() => {
@@ -215,10 +220,10 @@ const EnterScan: React.FC = () => {
               "error",
               `予約確認失敗 / 予約 ID: ${rsvId}`
             );
-          // 404 の場合
           if (isAxiosError(e) && e.response?.status === 404)
+            // 404 の場合
             setErrorStatusCode("RESERVATION_NOT_FOUND");
-          // TODO: 404 以外のエラーハンドリング
+          else networkErrorHandler(e);
         });
     }
   };
@@ -270,7 +275,7 @@ const EnterScan: React.FC = () => {
               setErrorStatusCode(errorCode as StatusCode);
             }
           }
-          // TODO: 不明なエラーハンドリング
+          if (!errorStatusCode) networkErrorHandler(e);
           setGuestCheckStatus("error");
           if (resultChipRef.current)
             resultChipRef.current.open(
@@ -279,6 +284,40 @@ const EnterScan: React.FC = () => {
             );
         });
     }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const networkErrorHandler = (e: any): void => {
+    console.error(e);
+    if (isAxiosError(e)) {
+      // axios error
+      if (e.response?.status)
+        // status code があるとき
+        setErrorDialogMessage([
+          "サーバーエラーが発生しました。",
+          "総務局にお問い合わせください。",
+          `status code: ${e.response?.status || "undefined"}`,
+          e.message,
+        ]);
+      // ないとき
+      else
+        setErrorDialogMessage([
+          "通信エラーが発生しました。",
+          "通信環境を確認し、はじめからやり直してください。",
+          "状況が改善しない場合は、総務局にお問い合わせください。",
+          e.message,
+        ]);
+    }
+    // なにもわからないとき
+    else
+      setErrorDialogMessage([
+        "通信エラーが発生しました。",
+        "通信環境を確認し、はじめからやり直してください。",
+        "状況が改善しない場合は、総務局にお問い合わせください。",
+      ]);
+    setErrorDialogTitle("通信エラー発生");
+    setErrorDialogOpen(true);
+    setErrorStatusCode("NETWORK_ERROR");
   };
 
   return (
@@ -431,6 +470,16 @@ const EnterScan: React.FC = () => {
         currentId={latestGuestId}
         type="guest"
       />
+
+      {/* エラーダイアログ */}
+      <UniversalErrorDialog
+        open={errorDialogOpen}
+        title={errorDialogTitle}
+        message={errorDialogMessage}
+        onClose={() => {
+          setErrorDialogOpen(false);
+        }}
+      />
     </div>
   );
 };
@@ -504,6 +553,8 @@ const getErrorMessage = (status_code: StatusCode): string => {
       return "このリストバンドはすでに登録済みです。別のリストバンドを試してください。";
     case "WRONG_WRISTBAND_COLOR":
       return "リストバンドの色と予約情報が一致しません。リストバンドの種類をもう一度確認してください。";
+    case "NETWORK_ERROR":
+      return "通信エラーが発生しました。通信環境を確認し、はじめからやり直してください。状況が改善しない場合は、総務局にお問い合わせください。";
   }
 };
 
@@ -515,6 +566,7 @@ const statusCodeList = [
   "ALREADY_ENTERED_RESERVATION",
   "OUT_OF_RESERVATION_TIME",
   "WRONG_WRISTBAND_COLOR",
+  "NETWORK_ERROR",
 ] as const;
 
 type StatusCode = typeof statusCodeList[number];

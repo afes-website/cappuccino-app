@@ -106,6 +106,7 @@ const ExitScan: React.FC = () => {
               setErrorStatusCode("GUEST_ALREADY_EXITED");
             }
           }
+          if (!errorStatusCode) setErrorStatusCode("NETWORK_ERROR");
           if (resultChipRef.current)
             resultChipRef.current.open(
               "error",
@@ -192,10 +193,16 @@ const getErrorMessage = (status_code: StatusCode) => {
       return "来場者が存在しません。";
     case "GUEST_ALREADY_EXITED":
       return "来場者は既に退場済みです。";
+    case "NETWORK_ERROR":
+      return "通信エラーが発生しました。通信環境を確認し、はじめからやり直してください。状況が改善しない場合は、総務局にお問い合わせください。";
   }
 };
 
-const statusCodeList = ["GUEST_NOT_FOUND", "GUEST_ALREADY_EXITED"] as const;
+const statusCodeList = [
+  "GUEST_NOT_FOUND",
+  "GUEST_ALREADY_EXITED",
+  "NETWORK_ERROR",
+] as const;
 
 type StatusCode = typeof statusCodeList[number];
 
