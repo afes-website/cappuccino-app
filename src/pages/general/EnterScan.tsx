@@ -356,7 +356,7 @@ const EnterScan: React.FC = () => {
         </Card>
 
         {/* はじめからやり直すボタン */}
-        {totalCheckStatus === "error" && (
+        {(activeScanner !== "rsv" || totalCheckStatus === "error") && (
           <Button
             variant="contained"
             color="primary"
