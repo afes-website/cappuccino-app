@@ -32,8 +32,9 @@ import ResultPopup, {
 import { useTitleSet } from "@/libs/title";
 import { AuthContext } from "@/libs/auth";
 import isAxiosError from "@/libs/isAxiosError";
-import { getStringTime } from "@/libs/stringDate";
-import api, { Guest } from "@afes-website/docs";
+import { getStringDateTimeBrief, getStringTime } from "@/libs/stringDate";
+import { useWristBandPaletteColor } from "@/libs/wristBandColor";
+import api, { Guest, Term } from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import clsx from "clsx";
 
@@ -98,8 +99,10 @@ const EnterScan: React.FC = () => {
   const [errorStatusCode, setErrorStatusCode] = useState<StatusCode | null>(
     null
   );
-  // 入場に成功した Guest の履歴
-  const [previousGuest, setPreviousGuest] = useState<Guest | null>(null);
+  // 最後にチェックした予約IDに紐付けられている Term
+  const [termInfo, setTermInfo] = useState<Term | null>(null);
+  // 前回入場したゲスト情報
+  const [prevGuestInfo, setPrevGuestInfo] = useState<Guest | null>(null);
   // 予約ID・ゲストIDそれぞれのチェック結果
   const [
     rsvCheckStatus,
@@ -135,6 +138,7 @@ const EnterScan: React.FC = () => {
     setOpensGuestInputModal(false);
     setActiveScanner("rsv");
     setErrorStatusCode(null);
+    setTermInfo(null);
     setRsvCheckStatus(null);
     setGuestCheckStatus(null);
     if (resultChipRef.current) resultChipRef.current.close();
@@ -163,6 +167,8 @@ const EnterScan: React.FC = () => {
       setRsvCheckStatus("loading");
       // error alert 非表示
       setErrorStatusCode(null);
+      // rsv info 消去
+      setTermInfo(null);
       // result chip 非表示
       if (resultChipRef.current) resultChipRef.current.close();
       // rsv id 検証
@@ -174,6 +180,8 @@ const EnterScan: React.FC = () => {
           },
         })
         .then((res) => {
+          // res.valid に関わらず無条件で Term 情報を取得
+          setTermInfo(res.term);
           if (res.valid) {
             // 有効 : 次に進む
             setRsvCheckStatus("success");
@@ -245,7 +253,7 @@ const EnterScan: React.FC = () => {
         .then((guest) => {
           setRsvCheckStatus("success");
           setGuestCheckStatus("success");
-          setPreviousGuest(guest);
+          setPrevGuestInfo(guest);
           if (resultChipRef.current)
             resultChipRef.current.open(
               "success",
@@ -321,7 +329,17 @@ const EnterScan: React.FC = () => {
                 </ListItemIcon>
                 <ListItemText
                   primary={latestRsvId ? latestRsvId : "-"}
-                  secondary="予約 ID"
+                  secondary={
+                    <>
+                      予約 ID
+                      {termInfo && (
+                        <>
+                          {" • "}
+                          <ReservationTermInfo term={termInfo} />
+                        </>
+                      )}
+                    </>
+                  }
                 />
               </ListItem>
               <ListItem disabled={activeScanner !== "guest"}>
@@ -355,7 +373,7 @@ const EnterScan: React.FC = () => {
           <Card>
             <CardContent
               className={clsx({
-                [classes.previousGuestInfoTitle]: previousGuest,
+                [classes.previousGuestInfoTitle]: prevGuestInfo,
               })}
             >
               <Typography
@@ -365,13 +383,13 @@ const EnterScan: React.FC = () => {
               >
                 前回入場したゲスト情報
               </Typography>
-              {!previousGuest && (
+              {!prevGuestInfo && (
                 <Typography variant="caption" align="center">
                   まだゲストの文化祭入場処理をしていません。
                 </Typography>
               )}
             </CardContent>
-            {previousGuest && <GuestInfoList guest={previousGuest} />}
+            {prevGuestInfo && <GuestInfoList guest={prevGuestInfo} />}
           </Card>
         )}
       </CardList>
@@ -432,7 +450,7 @@ const GuestInfoList: React.FC<{ guest: Guest }> = (props) => (
             <AccessTime />
           </ListItemIcon>
           <ListItemText
-            primary={getStringTime(props.guest.entered_at)}
+            primary={getStringDateTimeBrief(props.guest.entered_at)}
             secondary="入場時刻"
           />
         </ListItem>
@@ -445,7 +463,7 @@ const GuestInfoList: React.FC<{ guest: Guest }> = (props) => (
           <ListItemText
             primary={
               props.guest.term.exit_scheduled_time
-                ? getStringTime(props.guest.term.exit_scheduled_time)
+                ? getStringDateTimeBrief(props.guest.term.exit_scheduled_time)
                 : "-"
             }
             secondary="退場予定時刻"
@@ -455,6 +473,18 @@ const GuestInfoList: React.FC<{ guest: Guest }> = (props) => (
     </Grid>
   </List>
 );
+
+const ReservationTermInfo: React.FC<{ term: Term }> = (props) => {
+  const wristBandColor = useWristBandPaletteColor();
+  return (
+    <span style={{ color: wristBandColor(props.term.guest_type).main }}>
+      {props.term.guest_type + " "}
+      {`(${getStringDateTimeBrief(props.term.enter_scheduled_time)}
+      -
+      ${getStringTime(props.term.exit_scheduled_time)})`}
+    </span>
+  );
+};
 
 const getErrorMessage = (status_code: StatusCode): string => {
   switch (status_code) {
