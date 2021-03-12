@@ -32,4 +32,14 @@ const CustomSvgIcon: React.FC<CustomSvgIconProps> = (props) => (
   </SvgIcon>
 );
 
+export const QrCodeScanner: React.FC<SvgIconProps> = (props) => (
+  <CustomSvgIcon iconType="QrCodeScanner" {...props} />
+);
+export const WristBand: React.FC<SvgIconProps> = (props) => (
+  <CustomSvgIcon iconType="WristBand" {...props} />
+);
+export const CameraOff: React.FC<SvgIconProps> = (props) => (
+  <CustomSvgIcon iconType="CameraOff" {...props} />
+);
+
 export default CustomSvgIcon;

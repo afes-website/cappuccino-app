@@ -11,7 +11,7 @@ import {
 import { Alert } from "@material-ui/lab";
 import { CheckCircle } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
-import CustomSvgIcon from "@/components/CustomSvgICon";
+import { WristBand } from "@/components/CustomSvgIcon";
 import CardList from "@/components/CardList";
 import QRScanner, { QRScannerColors } from "@/components/QRScanner";
 import DirectInputModal from "@/components/DirectInputModal";
@@ -152,7 +152,7 @@ const ExitScan: React.FC = () => {
                   {checkStatus === "success" ? (
                     <CheckCircle className={classes.successIcon} />
                   ) : (
-                    <CustomSvgIcon iconType="WristBand" />
+                    <WristBand />
                   )}
                   {checkStatus === "loading" && (
                     <CircularProgress className={classes.progress} size={36} />
