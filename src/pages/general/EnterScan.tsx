@@ -19,7 +19,7 @@ import {
   Replay,
 } from "@material-ui/icons";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { WristBand } from "@/components/MaterialSvgIcons";
+import CustomSvgIcon from "@/components/CustomSvgICon";
 import CardList from "@/components/CardList";
 import QRScanner from "@/components/QRScanner";
 import DirectInputModal from "@/components/DirectInputModal";
@@ -383,7 +383,7 @@ const EnterScan: React.FC = () => {
               </ListItem>
               <ListItem disabled={activeScanner !== "guest"}>
                 <ListItemIcon>
-                  <WristBand />
+                  <CustomSvgIcon iconType="WristBand" />
                 </ListItemIcon>
                 <ListItemText
                   primary={latestGuestId ? latestGuestId : "-"}
@@ -488,7 +488,7 @@ const GuestInfoList: React.FC<{ guest: Guest }> = (props) => (
   <List>
     <ListItem>
       <ListItemIcon>
-        <WristBand />
+        <CustomSvgIcon iconType="WristBand" />
       </ListItemIcon>
       <ListItemText primary={props.guest.id} secondary="ゲスト ID" />
     </ListItem>

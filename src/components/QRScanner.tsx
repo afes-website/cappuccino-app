@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { CircularProgress, Fade } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import QrReader from "react-qr-reader";
-import { CameraOff } from "@/components/MaterialSvgIcons";
+import CustomSvgIcon from "@/components/CustomSvgICon";
 import { ResultPopupColors } from "@/components/ResultPopup";
 import UniversalErrorDialog from "@/components/UniversalErrorDialog";
 import clsx from "clsx";
@@ -161,7 +161,7 @@ const QRScanner: React.FunctionComponent<QRScannerProps> = (props) => {
         {["loading", "error"].includes(scannerStatus) && (
           <div className={classes.scannerBackground}>
             {scannerStatus === "error" ? (
-              <CameraOff />
+              <CustomSvgIcon iconType="CameraOff" />
             ) : (
               <CircularProgress size={64} />
             )}
