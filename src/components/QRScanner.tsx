@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { CircularProgress, Fade } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import QrReader from "react-qr-reader";
-import { CameraOff } from "@/components/CustomSvgIcon";
+import { CameraOff } from "@/components/MaterialSvgIcons";
 import { ResultPopupColors } from "@/components/ResultPopup";
 import UniversalErrorDialog from "@/components/UniversalErrorDialog";
 import clsx from "clsx";

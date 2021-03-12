@@ -41,5 +41,3 @@ export const WristBand: React.FC<SvgIconProps> = (props) => (
 export const CameraOff: React.FC<SvgIconProps> = (props) => (
   <CustomSvgIcon iconType="CameraOff" {...props} />
 );
-
-export default CustomSvgIcon;

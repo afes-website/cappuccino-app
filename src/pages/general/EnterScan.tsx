@@ -19,7 +19,7 @@ import {
   Replay,
 } from "@material-ui/icons";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { WristBand } from "@/components/CustomSvgIcon";
+import { WristBand } from "@/components/MaterialSvgIcons";
 import CardList from "@/components/CardList";
 import QRScanner from "@/components/QRScanner";
 import DirectInputModal from "@/components/DirectInputModal";

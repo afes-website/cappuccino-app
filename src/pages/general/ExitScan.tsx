@@ -11,7 +11,7 @@ import {
 import { Alert } from "@material-ui/lab";
 import { CheckCircle } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
-import { WristBand } from "@/components/CustomSvgIcon";
+import { WristBand } from "@/components/MaterialSvgIcons";
 import CardList from "@/components/CardList";
 import QRScanner, { QRScannerColors } from "@/components/QRScanner";
 import DirectInputModal from "@/components/DirectInputModal";
