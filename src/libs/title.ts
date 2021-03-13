@@ -6,7 +6,7 @@ export function useTitleSet(_new_title: string): void {
 
   useEffect(() => {
     titleCtx._setTitle(_new_title);
-  }, [_new_title]);
+  }, [_new_title, titleCtx]);
 }
 
 export const [useTitleContext, TitleContextProvider] = createCtx<{

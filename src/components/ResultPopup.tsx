@@ -3,6 +3,7 @@ import React, {
   useEffect,
   useImperativeHandle,
   forwardRef,
+  useCallback,
 } from "react";
 import {
   CircularProgress,
@@ -69,10 +70,10 @@ const ResultPopupRenderFunction: React.ForwardRefRenderFunction<
   const [timeoutId, setTimeoutId] = useState<number | null>(null);
 
   // 閉じる処理
-  const handleClose = () => {
+  const handleClose = useCallback((): void => {
     if (props.status === "success") props.handleCloseOnSuccess();
     if (props.status !== "loading") setDialogStatus("closed");
-  };
+  }, [props]);
 
   // 起動処理
   useImperativeHandle(ref, () => {
@@ -102,7 +103,7 @@ const ResultPopupRenderFunction: React.ForwardRefRenderFunction<
         setDialogStatus("closed");
       }
     }
-  }, [dialogStatus, props.status]);
+  }, [dialogStatus, props.status, props.duration, handleClose]);
 
   const StatusIcon: React.FC = () => {
     switch (props.status) {

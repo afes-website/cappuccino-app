@@ -209,5 +209,5 @@ export const useVerifyPermission = (
     if (!verifyPermission(_permission, auth)) {
       history.replace(routes.Forbidden.route.create({}));
     }
-  }, [_permission, auth]);
+  }, [_permission, auth, history]);
 };

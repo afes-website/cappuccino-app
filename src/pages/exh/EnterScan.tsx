@@ -75,7 +75,7 @@ const EnterScan: React.FC = () => {
 
   useEffect(() => {
     setExhibitionName(auth.val.get_current_user()?.name || "-");
-  }, [setExhibitionName]);
+  }, [setExhibitionName, auth.val]);
 
   const handleGuestIdScan = (guestId: string | null) => {
     if (guestId && latestGuestId !== guestId) {

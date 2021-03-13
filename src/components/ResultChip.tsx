@@ -96,7 +96,7 @@ const ResultChipRenderFunction: React.ForwardRefRenderFunction<
         );
       }
     }
-  }, [chipStatus]);
+  }, [chipStatus, duration]);
 
   return (
     <>

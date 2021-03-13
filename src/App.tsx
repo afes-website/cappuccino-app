@@ -15,7 +15,7 @@ const App: React.FunctionComponent = () => {
     provideVal.val.on_change(() => {
       setProvideVal((old) => ({ ...old }));
     });
-  }, []);
+  }, [provideVal.val]);
 
   const redirect_to_login = () => {
     if (
