@@ -31,7 +31,7 @@ import ResultPopup, {
 } from "@/components/ResultPopup";
 import UniversalErrorDialog from "@/components/UniversalErrorDialog";
 import { useTitleSet } from "@/libs/title";
-import { AuthContext } from "@/libs/auth";
+import { AuthContext, useVerifyPermission } from "@/libs/auth";
 import isAxiosError from "@/libs/isAxiosError";
 import { getStringDateTimeBrief, getStringTime } from "@/libs/stringDate";
 import { useWristBandPaletteColor } from "@/libs/wristBandColor";
@@ -81,6 +81,7 @@ const useStyles = makeStyles((theme) =>
 
 const EnterScan: React.FC = () => {
   useTitleSet("文化祭 入場スキャン");
+  useVerifyPermission("general");
   const classes = useStyles();
   const auth = useContext(AuthContext);
   const resultPopupRef = useRef<ResultPopupRefs>(null);

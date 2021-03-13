@@ -18,7 +18,7 @@ import DirectInputModal from "@/components/DirectInputModal";
 import DirectInputFab from "@/components/DirectInputFab";
 import ResultChip, { ResultChipRefs } from "@/components/ResultChip";
 import { useTitleSet } from "@/libs/title";
-import { AuthContext } from "@/libs/auth";
+import { AuthContext, useVerifyPermission } from "@/libs/auth";
 import isAxiosError from "@/libs/isAxiosError";
 import api from "@afes-website/docs";
 import aspida from "@aspida/axios";
@@ -57,6 +57,7 @@ const useStyles = makeStyles((theme) =>
 
 const ExitScan: React.FC = () => {
   useTitleSet("文化祭 退場スキャン");
+  useVerifyPermission("general");
   const classes = useStyles();
   const auth = useContext(AuthContext);
   const resultChipRef = useRef<ResultChipRefs>(null);
