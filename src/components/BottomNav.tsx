@@ -4,14 +4,12 @@ import {
   BottomNavigationAction,
   createStyles,
   makeStyles,
-  SvgIcon,
   Theme,
 } from "@material-ui/core";
 import routes from "@/libs/routes";
 import { Link, useHistory } from "react-router-dom";
-import { Assignment, Home, History } from "@material-ui/icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDoorOpen, faDoorClosed } from "@fortawesome/free-solid-svg-icons";
+import { Assignment, Home } from "@material-ui/icons";
+import { Login, Logout } from "@/components/MaterialSvgIcons";
 import { AuthContext } from "@/libs/auth";
 import { UserInfo } from "@afes-website/docs";
 
@@ -95,27 +93,13 @@ type MenuItem = [string, string, React.ReactNode];
 
 const menuItems: { [key in keyof UserInfo["permissions"]]?: MenuItem[] } = {
   exhibition: [
-    [
-      "Enter",
-      routes.ExhEnterScan.route.create({}),
-      <SvgIcon key="Enter">
-        <FontAwesomeIcon icon={faDoorOpen} />
-      </SvgIcon>,
-    ],
-    [
-      "Exit",
-      routes.ExhExitScan.route.create({}),
-      <SvgIcon key="Exit">
-        <FontAwesomeIcon icon={faDoorClosed} />
-      </SvgIcon>,
-    ],
-    [
-      "History",
-      routes.ExhScanHistory.route.create({}),
-      <History key="History" />,
-    ],
+    ["Enter", routes.ExhEnterScan.route.create({}), <Login key="Enter" />],
+    ["Exit", routes.ExhExitScan.route.create({}), <Logout key="Exit" />],
   ],
-  general: [["History", "/general/history", <History key="History" />]],
+  general: [
+    ["Enter", routes.GeneralEnterScan.route.create({}), <Login key="Enter" />],
+    ["Exit", routes.GeneralExitScan.route.create({}), <Logout key="Exit" />],
+  ],
   admin: [
     ["Reservation", "/admin/reservations", <Assignment key="reservation" />],
   ],
