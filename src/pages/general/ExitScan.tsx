@@ -99,11 +99,12 @@ const ExitScan: React.FC = () => {
         .catch((e) => {
           setCheckStatus("error");
           if (isAxiosError(e)) {
-            if (e.response?.status === 404) {
-              setErrorStatusCode("GUEST_NOT_FOUND");
-            }
-            if (e.response?.status === 409) {
-              setErrorStatusCode("GUEST_ALREADY_EXITED");
+            const errorCode: unknown = e.response?.data.error_code;
+            if (
+              typeof errorCode === "string" &&
+              (statusCodeList as ReadonlyArray<string>).includes(errorCode)
+            ) {
+              setErrorStatusCode(errorCode as StatusCode);
             }
           }
           if (!errorStatusCode) setErrorStatusCode("NETWORK_ERROR");
