@@ -98,6 +98,7 @@ const ExitScan: React.FC = () => {
         })
         .catch((e) => {
           setCheckStatus("error");
+          let isNetworkError = true;
           if (isAxiosError(e)) {
             const errorCode: unknown = e.response?.data.error_code;
             if (
@@ -105,9 +106,10 @@ const ExitScan: React.FC = () => {
               (statusCodeList as ReadonlyArray<string>).includes(errorCode)
             ) {
               setErrorStatusCode(errorCode as StatusCode);
+              isNetworkError = false;
             }
           }
-          if (!errorStatusCode) setErrorStatusCode("NETWORK_ERROR");
+          if (isNetworkError) setErrorStatusCode("NETWORK_ERROR");
           if (resultChipRef.current)
             resultChipRef.current.open(
               "error",

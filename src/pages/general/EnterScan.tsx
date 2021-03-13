@@ -266,6 +266,7 @@ const EnterScan: React.FC = () => {
             );
         })
         .catch((e) => {
+          let isNetworkError = true;
           if (isAxiosError(e)) {
             const errorCode: unknown = e.response?.data.error_code;
             if (
@@ -273,9 +274,10 @@ const EnterScan: React.FC = () => {
               (statusCodeList as ReadonlyArray<string>).includes(errorCode)
             ) {
               setErrorStatusCode(errorCode as StatusCode);
+              isNetworkError = false;
             }
           }
-          if (!errorStatusCode) networkErrorHandler(e);
+          if (isNetworkError) networkErrorHandler(e);
           setGuestCheckStatus("error");
           if (resultChipRef.current)
             resultChipRef.current.open(
