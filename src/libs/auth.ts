@@ -1,6 +1,6 @@
 import api, { UserInfo } from "@afes-website/docs";
 import axios from "@aspida/axios";
-import { createContext, useEffect } from "react";
+import { createContext, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import routes from "@/libs/routes";
 import isAxiosError from "@/libs/isAxiosError";
@@ -197,15 +197,14 @@ export const verifyPermission = (
 /**
  * 指定された権限（の少なくとも1つ）があるか確認し、なければ 403 ページにリダイレクトする
  * @param _permission 権限の種類文字列もしくはその配列
- * @param auth AuthContext で得られる Auth オブジェクト
  */
 export const useVerifyPermission = (
   _permission:
     | keyof StorageUserInfo["permissions"]
-    | (keyof StorageUserInfo["permissions"])[],
-  auth: Auth
+    | (keyof StorageUserInfo["permissions"])[]
 ): void => {
   const history = useHistory();
+  const auth = useContext(AuthContext).val;
   useEffect(() => {
     if (!verifyPermission(_permission, auth)) {
       history.replace(routes.Forbidden.route.create({}));

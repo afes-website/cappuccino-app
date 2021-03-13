@@ -63,7 +63,7 @@ const EnterScan: React.FC = () => {
   const classes = useStyles();
   const auth = useContext(AuthContext);
   const resultChipRef = useRef<ResultChipRefs>(null);
-  useVerifyPermission("exhibition", auth.val);
+  useVerifyPermission("exhibition");
 
   const [latestGuestId, setLatestGuestId] = useState("");
   const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
