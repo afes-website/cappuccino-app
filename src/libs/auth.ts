@@ -1,6 +1,8 @@
 import api, { UserInfo } from "@afes-website/docs";
 import axios from "@aspida/axios";
-import { createContext } from "react";
+import { createContext, useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import routes from "@/libs/routes";
 import isAxiosError from "@/libs/isAxiosError";
 import {
   faUser,
@@ -167,4 +169,46 @@ export const get_user_icon = (
   if (account?.permissions.general) return faUserCog;
   if (account?.permissions.exhibition) return faUser;
   return faUser;
+};
+
+/**
+ * 指定された権限（の少なくとも1つ）があるか確認する
+ * @param _permission 権限の種類文字列もしくはその配列
+ * @param auth AuthContext で得られる Auth オブジェクト
+ * @return 指定された権限を持っているかどうか
+ */
+export const verifyPermission = (
+  _permission:
+    | keyof StorageUserInfo["permissions"]
+    | (keyof StorageUserInfo["permissions"])[],
+  auth: Auth
+): boolean => {
+  const perm_arr = !_permission
+    ? []
+    : Array.isArray(_permission)
+    ? _permission
+    : [_permission];
+  const current_user = auth.get_current_user();
+
+  if (!current_user) return false;
+  return perm_arr.some((_perm) => current_user.permissions[_perm]);
+};
+
+/**
+ * 指定された権限（の少なくとも1つ）があるか確認し、なければ 403 ページにリダイレクトする
+ * @param _permission 権限の種類文字列もしくはその配列
+ * @param auth AuthContext で得られる Auth オブジェクト
+ */
+export const useVerifyPermission = (
+  _permission:
+    | keyof StorageUserInfo["permissions"]
+    | (keyof StorageUserInfo["permissions"])[],
+  auth: Auth
+): void => {
+  const history = useHistory();
+  useEffect(() => {
+    if (!verifyPermission(_permission, auth)) {
+      history.replace(routes.Forbidden.route.create({}));
+    }
+  }, [_permission, auth]);
 };
