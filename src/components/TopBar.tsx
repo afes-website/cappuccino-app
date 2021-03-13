@@ -4,15 +4,14 @@ import {
   Toolbar,
   Typography,
   IconButton,
-  SvgIcon,
   createStyles,
   makeStyles,
 } from "@material-ui/core";
 import { ArrowBackIos } from "@material-ui/icons";
 import { useHistory } from "react-router-dom";
+import UserIcon from "@/components/UserIcon";
 import AccountDrawer from "@/components/AccountDrawer";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { AuthContext, get_user_icon } from "@/libs/auth";
+import { AuthContext } from "@/libs/auth";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -80,11 +79,10 @@ const TopBar: React.FunctionComponent<Props> = (props) => {
                   setIsDrawerOpen(true);
                 }}
               >
-                <SvgIcon>
-                  <FontAwesomeIcon
-                    icon={get_user_icon(auth.val.get_current_user())}
-                  />
-                </SvgIcon>
+                <UserIcon
+                  account={auth.val.get_current_user()}
+                  fontSize="large"
+                />
               </IconButton>
             ))}
           <Typography variant="h6" align="center" className={classes.title}>
