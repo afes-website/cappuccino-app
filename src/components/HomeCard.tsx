@@ -27,7 +27,7 @@ interface Props {
   buttons: [string, string][];
 }
 
-const HomeCard: React.FunctionComponent<Props> = (props) => {
+const HomeCard: React.FC<Props> = (props) => {
   const classes = useStyles();
 
   return (

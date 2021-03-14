@@ -10,7 +10,7 @@ const useStyles = makeStyles(() =>
   })
 );
 
-const ScanHistory: React.FunctionComponent = () => {
+const ScanHistory: React.FC = () => {
   const classes = useStyles();
   useTitleSet("スキャン履歴");
 

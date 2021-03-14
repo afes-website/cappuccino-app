@@ -101,7 +101,7 @@ export interface QRScannerProps {
   color?: QRScannerColors;
 }
 
-const QRScanner: React.FunctionComponent<QRScannerProps> = (props) => {
+const QRScanner: React.FC<QRScannerProps> = (props) => {
   const classes = useStyles();
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [errorDialogTitle, setErrorDialogTitle] = useState("");

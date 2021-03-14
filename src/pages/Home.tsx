@@ -5,7 +5,7 @@ import CardList from "@/components/CardList";
 import { useTitleSet } from "@/libs/title";
 import { AuthContext, verifyPermission } from "@/libs/auth";
 
-const Home: React.FunctionComponent = () => {
+const Home: React.FC = () => {
   useTitleSet("Manager for Exhibition");
   const auth = useContext(AuthContext).val;
 

@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const Forbidden: React.FunctionComponent = () => {
+const Forbidden: React.FC = () => {
   useTitleSet("404 Not Found");
   const classes = useStyles();
   const history = useHistory();
