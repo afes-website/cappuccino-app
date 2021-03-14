@@ -6,7 +6,7 @@ on:
       - "yarn.lock"
 
 jobs:
-  test:
+  loxcan:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
