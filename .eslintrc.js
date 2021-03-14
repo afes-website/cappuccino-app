@@ -20,7 +20,7 @@ module.exports = {
   },
   rules: {
     "react/prop-types": "off",
-    "react-hooks/exhaustive-deps": "off",
+    "react-hooks/exhaustive-deps": "error",
   },
   extends: [
     "eslint:recommended",
