@@ -25,7 +25,7 @@ const App: React.FC = () => {
       history.push(routes.Login.route.create({}));
     }
   };
-  React.useEffect(redirect_to_login, [provideVal]);
+  React.useEffect(redirect_to_login, [history, provideVal]);
   React.useEffect(() => {
     return history.listen(redirect_to_login);
   });
