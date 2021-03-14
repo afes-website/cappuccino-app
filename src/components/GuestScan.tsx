@@ -102,7 +102,7 @@ const GuestScan: React.FC<Props> = (props) => {
   }, [setExhibitionName, auth, isExh]);
 
   const handleGuestIdScan = (guestId: string | null) => {
-    if (guestId && guestId !== latestGuestId) {
+    if (guestId && guestId !== latestGuestId && checkStatus !== "loading") {
       setCheckStatus("loading");
       if (resultChipRef.current) resultChipRef.current.close();
       setLatestGuestId(guestId);
