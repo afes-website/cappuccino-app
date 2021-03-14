@@ -1,0 +1,21 @@
+name: Loxcan
+
+on:
+  pull_request:
+    paths:
+      - "yarn.lock"
+
+jobs:
+  loxcan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: siketyan/loxcan@master
+        with:
+          owner: ${{ github.event.repository.owner.login }}
+          repo: ${{ github.event.repository.name }}
+          base: ${{ github.event.pull_request.base.ref }}
+          issue_number: ${{ github.event.pull_request.number }}
+          token: ${{ github.token }}
