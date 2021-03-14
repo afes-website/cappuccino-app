@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   BottomNavigation,
   BottomNavigationAction,
@@ -27,18 +27,18 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const BottomNav: React.FunctionComponent = () => {
+const BottomNav: React.FC = () => {
   const history = useHistory();
   const classes = useStyles();
-  const [value, setValue] = React.useState(history.location.pathname);
-  const auth = React.useContext(AuthContext);
+  const [value, setValue] = useState(history.location.pathname);
+  const auth = useContext(AuthContext).val;
 
   const get_menus = () => {
     const menus: MenuItem[] = [];
     menus.push(...commonMenus);
     const _perm:
       | { [name: string]: boolean }
-      | undefined = auth.val.get_current_user()?.permissions;
+      | undefined = auth.get_current_user()?.permissions;
     if (!_perm) return menus;
     Object.entries(menuItems).forEach(([key, items]) => {
       if (items && _perm[key]) menus.push(...items);
@@ -50,13 +50,13 @@ const BottomNav: React.FunctionComponent = () => {
     setValue(history.location.pathname);
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       unListen();
     };
   });
 
-  if (auth.val.get_current_user_id())
+  if (auth.get_current_user_id())
     return (
       <BottomNavigation
         value={value}

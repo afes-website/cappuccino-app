@@ -59,7 +59,7 @@ const ExitScan: React.FC = () => {
   useTitleSet("文化祭 退場スキャン");
   useVerifyPermission("general");
   const classes = useStyles();
-  const auth = useContext(AuthContext);
+  const auth = useContext(AuthContext).val;
   const resultChipRef = useRef<ResultChipRefs>(null);
 
   const [latestGuestId, setLatestGuestId] = useState("");
@@ -81,7 +81,7 @@ const ExitScan: React.FC = () => {
             guest_id: guestId,
           },
           headers: {
-            Authorization: "bearer " + auth.val.get_current_user()?.token,
+            Authorization: "bearer " + auth.get_current_user()?.token,
           },
         })
         .then(() => {

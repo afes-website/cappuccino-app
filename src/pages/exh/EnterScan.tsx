@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) =>
 const EnterScan: React.FC = () => {
   useTitleSet("展示教室 入室スキャン");
   const classes = useStyles();
-  const auth = useContext(AuthContext);
+  const auth = useContext(AuthContext).val;
   const resultChipRef = useRef<ResultChipRefs>(null);
   useVerifyPermission("exhibition");
 
@@ -74,8 +74,8 @@ const EnterScan: React.FC = () => {
   const [exhibitionName, setExhibitionName] = useState<string | null>(null);
 
   useEffect(() => {
-    setExhibitionName(auth.val.get_current_user()?.name || "-");
-  }, [setExhibitionName, auth.val]);
+    setExhibitionName(auth.get_current_user()?.name || "-");
+  }, [setExhibitionName, auth]);
 
   const handleGuestIdScan = (guestId: string | null) => {
     if (guestId && latestGuestId !== guestId) {
@@ -89,7 +89,7 @@ const EnterScan: React.FC = () => {
             guest_id: guestId,
           },
           headers: {
-            Authorization: "bearer " + auth.val.get_current_user()?.token,
+            Authorization: "bearer " + auth.get_current_user()?.token,
           },
         })
         .then(() => {

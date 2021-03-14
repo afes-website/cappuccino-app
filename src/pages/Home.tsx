@@ -7,11 +7,11 @@ import { AuthContext, verifyPermission } from "@/libs/auth";
 
 const Home: React.FunctionComponent = () => {
   useTitleSet("Manager for Exhibition");
-  const auth = useContext(AuthContext);
+  const auth = useContext(AuthContext).val;
 
   return (
     <CardList>
-      {verifyPermission("general", auth.val) && (
+      {verifyPermission("general", auth) && (
         <HomeCard
           title="文化祭 入退場 QRスキャン"
           paragraphs={[
@@ -24,7 +24,7 @@ const Home: React.FunctionComponent = () => {
           ]}
         />
       )}
-      {verifyPermission("exhibition", auth.val) && (
+      {verifyPermission("exhibition", auth) && (
         <HomeCard
           title="展示教室 入退室 QRスキャン"
           paragraphs={[

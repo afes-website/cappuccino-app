@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
   Button,
@@ -35,15 +35,15 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const Login: React.FunctionComponent = () => {
+const Login: React.FC = () => {
   const classes = useStyles();
   const history = useHistory();
-  const [id, setId] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [isError, setIsError] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [errorText, setErrorText] = React.useState<string[]>([]);
-  const auth = React.useContext(AuthContext);
+  const [id, setId] = useState("");
+  const [password, setPassword] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorText, setErrorText] = useState<string[]>([]);
+  const auth = useContext(AuthContext).val;
   useTitleSet("ログイン");
 
   const login = (e?: React.FormEvent<HTMLFormElement>) => {
@@ -56,8 +56,8 @@ const Login: React.FunctionComponent = () => {
         },
       })
       .then((res) => {
-        auth.val.register_user(res.token).then(() => {
-          auth.val.switch_user(id);
+        auth.register_user(res.token).then(() => {
+          auth.switch_user(id);
           history.push(routes.Home.route.create({}));
         });
       })

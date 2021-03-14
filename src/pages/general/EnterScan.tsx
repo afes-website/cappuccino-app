@@ -83,7 +83,7 @@ const EnterScan: React.FC = () => {
   useTitleSet("文化祭 入場スキャン");
   useVerifyPermission("general");
   const classes = useStyles();
-  const auth = useContext(AuthContext);
+  const auth = useContext(AuthContext).val;
   const resultPopupRef = useRef<ResultPopupRefs>(null);
   const resultChipRef = useRef<ResultChipRefs>(null);
 
@@ -182,7 +182,7 @@ const EnterScan: React.FC = () => {
         .onsite.reservation._id(rsvId)
         .check.$get({
           headers: {
-            Authorization: "bearer " + auth.val.get_current_user()?.token,
+            Authorization: "bearer " + auth.get_current_user()?.token,
           },
         })
         .then((res) => {
@@ -253,7 +253,7 @@ const EnterScan: React.FC = () => {
             guest_id: guestId,
           },
           headers: {
-            Authorization: "bearer " + auth.val.get_current_user()?.token,
+            Authorization: "bearer " + auth.get_current_user()?.token,
           },
         })
         .then((guest) => {

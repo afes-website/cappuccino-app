@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import routes from "@/libs/routes";
 import {
@@ -57,10 +57,10 @@ interface Props {
   onDrawerClose: () => undefined;
 }
 
-const AccountDrawer: React.FunctionComponent<Props> = (props) => {
+const AccountDrawer: React.FC<Props> = (props) => {
   const classes = useStyles();
-  const auth = React.useContext(AuthContext);
-  const [isLogoutAlertVisible, setIsLogoutAlertVisible] = React.useState(false);
+  const auth = useContext(AuthContext).val;
+  const [isLogoutAlertVisible, setIsLogoutAlertVisible] = useState(false);
 
   return (
     <Drawer
@@ -72,24 +72,24 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
     >
       <Paper className={classes.nowAccount} square={true}>
         <UserIcon
-          account={auth.val.get_current_user()}
+          account={auth.get_current_user()}
           className={classes.menuIcon}
           color="inherit"
         />
         <Typography variant="h6">
-          {auth.val.get_current_user()?.name || ""}
+          {auth.get_current_user()?.name || ""}
         </Typography>
         <Typography variant="body2">
-          @{auth.val.get_current_user()?.id || ""}
+          @{auth.get_current_user()?.id || ""}
         </Typography>
       </Paper>
       <List>
-        {Object.values(auth.val.get_all_users())
+        {Object.values(auth.get_all_users())
           .map((info) => {
             return info;
           })
           .filter((account) => {
-            return account.id !== auth.val.get_current_user()?.id;
+            return account.id !== auth.get_current_user()?.id;
           })
           .map((account, index, array) => {
             return (
@@ -97,7 +97,7 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
                 <ListItem
                   button
                   onClick={() => {
-                    auth.val.switch_user(account.id);
+                    auth.switch_user(account.id);
                   }}
                 >
                   <ListItemAvatar>
@@ -140,16 +140,16 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
           setIsLogoutAlertVisible(true);
         }}
       >
-        @{auth.val.get_current_user_id()} からログアウト
+        @{auth.get_current_user_id()} からログアウト
       </Button>
       <Dialog open={isLogoutAlertVisible}>
         <DialogTitle>ログアウトしますか？</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            @{auth.val.get_current_user_id()} からログアウトしますか？
+            @{auth.get_current_user_id()} からログアウトしますか？
           </DialogContentText>
           <DialogContentText>
-            {`ログアウト後、再び @${auth.val.get_current_user_id()} を使用するにはパスワードが必要です。`}
+            {`ログアウト後、再び @${auth.get_current_user_id()} を使用するにはパスワードが必要です。`}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -163,8 +163,8 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
           </Button>
           <Button
             onClick={() => {
-              auth.val.remove_user(auth.val.get_current_user_id() || "");
-              if (!auth.val.get_current_user_id()) props.setIsOpen(false);
+              auth.remove_user(auth.get_current_user_id() || "");
+              if (!auth.get_current_user_id()) props.setIsOpen(false);
               setIsLogoutAlertVisible(false);
             }}
             color="secondary"
