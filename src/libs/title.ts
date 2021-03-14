@@ -6,6 +6,7 @@ export function useTitleSet(_new_title: string): void {
 
   useEffect(() => {
     titleCtx._setTitle(_new_title);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_new_title]);
 }
 
