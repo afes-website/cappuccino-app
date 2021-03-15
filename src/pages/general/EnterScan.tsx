@@ -257,7 +257,6 @@ const EnterScan: React.FC = () => {
           },
         })
         .then((guest) => {
-          setRsvCheckStatus("success");
           setGuestCheckStatus("success");
           setPrevGuestInfo(guest);
           if (resultChipRef.current)
