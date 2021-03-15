@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
   Card,
   CardContent,
@@ -86,11 +80,11 @@ const GuestScan: React.FC<Props> = (props) => {
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [exhibitionName, setExhibitionName] = useState<string | null>(null);
 
-  const isExh = useCallback((): boolean => props.page.split("/")[0] === "exh", [
+  const isExh = useMemo((): boolean => props.page.split("/")[0] === "exh", [
     props.page,
   ]);
 
-  const getActionName = useCallback(() => {
+  const actionName = useMemo(() => {
     switch (props.page) {
       case "exh/enter":
         return "入室";
@@ -102,7 +96,7 @@ const GuestScan: React.FC<Props> = (props) => {
   }, [props.page]);
 
   useEffect(() => {
-    if (isExh()) setExhibitionName(auth.get_current_user()?.name || "-");
+    if (isExh) setExhibitionName(auth.get_current_user()?.name || "-");
   }, [setExhibitionName, auth, isExh]);
 
   const handleGuestIdScan = (guestId: string | null) => {
@@ -142,7 +136,7 @@ const GuestScan: React.FC<Props> = (props) => {
         if (resultChipRef.current)
           resultChipRef.current.open(
             "success",
-            `${getActionName()}成功 / ゲスト ID: ${latestGuestId}`,
+            `${actionName}成功 / ゲスト ID: ${latestGuestId}`,
             3000
           );
         break;
@@ -150,11 +144,11 @@ const GuestScan: React.FC<Props> = (props) => {
         if (resultChipRef.current)
           resultChipRef.current.open(
             "error",
-            `${getActionName()}失敗 / ゲスト ID: ${latestGuestId}`
+            `${actionName}失敗 / ゲスト ID: ${latestGuestId}`
           );
         break;
     }
-  }, [checkStatus, latestGuestId, getActionName]);
+  }, [checkStatus, latestGuestId, actionName]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const networkErrorHandler = (e: any): void => {
@@ -201,7 +195,7 @@ const GuestScan: React.FC<Props> = (props) => {
     <div>
       <CardList className={classes.list}>
         {/* 展示名 */}
-        {isExh() && (
+        {isExh && (
           <Card>
             <Alert severity="info">{`展示名: ${exhibitionName}`}</Alert>
           </Card>
