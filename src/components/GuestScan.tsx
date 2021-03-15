@@ -27,6 +27,7 @@ import { AuthContext } from "@/libs/auth";
 import clsx from "clsx";
 import isAxiosError from "@/libs/isAxiosError";
 import { Guest } from "@afes-website/docs";
+import UniversalErrorDialog from "@/components/UniversalErrorDialog";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -80,6 +81,9 @@ const GuestScan: React.FC<Props> = (props) => {
   const [errorStatusCode, setErrorStatusCode] = useState<StatusCode | null>(
     null
   );
+  const [errorDialogTitle, setErrorDialogTitle] = useState("");
+  const [errorDialogMessage, setErrorDialogMessage] = useState<string[]>([]);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [exhibitionName, setExhibitionName] = useState<string | null>(null);
 
   const isExh = useCallback((): boolean => props.page.split("/")[0] === "exh", [
@@ -123,7 +127,6 @@ const GuestScan: React.FC<Props> = (props) => {
         })
         .catch((e) => {
           setCheckStatus("error");
-          let isNetworkError = true;
           if (isAxiosError(e)) {
             const errorCode: unknown = e.response?.data.error_code;
             if (
@@ -131,10 +134,8 @@ const GuestScan: React.FC<Props> = (props) => {
               (statusCodeList as ReadonlyArray<string>).includes(errorCode)
             ) {
               setErrorStatusCode(errorCode as StatusCode);
-              isNetworkError = false;
-            }
-          }
-          if (isNetworkError) setErrorStatusCode("NETWORK_ERROR");
+            } else networkErrorHandler(e);
+          } else networkErrorHandler(e);
           if (resultChipRef.current)
             resultChipRef.current.open(
               "error",
@@ -142,6 +143,40 @@ const GuestScan: React.FC<Props> = (props) => {
             );
         });
     }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const networkErrorHandler = (e: any): void => {
+    console.error(e);
+    if (isAxiosError(e)) {
+      // axios error
+      if (e.response?.status)
+        // status code があるとき
+        setErrorDialogMessage([
+          "サーバーエラーが発生しました。",
+          "総務局にお問い合わせください。",
+          `status code: ${e.response?.status || "undefined"}`,
+          e.message,
+        ]);
+      // ないとき
+      else
+        setErrorDialogMessage([
+          "通信エラーが発生しました。",
+          "通信環境を確認し、はじめからやり直してください。",
+          "状況が改善しない場合は、総務局にお問い合わせください。",
+          e.message,
+        ]);
+    }
+    // なにもわからないとき
+    else
+      setErrorDialogMessage([
+        "通信エラーが発生しました。",
+        "通信環境を確認し、はじめからやり直してください。",
+        "状況が改善しない場合は、総務局にお問い合わせください。",
+      ]);
+    setErrorDialogTitle("通信エラー発生");
+    setErrorDialogOpen(true);
+    setErrorStatusCode("NETWORK_ERROR");
   };
 
   return (
@@ -217,6 +252,16 @@ const GuestScan: React.FC<Props> = (props) => {
         onIdChange={handleGuestIdScan}
         currentId={latestGuestId}
         type="guest"
+      />
+
+      {/* エラーダイアログ */}
+      <UniversalErrorDialog
+        open={errorDialogOpen}
+        title={errorDialogTitle}
+        message={errorDialogMessage}
+        onClose={() => {
+          setErrorDialogOpen(false);
+        }}
       />
     </div>
   );
