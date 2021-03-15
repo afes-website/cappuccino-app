@@ -164,7 +164,7 @@ const EnterScan: React.FC = () => {
   const handleRsvIdScan = (rsvId: string | null) => {
     // null check & 二重スキャン防止
     if (
-      rsvId !== null &&
+      rsvId &&
       rsvId !== latestRsvId &&
       (rsvCheckStatus === null || rsvCheckStatus === "error")
     ) {
@@ -232,7 +232,7 @@ const EnterScan: React.FC = () => {
   const handleGuestIdScan = (guestId: string | null) => {
     // null check & 二重スキャン防止
     if (
-      guestId !== null &&
+      guestId &&
       guestId !== latestGuestId &&
       guestId !== latestRsvId &&
       (guestCheckStatus === null || guestCheckStatus === "error")

@@ -92,7 +92,7 @@ const ResultPopupRenderFunction: React.ForwardRefRenderFunction<
   useEffect(() => {
     if (dialogStatus === "triggered" || dialogStatus === "opened") {
       // status が有効
-      if (props.status !== null) {
+      if (props.status) {
         setDialogStatus("opened");
 
         // すでに結果が出ていたら、duration ms 後に閉じる
