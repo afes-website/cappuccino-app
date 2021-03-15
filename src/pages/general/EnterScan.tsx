@@ -288,35 +288,42 @@ const EnterScan: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const networkErrorHandler = (e: any): void => {
     console.error(e);
+    setErrorDialogOpen(true);
     if (isAxiosError(e)) {
       // axios error
-      if (e.response?.status)
+      if (e.response?.status) {
         // status code があるとき
+        setErrorStatusCode("SERVER_ERROR");
+        setErrorDialogTitle("サーバーエラー");
         setErrorDialogMessage([
           "サーバーエラーが発生しました。",
           "総務局にお問い合わせください。",
           `status code: ${e.response?.status || "undefined"}`,
           e.message,
         ]);
+      }
       // ないとき
-      else
+      else {
+        setErrorStatusCode("NETWORK_ERROR");
+        setErrorDialogTitle("通信エラー");
         setErrorDialogMessage([
           "通信エラーが発生しました。",
           "通信環境を確認し、はじめからやり直してください。",
           "状況が改善しない場合は、総務局にお問い合わせください。",
           e.message,
         ]);
+      }
     }
     // なにもわからないとき
-    else
+    else {
+      setErrorStatusCode("NETWORK_ERROR");
+      setErrorDialogTitle("通信エラー");
       setErrorDialogMessage([
         "通信エラーが発生しました。",
         "通信環境を確認し、はじめからやり直してください。",
         "状況が改善しない場合は、総務局にお問い合わせください。",
       ]);
-    setErrorDialogTitle("通信エラー発生");
-    setErrorDialogOpen(true);
-    setErrorStatusCode("NETWORK_ERROR");
+    }
   };
 
   return (
@@ -554,6 +561,8 @@ const getErrorMessage = (status_code: StatusCode): string => {
       return "リストバンドの色と予約情報が一致しません。リストバンドの種類をもう一度確認してください。";
     case "NETWORK_ERROR":
       return "通信エラーが発生しました。通信環境を確認し、はじめからやり直してください。状況が改善しない場合は、総務局にお問い合わせください。";
+    case "SERVER_ERROR":
+      return "サーバーエラーが発生しました。総務局にお問い合わせください。";
   }
 };
 
@@ -566,6 +575,7 @@ const statusCodeList = [
   "OUT_OF_RESERVATION_TIME",
   "WRONG_WRISTBAND_COLOR",
   "NETWORK_ERROR",
+  "SERVER_ERROR",
 ] as const;
 
 type StatusCode = typeof statusCodeList[number];
