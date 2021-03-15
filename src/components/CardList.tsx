@@ -5,9 +5,9 @@ import clsx from "clsx";
 const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
-      padding: theme.spacing(1),
+      padding: theme.spacing(1.5),
       "& > * + *": {
-        marginTop: theme.spacing(1),
+        marginTop: theme.spacing(1.5),
       },
     },
   })

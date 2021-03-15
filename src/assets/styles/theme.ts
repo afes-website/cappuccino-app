@@ -42,7 +42,7 @@ const props: ComponentsProps = {
     variant: "standard",
   },
   MuiCard: {
-    variant: "outlined",
+    variant: "elevation",
   },
 };
 
