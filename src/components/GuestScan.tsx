@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Card,
   CardContent,
@@ -80,11 +80,9 @@ const GuestScan: React.FC<Props> = (props) => {
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [exhibitionName, setExhibitionName] = useState<string | null>(null);
 
-  const isExh = useMemo((): boolean => props.page.split("/")[0] === "exh", [
-    props.page,
-  ]);
+  const isExh = props.page.split("/")[0] === "exh";
 
-  const actionName = useMemo(() => {
+  const actionName = ((): string => {
     switch (props.page) {
       case "exh/enter":
         return "入室";
@@ -93,7 +91,7 @@ const GuestScan: React.FC<Props> = (props) => {
       case "general/exit":
         return "退場";
     }
-  }, [props.page]);
+  })();
 
   useEffect(() => {
     if (isExh) setExhibitionName(auth.get_current_user()?.name || "-");
