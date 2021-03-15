@@ -151,33 +151,26 @@ const EnterScan: React.FC = () => {
   };
 
   const handleScan = (data: string | null) => {
-    switch (activeScanner) {
-      case "rsv":
-        handleRsvIdScan(data);
-        break;
-      case "guest":
-        handleGuestIdScan(data);
-        break;
-    }
+    if (data)
+      switch (activeScanner) {
+        case "rsv":
+          handleRsvIdScan(data);
+          break;
+        case "guest":
+          handleGuestIdScan(data);
+          break;
+      }
   };
 
-  const handleRsvIdScan = (rsvId: string | null) => {
-    // null check & 二重スキャン防止
+  const handleRsvIdScan = (rsvId: string) => {
+    // 二重スキャン防止
     if (
-      rsvId &&
       rsvId !== latestRsvId &&
       (rsvCheckStatus === null || rsvCheckStatus === "error")
     ) {
       setLatestRsvId(rsvId);
-      // circular loading 表示
       setRsvCheckStatus("loading");
-      // error alert 非表示
-      setErrorStatusCode(null);
-      // rsv info 消去
-      setTermInfo(null);
-      // result chip 非表示
-      if (resultChipRef.current) resultChipRef.current.close();
-      // rsv id 検証
+
       api(aspida())
         .onsite.reservation._id(rsvId)
         .check.$get({
@@ -188,63 +181,64 @@ const EnterScan: React.FC = () => {
         .then((res) => {
           // res.valid に関わらず無条件で Term 情報を取得
           setTermInfo(res.term);
+
           if (res.valid) {
-            // 有効 : 次に進む
             setRsvCheckStatus("success");
-            setTimeout(() => {
-              setActiveScanner("guest");
-            }, 500);
-            if (resultChipRef.current)
-              resultChipRef.current.open(
-                "success",
-                `予約確認成功 / 予約 ID: ${rsvId}`,
-                3000
-              );
           } else if (
             res.status_code &&
             (statusCodeList as ReadonlyArray<string>).includes(res.status_code)
           ) {
-            // 無効 : 止める
             setRsvCheckStatus("error");
             setErrorStatusCode(res.status_code as StatusCode);
-            if (resultChipRef.current)
-              resultChipRef.current.open(
-                "error",
-                `予約確認失敗 / 予約 ID: ${rsvId}`
-              );
           }
         })
         .catch((e) => {
           setRsvCheckStatus("error");
-          if (resultChipRef.current)
-            resultChipRef.current.open(
-              "error",
-              `予約確認失敗 / 予約 ID: ${rsvId}`
-            );
+
           if (isAxiosError(e) && e.response?.status === 404)
-            // 404 の場合
             setErrorStatusCode("RESERVATION_NOT_FOUND");
           else networkErrorHandler(e);
         });
     }
   };
 
-  const handleGuestIdScan = (guestId: string | null) => {
-    // null check & 二重スキャン防止
+  useEffect(() => {
+    switch (rsvCheckStatus) {
+      case "loading":
+        setErrorStatusCode(null);
+        setTermInfo(null);
+        if (resultChipRef.current) resultChipRef.current.close();
+        break;
+      case "success":
+        setTimeout(() => {
+          setActiveScanner("guest");
+        }, 500);
+        if (resultChipRef.current)
+          resultChipRef.current.open(
+            "success",
+            `予約確認成功 / 予約 ID: ${latestRsvId}`,
+            3000
+          );
+        break;
+      case "error":
+        if (resultChipRef.current)
+          resultChipRef.current.open(
+            "error",
+            `予約確認失敗 / 予約 ID: ${latestRsvId}`
+          );
+        break;
+    }
+  }, [rsvCheckStatus, latestRsvId]);
+
+  const handleGuestIdScan = (guestId: string) => {
+    // 二重スキャン防止
     if (
-      guestId &&
       guestId !== latestGuestId &&
       guestId !== latestRsvId &&
       (guestCheckStatus === null || guestCheckStatus === "error")
     ) {
       setLatestGuestId(guestId);
       setGuestCheckStatus("loading");
-      // error alert 非表示
-      setErrorStatusCode(null);
-      // result chip 非表示
-      if (resultChipRef.current) resultChipRef.current.close();
-      // ポップアップを開く
-      if (resultPopupRef.current) resultPopupRef.current.open();
       // guest id 検証 (rsv id は有効性を確認済)
       api(aspida())
         .onsite.general.enter.$post({
@@ -259,11 +253,6 @@ const EnterScan: React.FC = () => {
         .then((guest) => {
           setGuestCheckStatus("success");
           setPrevGuestInfo(guest);
-          if (resultChipRef.current)
-            resultChipRef.current.open(
-              "success",
-              `入場成功 / ゲスト ID: ${guestId}`
-            );
         })
         .catch((e) => {
           setGuestCheckStatus("error");
@@ -276,14 +265,33 @@ const EnterScan: React.FC = () => {
               setErrorStatusCode(errorCode as StatusCode);
             } else networkErrorHandler(e);
           } else networkErrorHandler(e);
-          if (resultChipRef.current)
-            resultChipRef.current.open(
-              "error",
-              `入場失敗 / ゲスト ID: ${guestId}`
-            );
         });
     }
   };
+
+  useEffect(() => {
+    switch (guestCheckStatus) {
+      case "loading":
+        setErrorStatusCode(null);
+        if (resultChipRef.current) resultChipRef.current.close();
+        if (resultPopupRef.current) resultPopupRef.current.open();
+        break;
+      case "success":
+        if (resultChipRef.current)
+          resultChipRef.current.open(
+            "success",
+            `入場成功 / ゲスト ID: ${latestGuestId}`
+          );
+        break;
+      case "error":
+        if (resultChipRef.current)
+          resultChipRef.current.open(
+            "error",
+            `入場失敗 / ゲスト ID: ${latestGuestId}`
+          );
+        break;
+    }
+  }, [guestCheckStatus, latestGuestId]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const networkErrorHandler = (e: any): void => {

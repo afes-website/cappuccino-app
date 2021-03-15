@@ -108,22 +108,11 @@ const GuestScan: React.FC<Props> = (props) => {
   const handleGuestIdScan = (guestId: string | null) => {
     if (guestId && guestId !== latestGuestId && checkStatus !== "loading") {
       setCheckStatus("loading");
-      if (resultChipRef.current) resultChipRef.current.close();
       setLatestGuestId(guestId);
       props
         .handleScan(guestId)
         .then(() => {
           setCheckStatus("success");
-          setTimeout(() => {
-            setCheckStatus(null);
-            setLatestGuestId("");
-          }, 3000);
-          if (resultChipRef.current)
-            resultChipRef.current.open(
-              "success",
-              `${getActionName()}成功 / ゲスト ID: ${guestId}`,
-              3000
-            );
         })
         .catch((e) => {
           setCheckStatus("error");
@@ -136,14 +125,36 @@ const GuestScan: React.FC<Props> = (props) => {
               setErrorStatusCode(errorCode as StatusCode);
             } else networkErrorHandler(e);
           } else networkErrorHandler(e);
-          if (resultChipRef.current)
-            resultChipRef.current.open(
-              "error",
-              `${getActionName()}失敗 / ゲスト ID: ${guestId}`
-            );
         });
     }
   };
+
+  useEffect(() => {
+    switch (checkStatus) {
+      case "loading":
+        if (resultChipRef.current) resultChipRef.current.close();
+        break;
+      case "success":
+        setTimeout(() => {
+          setCheckStatus(null);
+          setLatestGuestId("");
+        }, 3000);
+        if (resultChipRef.current)
+          resultChipRef.current.open(
+            "success",
+            `${getActionName()}成功 / ゲスト ID: ${latestGuestId}`,
+            3000
+          );
+        break;
+      case "error":
+        if (resultChipRef.current)
+          resultChipRef.current.open(
+            "error",
+            `${getActionName()}失敗 / ゲスト ID: ${latestGuestId}`
+          );
+        break;
+    }
+  }, [checkStatus, latestGuestId, getActionName]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const networkErrorHandler = (e: any): void => {
