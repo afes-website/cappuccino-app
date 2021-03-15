@@ -263,8 +263,10 @@ const EnterScan: React.FC = () => {
               (statusCodeList as ReadonlyArray<string>).includes(errorCode)
             ) {
               setErrorStatusCode(errorCode as StatusCode);
-            } else networkErrorHandler(e);
-          } else networkErrorHandler(e);
+              return;
+            }
+          }
+          networkErrorHandler(e);
         });
     }
   };

@@ -117,8 +117,10 @@ const GuestScan: React.FC<Props> = (props) => {
               (statusCodeList as ReadonlyArray<string>).includes(errorCode)
             ) {
               setErrorStatusCode(errorCode as StatusCode);
-            } else networkErrorHandler(e);
-          } else networkErrorHandler(e);
+              return;
+            }
+          }
+          networkErrorHandler(e);
         });
     }
   };
