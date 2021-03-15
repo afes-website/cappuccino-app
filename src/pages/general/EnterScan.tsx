@@ -206,12 +206,12 @@ const EnterScan: React.FC = () => {
           ) {
             // 無効 : 止める
             setRsvCheckStatus("error");
+            setErrorStatusCode(res.status_code as StatusCode);
             if (resultChipRef.current)
               resultChipRef.current.open(
                 "error",
                 `予約確認失敗 / 予約 ID: ${rsvId}`
               );
-            setErrorStatusCode(res.status_code as StatusCode);
           }
         })
         .catch((e) => {
@@ -267,6 +267,7 @@ const EnterScan: React.FC = () => {
             );
         })
         .catch((e) => {
+          setGuestCheckStatus("error");
           let isNetworkError = true;
           if (isAxiosError(e)) {
             const errorCode: unknown = e.response?.data.error_code;
@@ -279,7 +280,6 @@ const EnterScan: React.FC = () => {
             }
           }
           if (isNetworkError) networkErrorHandler(e);
-          setGuestCheckStatus("error");
           if (resultChipRef.current)
             resultChipRef.current.open(
               "error",

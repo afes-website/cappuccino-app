@@ -110,16 +110,16 @@ const GuestScan: React.FC<Props> = (props) => {
         .handleScan(guestId)
         .then(() => {
           setCheckStatus("success");
+          setTimeout(() => {
+            setCheckStatus(null);
+            setLatestGuestId("");
+          }, 3000);
           if (resultChipRef.current)
             resultChipRef.current.open(
               "success",
               `${getActionName()}成功 / ゲスト ID: ${guestId}`,
               3000
             );
-          setTimeout(() => {
-            setCheckStatus(null);
-            setLatestGuestId("");
-          }, 3000);
         })
         .catch((e) => {
           setCheckStatus("error");
