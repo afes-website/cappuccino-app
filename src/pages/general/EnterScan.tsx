@@ -455,15 +455,14 @@ const EnterScan: React.FC = () => {
       {/* 直接入力ボタン */}
       <DirectInputFab
         onClick={() => {
-          switch (activeScanner) {
-            case "rsv":
-              setOpensRsvInputModal(true);
-              break;
-            case "guest":
-              setOpensGuestInputModal(true);
-              break;
-          }
+          ({ rsv: setOpensRsvInputModal, guest: setOpensGuestInputModal }[
+            activeScanner
+          ](true));
         }}
+        disabled={
+          { rsv: rsvCheckStatus, guest: guestCheckStatus }[activeScanner] ===
+          "loading"
+        }
       />
 
       {/* 直接入力モーダル */}

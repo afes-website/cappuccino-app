@@ -256,6 +256,7 @@ const GuestScan: React.FC<Props> = (props) => {
         onClick={() => {
           setOpensGuestInputModal(true);
         }}
+        disabled={checkStatus === "loading"}
       />
 
       {/* 直接入力モーダル */}
