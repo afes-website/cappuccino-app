@@ -41,7 +41,7 @@ const Forbidden: React.FC = () => {
           403
         </Typography>
         <Typography align="center" variant="body1" color="textSecondary">
-          ページを開く権限がありません
+          このページを開く権限がありません
         </Typography>
         <Typography align="center" variant="body1" color="textSecondary">
           現在のアカウントを確認してください
