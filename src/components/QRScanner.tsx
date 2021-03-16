@@ -3,7 +3,7 @@ import { CircularProgress, Fade } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import QrReader from "react-qr-reader";
 import { CameraOff } from "@/components/MaterialSvgIcons";
-import { ResultPopupColors } from "@/components/ResultPopup";
+import { StatusColor } from "@/types/statusColor";
 import UniversalErrorDialog from "@/components/UniversalErrorDialog";
 import clsx from "clsx";
 
@@ -93,12 +93,10 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-export type QRScannerColors = ResultPopupColors;
-
 export interface QRScannerProps {
   onScanFunc: (data: string | null) => void;
   videoStop: boolean;
-  color?: QRScannerColors;
+  color?: StatusColor;
 }
 
 const QRScanner: React.FC<QRScannerProps> = (props) => {
@@ -110,7 +108,7 @@ const QRScanner: React.FC<QRScannerProps> = (props) => {
     "loading" | "waiting" | "error"
   >("loading");
 
-  const getBorderClassName = (color: QRScannerColors | undefined): string => {
+  const getBorderClassName = (color: StatusColor | undefined): string => {
     switch (color) {
       case "success":
         return classes.borderSuccess;

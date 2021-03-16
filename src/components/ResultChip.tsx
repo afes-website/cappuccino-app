@@ -7,7 +7,7 @@ import React, {
 import { Chip, Fade, SvgIcon } from "@material-ui/core";
 import { CheckCircleOutline, ErrorOutline } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
-import { ResultPopupColors } from "@/components/ResultPopup";
+import { StatusColor } from "@/types/statusColor";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-export type ResultChipColors = Extract<ResultPopupColors, "success" | "error">;
+export type ResultChipColors = Extract<StatusColor, "success" | "error">;
 
 export interface ResultChipRefs {
   open: (

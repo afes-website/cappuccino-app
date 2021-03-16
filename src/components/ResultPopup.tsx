@@ -15,6 +15,7 @@ import {
 import { CheckCircleOutline, ErrorOutline } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
 import { TransitionProps } from "@material-ui/core/transitions";
+import { StatusColor } from "@/types/statusColor";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>
@@ -47,10 +48,8 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-export type ResultPopupColors = "success" | "error" | "loading";
-
 export interface ResultPopupProps {
-  status: ResultPopupColors | null;
+  status: StatusColor | null;
   duration: number;
   handleCloseOnSuccess: () => void;
 }

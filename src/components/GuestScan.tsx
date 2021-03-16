@@ -13,15 +13,16 @@ import { CheckCircle } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
 import { WristBand } from "@/components/MaterialSvgIcons";
 import CardList from "@/components/CardList";
-import QRScanner, { QRScannerColors } from "@/components/QRScanner";
+import QRScanner from "@/components/QRScanner";
 import DirectInputModal from "@/components/DirectInputModal";
 import DirectInputFab from "@/components/DirectInputFab";
 import ResultChip, { ResultChipRefs } from "@/components/ResultChip";
-import { AuthContext } from "@/libs/auth";
-import clsx from "clsx";
-import isAxiosError from "@/libs/isAxiosError";
-import { Guest } from "@afes-website/docs";
 import UniversalErrorDialog from "@/components/UniversalErrorDialog";
+import { AuthContext } from "@/libs/auth";
+import isAxiosError from "@/libs/isAxiosError";
+import { StatusColor } from "@/types/statusColor";
+import clsx from "clsx";
+import { Guest } from "@afes-website/docs";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -71,7 +72,7 @@ const GuestScan: React.FC<Props> = (props) => {
 
   const [latestGuestId, setLatestGuestId] = useState("");
   const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
-  const [checkStatus, setCheckStatus] = useState<QRScannerColors | null>(null);
+  const [checkStatus, setCheckStatus] = useState<StatusColor | null>(null);
   const [errorStatusCode, setErrorStatusCode] = useState<StatusCode | null>(
     null
   );

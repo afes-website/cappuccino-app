@@ -25,16 +25,14 @@ import QRScanner from "@/components/QRScanner";
 import DirectInputModal from "@/components/DirectInputModal";
 import DirectInputFab from "@/components/DirectInputFab";
 import ResultChip, { ResultChipRefs } from "@/components/ResultChip";
-import ResultPopup, {
-  ResultPopupRefs,
-  ResultPopupColors,
-} from "@/components/ResultPopup";
+import ResultPopup, { ResultPopupRefs } from "@/components/ResultPopup";
 import UniversalErrorDialog from "@/components/UniversalErrorDialog";
 import { useTitleSet } from "@/libs/title";
 import { AuthContext, useVerifyPermission } from "@/libs/auth";
 import isAxiosError from "@/libs/isAxiosError";
 import { getStringDateTimeBrief, getStringTime } from "@/libs/stringDate";
 import { useWristBandPaletteColor } from "@/libs/wristBandColor";
+import { StatusColor } from "@/types/statusColor";
 import api, { Guest, Term } from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import clsx from "clsx";
@@ -106,20 +104,17 @@ const EnterScan: React.FC = () => {
   // 前回入場したゲスト情報
   const [prevGuestInfo, setPrevGuestInfo] = useState<Guest | null>(null);
   // 予約ID・ゲストIDそれぞれのチェック結果
-  const [
-    rsvCheckStatus,
-    setRsvCheckStatus,
-  ] = useState<ResultPopupColors | null>(null);
-  const [
-    guestCheckStatus,
-    setGuestCheckStatus,
-  ] = useState<ResultPopupColors | null>(null);
+  const [rsvCheckStatus, setRsvCheckStatus] = useState<StatusColor | null>(
+    null
+  );
+  const [guestCheckStatus, setGuestCheckStatus] = useState<StatusColor | null>(
+    null
+  );
   // 予約IDチェック・ゲストIDチェックをマージした全体のチェック結果
   // useEffect で自動更新
-  const [
-    totalCheckStatus,
-    setTotalCheckStatus,
-  ] = useState<ResultPopupColors | null>(null);
+  const [totalCheckStatus, setTotalCheckStatus] = useState<StatusColor | null>(
+    null
+  );
   // エラーダイアログ
   const [errorDialogTitle, setErrorDialogTitle] = useState("");
   const [errorDialogMessage, setErrorDialogMessage] = useState<string[]>([]);
