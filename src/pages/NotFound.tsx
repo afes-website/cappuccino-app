@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const Forbidden: React.FC = () => {
+const NotFound: React.FC = () => {
   useTitleSet("404 Not Found");
   const classes = useStyles();
   const history = useHistory();
@@ -61,4 +61,4 @@ const Forbidden: React.FC = () => {
   );
 };
 
-export default Forbidden;
+export default NotFound;
