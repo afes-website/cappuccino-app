@@ -1,13 +1,9 @@
+import { createContext, useContext, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import api, { UserInfo } from "@afes-website/docs";
 import axios from "@aspida/axios";
-import { createContext } from "react";
+import routes from "@/libs/routes";
 import isAxiosError from "@/libs/isAxiosError";
-import {
-  faUser,
-  faUserCog,
-  faUserShield,
-  IconDefinition,
-} from "@fortawesome/free-solid-svg-icons";
 
 const storage_key_users = "users";
 const storage_key_current_user = "current_user";
@@ -160,11 +156,43 @@ export const AuthContext = createContext<{ val: Auth }>({
   val: new Auth(),
 });
 
-export const get_user_icon = (
-  account: StorageUserInfo | null
-): IconDefinition => {
-  if (account?.permissions.admin) return faUserShield;
-  if (account?.permissions.general) return faUserCog;
-  if (account?.permissions.exhibition) return faUser;
-  return faUser;
+/**
+ * 指定された権限（の少なくとも1つ）があるか確認する
+ * @param _permission 権限の種類文字列もしくはその配列
+ * @param auth AuthContext で得られる Auth オブジェクト
+ * @return 指定された権限を持っているかどうか
+ */
+export const verifyPermission = (
+  _permission:
+    | keyof StorageUserInfo["permissions"]
+    | (keyof StorageUserInfo["permissions"])[],
+  auth: Auth
+): boolean => {
+  const perm_arr = !_permission
+    ? []
+    : Array.isArray(_permission)
+    ? _permission
+    : [_permission];
+  const current_user = auth.get_current_user();
+
+  if (!current_user) return false;
+  return perm_arr.some((_perm) => current_user.permissions[_perm]);
+};
+
+/**
+ * 指定された権限（の少なくとも1つ）があるか確認し、なければ 403 ページにリダイレクトする
+ * @param _permission 権限の種類文字列もしくはその配列
+ */
+export const useVerifyPermission = (
+  _permission:
+    | keyof StorageUserInfo["permissions"]
+    | (keyof StorageUserInfo["permissions"])[]
+): void => {
+  const history = useHistory();
+  const auth = useContext(AuthContext).val;
+  useEffect(() => {
+    if (!verifyPermission(_permission, auth)) {
+      history.replace(routes.Forbidden.route.create({}));
+    }
+  }, [_permission, auth, history]);
 };

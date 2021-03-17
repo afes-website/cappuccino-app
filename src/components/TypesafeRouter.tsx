@@ -33,13 +33,10 @@ interface Props {
   routes: { [key: string]: TypedRouteWithComponent<any, any> };
   history: History;
   layout: React.ComponentType<{ children: React.ReactNode }>;
-  fallback: React.FunctionComponent;
+  fallback: React.FC;
 }
 
-const TypesafeRouter: React.FunctionComponent<Props> = ({
-  layout: Layout,
-  ...props
-}) => (
+const TypesafeRouter: React.FC<Props> = ({ layout: Layout, ...props }) => (
   <Router history={props.history}>
     <Layout>
       <Switch>

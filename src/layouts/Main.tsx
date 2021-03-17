@@ -24,7 +24,7 @@ const useStyles = makeStyles(() =>
       zIndex: 600,
     },
     main: {
-      marginBottom: "56px", // bottom Nav
+      paddingBottom: "56px", // bottom Nav
     },
     bottomNav: {
       position: "fixed",
@@ -41,7 +41,7 @@ interface Props {
 const TITLE_SUFFIX = "73rd Afes Manage App";
 const TOP_TITLE = "73rd Afes Manage App";
 
-const MainLayout: React.FunctionComponent<Props> = (props) => {
+const MainLayout: React.FC<Props> = (props) => {
   const classes = useStyles();
   const history = useHistory();
   const [titleState, _setTitleState] = React.useState({

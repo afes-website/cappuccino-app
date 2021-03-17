@@ -20,7 +20,7 @@ module.exports = {
   },
   rules: {
     "react/prop-types": "off",
-    "react-hooks/exhaustive-deps": "off",
+    "react-hooks/exhaustive-deps": "error",
   },
   extends: [
     "eslint:recommended",
@@ -41,7 +41,7 @@ module.exports = {
       rules: {
         "@typescript-eslint/no-explicit-any": "error",
         "@typescript-eslint/no-unused-vars": [
-          "error",
+          "warn",
           { ignoreRestSiblings: true },
         ],
       },

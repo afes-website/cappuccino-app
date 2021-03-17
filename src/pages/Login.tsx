@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
   Button,
@@ -15,34 +15,35 @@ import {
 } from "@material-ui/core";
 import api from "@afes-website/docs";
 import axios from "@aspida/axios";
+import CardList from "@/components/CardList";
 import { AuthContext } from "@/libs/auth";
 import routes from "@/libs/routes";
 import isAxiosError from "@/libs/isAxiosError";
 import { useTitleSet } from "@/libs/title";
+import { createStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles({
-  root: {
-    padding: "10px",
-  },
-  form: {
-    display: "block",
-    margin: 0,
-    padding: 0,
-  },
-  mb: {
-    marginBottom: "10px",
-  },
-});
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    form: {
+      display: "block",
+      margin: 0,
+      padding: 0,
+    },
+    mb: {
+      marginBottom: theme.spacing(1),
+    },
+  })
+);
 
-const Login: React.FunctionComponent = () => {
+const Login: React.FC = () => {
   const classes = useStyles();
   const history = useHistory();
-  const [id, setId] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [isError, setIsError] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [errorText, setErrorText] = React.useState<string[]>([]);
-  const auth = React.useContext(AuthContext);
+  const [id, setId] = useState("");
+  const [password, setPassword] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorText, setErrorText] = useState<string[]>([]);
+  const auth = useContext(AuthContext).val;
   useTitleSet("ログイン");
 
   const login = (e?: React.FormEvent<HTMLFormElement>) => {
@@ -55,8 +56,8 @@ const Login: React.FunctionComponent = () => {
         },
       })
       .then((res) => {
-        auth.val.register_user(res.token).then(() => {
-          auth.val.switch_user(id);
+        auth.register_user(res.token).then(() => {
+          auth.switch_user(id);
           history.push(routes.Home.route.create({}));
         });
       })
@@ -79,7 +80,7 @@ const Login: React.FunctionComponent = () => {
   };
 
   return (
-    <div className={classes.root}>
+    <CardList>
       <Card>
         <form onSubmit={login} className={classes.form}>
           <CardContent>
@@ -141,7 +142,7 @@ const Login: React.FunctionComponent = () => {
           </CardActions>
         </form>
       </Card>
-    </div>
+    </CardList>
   );
 };
 

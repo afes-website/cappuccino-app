@@ -6,7 +6,7 @@ import NotFound from "@/pages/NotFound";
 import MainLayout from "@/layouts/Main";
 import Auth, { AuthContext } from "@/libs/auth";
 
-const App: React.FunctionComponent = () => {
+const App: React.FC = () => {
   const [history] = useState(createBrowserHistory());
   const [provideVal, setProvideVal] = React.useState(() => ({
     val: new Auth(),
@@ -25,7 +25,7 @@ const App: React.FunctionComponent = () => {
       history.push(routes.Login.route.create({}));
     }
   };
-  React.useEffect(redirect_to_login, [provideVal]);
+  React.useEffect(redirect_to_login, [history, provideVal]);
   React.useEffect(() => {
     return history.listen(redirect_to_login);
   });

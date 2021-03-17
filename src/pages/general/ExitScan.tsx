@@ -6,14 +6,14 @@ import aspida from "@aspida/axios";
 import GuestScan from "@/components/GuestScan";
 
 const ExitScan: React.FC = () => {
-  useTitleSet("展示教室 退室スキャン");
-  useVerifyPermission("exhibition");
+  useTitleSet("文化祭 退場スキャン");
+  useVerifyPermission("general");
   const auth = useContext(AuthContext).val;
 
   return (
     <GuestScan
       handleScan={(guestId) =>
-        api(aspida()).onsite.exhibition.exit.$post({
+        api(aspida()).onsite.general.exit.$post({
           body: {
             guest_id: guestId,
           },
@@ -22,7 +22,7 @@ const ExitScan: React.FC = () => {
           },
         })
       }
-      page="exh/exit"
+      page="general/exit"
     />
   );
 };

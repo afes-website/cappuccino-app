@@ -1,18 +1,17 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   AppBar,
   Toolbar,
   Typography,
   IconButton,
-  SvgIcon,
   createStyles,
   makeStyles,
 } from "@material-ui/core";
 import { ArrowBackIos } from "@material-ui/icons";
 import { useHistory } from "react-router-dom";
+import UserIcon from "@/components/UserIcon";
 import AccountDrawer from "@/components/AccountDrawer";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { AuthContext, get_user_icon } from "@/libs/auth";
+import { AuthContext } from "@/libs/auth";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -32,14 +31,14 @@ interface Props {
   title: string;
 }
 
-const TopBar: React.FunctionComponent<Props> = (props) => {
+const TopBar: React.FC<Props> = (props) => {
   const classes = useStyles();
   const history = useHistory();
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
-  const [isNeedBackButton, setIsNeedBackButton] = React.useState(
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isNeedBackButton, setIsNeedBackButton] = useState(
     history.location.pathname !== "/"
   );
-  const auth = React.useContext(AuthContext);
+  const auth = useContext(AuthContext).val;
 
   function onDrawerClose(): undefined {
     setIsDrawerOpen(false);
@@ -49,7 +48,7 @@ const TopBar: React.FunctionComponent<Props> = (props) => {
   const unListen = history.listen(() => {
     setIsNeedBackButton(history.location.pathname !== "/");
   });
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       unListen();
     };
@@ -59,7 +58,7 @@ const TopBar: React.FunctionComponent<Props> = (props) => {
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-          {auth.val.get_current_user_id() &&
+          {auth.get_current_user_id() &&
             (isNeedBackButton ? (
               <IconButton
                 edge="start"
@@ -80,11 +79,7 @@ const TopBar: React.FunctionComponent<Props> = (props) => {
                   setIsDrawerOpen(true);
                 }}
               >
-                <SvgIcon>
-                  <FontAwesomeIcon
-                    icon={get_user_icon(auth.val.get_current_user())}
-                  />
-                </SvgIcon>
+                <UserIcon account={auth.get_current_user()} fontSize="large" />
               </IconButton>
             ))}
           <Typography variant="h6" align="center" className={classes.title}>

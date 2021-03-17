@@ -10,9 +10,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles({
-  root: {
-    marginBottom: "10px",
-  },
   cardContent: {
     paddingBottom: "0",
   },
@@ -30,11 +27,11 @@ interface Props {
   buttons: [string, string][];
 }
 
-const HomeCard: React.FunctionComponent<Props> = (props) => {
+const HomeCard: React.FC<Props> = (props) => {
   const classes = useStyles();
 
   return (
-    <Card variant="outlined" className={classes.root}>
+    <Card>
       <CardContent className={classes.cardContent}>
         <Typography variant="h5" component="h2" className={classes.title}>
           {props.title}

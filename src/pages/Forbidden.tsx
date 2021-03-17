@@ -29,8 +29,8 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const NotFound: React.FC = () => {
-  useTitleSet("404 Not Found");
+const Forbidden: React.FC = () => {
+  useTitleSet("403 Forbidden");
   const classes = useStyles();
   const history = useHistory();
 
@@ -38,13 +38,13 @@ const NotFound: React.FC = () => {
     <div className={classes.root}>
       <div className={classes.inner}>
         <Typography align="center" variant="h2">
-          404
+          403
         </Typography>
         <Typography align="center" variant="body1" color="textSecondary">
-          ページが見つかりませんでした
+          このページを開く権限がありません
         </Typography>
         <Typography align="center" variant="body1" color="textSecondary">
-          URL が間違っている可能性があります
+          現在のアカウントを確認してください
         </Typography>
         <Button
           onClick={() => {
@@ -61,4 +61,4 @@ const NotFound: React.FC = () => {
   );
 };
 
-export default NotFound;
+export default Forbidden;
