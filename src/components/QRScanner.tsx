@@ -132,7 +132,7 @@ const QRScanner: React.FC<QRScannerProps> = (props) => {
         case "NotReadableError":
           reason = [
             "カメラが他のアプリケーションで使用されています。",
-            "カメラアプリやビデオ通話を開いていたり、フラッシュライトが点灯していませんか？",
+            "カメラアプリやビデオ通話を開いていたり、フラッシュライトが点灯していたりしませんか？",
           ];
           break;
         case "NotAllowedError":
