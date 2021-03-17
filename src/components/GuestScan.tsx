@@ -284,21 +284,21 @@ const GuestScan: React.FC<Props> = (props) => {
 const getErrorMessage = (status_code: StatusCode) => {
   switch (status_code) {
     case "GUEST_NOT_FOUND":
-      return "来場者が存在しません。";
+      return "合致する来場者情報がありません。";
     case "GUEST_ALREADY_ENTERED":
-      return "来場者は既に入室済みで、まだ退室していません。";
+      return "すでに入室処理が完了しています。";
     case "PEOPLE_LIMIT_EXCEEDED":
-      return "展示の人数制限に達しています。";
+      return "すでに展示の滞在人数の上限に達しています。";
     case "GUEST_ALREADY_EXITED":
-      return "来場者は既に退場済みです。";
+      return "来場者は一度麻布から退場しています。必要に応じて近くの統制局員・総務局員にお問い合わせください。";
     case "EXIT_TIME_EXCEEDED":
       return "来場者は既に退場予定時刻を過ぎています。";
     case "EXHIBITION_NOT_FOUND":
-      return "展示が存在しません。総務局にお問い合わせください。";
+      return "内部エラーです。至急、総務局にお問い合わせください。（EXHIBITION_NOT_FOUND）";
     case "NETWORK_ERROR":
       return "通信エラーが発生しました。通信環境を確認し、はじめからやり直してください。状況が改善しない場合は、総務局にお問い合わせください。";
     case "SERVER_ERROR":
-      return "サーバーエラーが発生しました。総務局にお問い合わせください。";
+      return "サーバーエラーが発生しました。至急、総務局にお問い合わせください。";
   }
 };
 

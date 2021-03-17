@@ -549,24 +549,24 @@ const getErrorMessage = (status_code: StatusCode): string => {
   switch (status_code) {
     // reservation
     case "RESERVATION_NOT_FOUND":
-      return "該当する予約が見つかりませんでした。予約 ID を再確認し、権限の強い人を呼んでください。";
+      return "合致する予約情報がありません。マニュアルを参照し、権限の強い人を呼んでください。";
     case "INVALID_RESERVATION_INFO":
-      return "予約情報に問題があります。予約 ID を再確認し、権限の強い人を呼んでください。";
+      return "予約情報に不備があります。権限の強い人を呼んでください。";
     case "OUT_OF_RESERVATION_TIME":
-      return "この予約は入場時間外です。予約 ID を再確認し、権限の強い人を呼んでください。";
+      return "入場可能時間外です。マニュアルを参照してください。";
     case "ALREADY_ENTERED_RESERVATION":
-      return "この予約はすでに入場済みです。予約 ID を再確認し、権限の強い人を呼んでください。";
+      return "すでに入場処理が完了しています。権限の強い人を呼んでください。";
     // guest (wristband)
     case "INVALID_WRISTBAND_CODE":
-      return "リストバンド ID の形式が間違っています。別のリストバンドを試してください。";
+      return "リストバンド ID の形式が間違っています。予約 QR を読んでいませんか？";
     case "ALREADY_USED_WRISTBAND":
-      return "このリストバンドはすでに登録済みです。別のリストバンドを試してください。";
+      return "使用済みのリストバンドです。権限の強い人を呼んでください。";
     case "WRONG_WRISTBAND_COLOR":
-      return "リストバンドの色と予約情報が一致しません。リストバンドの種類をもう一度確認してください。";
+      return "リストバンドの種類が間違っています。";
     case "NETWORK_ERROR":
       return "通信エラーが発生しました。通信環境を確認し、はじめからやり直してください。状況が改善しない場合は、総務局にお問い合わせください。";
     case "SERVER_ERROR":
-      return "サーバーエラーが発生しました。総務局にお問い合わせください。";
+      return "サーバーエラーが発生しました。至急、総務局にお問い合わせください。";
   }
 };
 
