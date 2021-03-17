@@ -93,18 +93,24 @@ type MenuItem = [string, string, React.ReactNode];
 
 const menuItems: { [key in keyof UserInfo["permissions"]]?: MenuItem[] } = {
   exhibition: [
-    ["Enter", routes.ExhEnterScan.route.create({}), <Login key="Enter" />],
-    ["Exit", routes.ExhExitScan.route.create({}), <Logout key="Exit" />],
+    ["入室処理", routes.ExhEnterScan.route.create({}), <Login key="Enter" />],
+    ["退室処理", routes.ExhExitScan.route.create({}), <Logout key="Exit" />],
   ],
   general: [
-    ["Enter", routes.GeneralEnterScan.route.create({}), <Login key="Enter" />],
-    ["Exit", routes.GeneralExitScan.route.create({}), <Logout key="Exit" />],
+    [
+      "入場処理",
+      routes.GeneralEnterScan.route.create({}),
+      <Login key="Enter" />,
+    ],
+    [
+      "退場処理",
+      routes.GeneralExitScan.route.create({}),
+      <Logout key="Exit" />,
+    ],
   ],
-  admin: [
-    ["Reservation", "/admin/reservations", <Assignment key="reservation" />],
-  ],
+  admin: [["予約", "/admin/reservations", <Assignment key="reservation" />]],
 };
 
 const commonMenus: MenuItem[] = [
-  ["Home", routes.Home.route.create({}), <Home key="Home" />],
+  ["ホーム", routes.Home.route.create({}), <Home key="Home" />],
 ];
