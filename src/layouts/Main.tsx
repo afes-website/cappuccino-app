@@ -5,7 +5,7 @@ import {
   Paper,
   ThemeProvider,
 } from "@material-ui/core";
-import AppBar from "@/components/AppBar";
+import TopBar from "@/components/TopBar";
 import BottomNav from "@/components/BottomNav";
 import themes from "@/assets/styles/theme";
 import { TitleContextProvider } from "@/libs/title";
@@ -61,7 +61,7 @@ const MainLayout: React.FC<Props> = (props) => {
       <TitleContextProvider value={titleState}>
         <Paper className={classes.root} square={true}>
           <div className={classes.topBar}>
-            <AppBar title={titleState.title} />
+            <TopBar title={titleState.title} />
           </div>
           <main className={classes.main}>{props.children}</main>
           <div className={classes.bottomNav}>

@@ -31,7 +31,7 @@ interface Props {
   title: string;
 }
 
-const AppBar: React.FC<Props> = (props) => {
+const TopBar: React.FC<Props> = (props) => {
   const classes = useStyles();
   const history = useHistory();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -99,4 +99,4 @@ const AppBar: React.FC<Props> = (props) => {
   );
 };
 
-export default AppBar;
+export default TopBar;
