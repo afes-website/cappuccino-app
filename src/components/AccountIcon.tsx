@@ -4,9 +4,9 @@ import { Person } from "@material-ui/icons";
 import { PersonSetting, PersonSecurity } from "@/components/MaterialSvgIcons";
 import { SvgIconProps } from "@material-ui/core";
 
-const UserIcon: React.FC<{ account: StorageUserInfo | null } & SvgIconProps> = (
-  props
-) => {
+const AccountIcon: React.FC<
+  { account: StorageUserInfo | null } & SvgIconProps
+> = (props) => {
   const { account, ...iconProps } = props;
   if (account?.permissions.admin) return <PersonSecurity {...iconProps} />;
   if (account?.permissions.general) return <PersonSetting {...iconProps} />;
@@ -14,4 +14,4 @@ const UserIcon: React.FC<{ account: StorageUserInfo | null } & SvgIconProps> = (
   return <Person {...iconProps} />;
 };
 
-export default UserIcon;
+export default AccountIcon;

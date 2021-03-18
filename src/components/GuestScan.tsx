@@ -17,7 +17,7 @@ import QRScanner from "@/components/QRScanner";
 import DirectInputModal from "@/components/DirectInputModal";
 import DirectInputFab from "@/components/DirectInputFab";
 import ResultChip, { ResultChipRefs } from "@/components/ResultChip";
-import UniversalErrorDialog from "@/components/UniversalErrorDialog";
+import ErrorDialog from "@/components/ErrorDialog";
 import { AuthContext } from "@/libs/auth";
 import isAxiosError from "@/libs/isAxiosError";
 import { StatusColor } from "@/types/statusColor";
@@ -269,7 +269,7 @@ const GuestScan: React.FC<Props> = (props) => {
       />
 
       {/* エラーダイアログ */}
-      <UniversalErrorDialog
+      <ErrorDialog
         open={errorDialogOpen}
         title={errorDialogTitle}
         message={errorDialogMessage}

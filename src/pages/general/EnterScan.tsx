@@ -26,7 +26,7 @@ import DirectInputModal from "@/components/DirectInputModal";
 import DirectInputFab from "@/components/DirectInputFab";
 import ResultChip, { ResultChipRefs } from "@/components/ResultChip";
 import ResultPopup, { ResultPopupRefs } from "@/components/ResultPopup";
-import UniversalErrorDialog from "@/components/UniversalErrorDialog";
+import ErrorDialog from "@/components/ErrorDialog";
 import { useTitleSet } from "@/libs/title";
 import { AuthContext, useVerifyPermission } from "@/libs/auth";
 import isAxiosError from "@/libs/isAxiosError";
@@ -482,7 +482,7 @@ const EnterScan: React.FC = () => {
       />
 
       {/* エラーダイアログ */}
-      <UniversalErrorDialog
+      <ErrorDialog
         open={errorDialogOpen}
         title={errorDialogTitle}
         message={errorDialogMessage}
