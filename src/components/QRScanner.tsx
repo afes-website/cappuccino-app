@@ -4,7 +4,7 @@ import { createStyles, makeStyles } from "@material-ui/core/styles";
 import QrReader from "react-qr-reader";
 import { CameraOff } from "@/components/MaterialSvgIcons";
 import { StatusColor } from "@/types/statusColor";
-import UniversalErrorDialog from "@/components/UniversalErrorDialog";
+import ErrorDialog from "@/components/ErrorDialog";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>
@@ -188,7 +188,7 @@ const QRScanner: React.FC<QRScannerProps> = (props) => {
           </Fade>
         </div>
       </div>
-      <UniversalErrorDialog
+      <ErrorDialog
         open={errorDialogOpen}
         title={errorDialogTitle}
         message={errorDialogMessage}

@@ -22,7 +22,7 @@ import {
 } from "@material-ui/core";
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
 import { AuthContext } from "@/libs/auth";
-import UserIcon from "@/components/UserIcon";
+import AccountIcon from "@/components/AccountIcon";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -71,7 +71,7 @@ const AccountDrawer: React.FC<Props> = (props) => {
       }}
     >
       <Paper className={classes.nowAccount} square={true}>
-        <UserIcon
+        <AccountIcon
           account={auth.get_current_user()}
           className={classes.menuIcon}
           color="inherit"
@@ -101,7 +101,7 @@ const AccountDrawer: React.FC<Props> = (props) => {
                   }}
                 >
                   <ListItemAvatar>
-                    <UserIcon
+                    <AccountIcon
                       account={account}
                       className={classes.listIcon}
                       color="inherit"

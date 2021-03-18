@@ -9,7 +9,7 @@ import {
 } from "@material-ui/core";
 import { ArrowBackIos } from "@material-ui/icons";
 import { useHistory } from "react-router-dom";
-import UserIcon from "@/components/UserIcon";
+import AccountIcon from "@/components/AccountIcon";
 import AccountDrawer from "@/components/AccountDrawer";
 import { AuthContext } from "@/libs/auth";
 
@@ -31,7 +31,7 @@ interface Props {
   title: string;
 }
 
-const TopBar: React.FC<Props> = (props) => {
+const AppBar: React.FC<Props> = (props) => {
   const classes = useStyles();
   const history = useHistory();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -79,7 +79,10 @@ const TopBar: React.FC<Props> = (props) => {
                   setIsDrawerOpen(true);
                 }}
               >
-                <UserIcon account={auth.get_current_user()} fontSize="large" />
+                <AccountIcon
+                  account={auth.get_current_user()}
+                  fontSize="large"
+                />
               </IconButton>
             ))}
           <Typography variant="h6" align="center" className={classes.title}>
@@ -96,4 +99,4 @@ const TopBar: React.FC<Props> = (props) => {
   );
 };
 
-export default TopBar;
+export default AppBar;
