@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import {
+  CircularProgress,
   List,
   ListItem,
   ListItemText,
@@ -29,6 +30,12 @@ const useStyles = makeStyles((theme) =>
       marginBottom: -1,
       marginRight: theme.spacing(0.75),
     },
+    loadingWrapper: {
+      height: "calc(100vh - 112px)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    },
   })
 );
 
@@ -40,7 +47,7 @@ const ScanHistory: React.FC = () => {
   const auth = useContext(AuthContext).val;
   const wristBandPaletteColor = useWristBandPaletteColor();
 
-  const [logs, setLogs] = useState<ActivityLog[]>([]);
+  const [logs, setLogs] = useState<ActivityLog[] | null>(null);
 
   useEffect(() => {
     api(aspida())
@@ -53,6 +60,13 @@ const ScanHistory: React.FC = () => {
         setLogs(res);
       });
   }, [auth]);
+
+  if (logs === null)
+    return (
+      <div className={classes.loadingWrapper}>
+        <CircularProgress />
+      </div>
+    );
 
   return (
     <div className={classes.root}>
@@ -94,6 +108,11 @@ const ScanHistory: React.FC = () => {
       {logs.length > 0 && (
         <Typography align="center" variant="body2" color="textSecondary">
           履歴は以上です。お疲れさまでした！
+        </Typography>
+      )}
+      {logs.length === 0 && (
+        <Typography align="center" variant="body2" color="textSecondary">
+          まだスキャン履歴はありません。
         </Typography>
       )}
     </div>
