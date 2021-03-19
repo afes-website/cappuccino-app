@@ -58,7 +58,7 @@ const StayStatus: React.FC<StayStatusCardProps> = (props) => {
   const { statusCount, limit, terms } = props;
 
   const sum: number = statusCount
-    ? Object.values(statusCount).reduce((prev, curr) => prev + curr)
+    ? Object.values(statusCount).reduce((prev, curr) => prev + curr, 0)
     : 0;
 
   return (
@@ -162,7 +162,7 @@ const StayStatusPieChart: React.FC<StayStatusPieChartProps> = (props) => {
   const classes = useChartStyles();
   const { statusCount, limit, terms } = props;
 
-  const sum = Object.values(statusCount).reduce((prev, curr) => prev + curr);
+  const sum = Object.values(statusCount).reduce((prev, curr) => prev + curr, 0);
 
   let data = Object.entries(statusCount).map(([termId, count]) => {
     return {
