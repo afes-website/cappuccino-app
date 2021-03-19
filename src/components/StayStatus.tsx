@@ -74,8 +74,9 @@ const StayStatus: React.FC<StayStatusCardProps> = (props) => {
       )}
       <Divider orientation="vertical" flexItem />
       <div className={classes.termList}>
-        {statusCount && terms
-          ? Object.entries(statusCount).map(([termId, count], index) => (
+        {statusCount && terms ? (
+          Object.keys(statusCount).length > 0 ? (
+            Object.entries(statusCount).map(([termId, count], index) => (
               <>
                 {termId in terms && (
                   <span
@@ -104,24 +105,41 @@ const StayStatus: React.FC<StayStatusCardProps> = (props) => {
                 </Typography>
               </>
             ))
-          : [...Array(5)].map((value, index) => (
-              <>
-                <Skeleton
-                  key={`circleSkeleton-${index}`}
-                  variant="circle"
-                  className={classes.termColorBadge}
-                  animation="wave"
-                />
-                <Skeleton
-                  key={`textSkeleton-${index}`}
-                  width={120}
-                  animation="wave"
-                  style={{
-                    gridColumn: "2 / 4",
-                  }}
-                />
-              </>
-            ))}
+          ) : (
+            <Typography
+              align="center"
+              variant="body2"
+              color="textSecondary"
+              style={{
+                gridColumn: "1 / 4",
+                margin: "auto 0",
+              }}
+            >
+              来場者が展示に入ると
+              <br />
+              内訳が表示されます
+            </Typography>
+          )
+        ) : (
+          [...Array(5)].map((value, index) => (
+            <>
+              <Skeleton
+                key={`circleSkeleton-${index}`}
+                variant="circle"
+                className={classes.termColorBadge}
+                animation="wave"
+              />
+              <Skeleton
+                key={`textSkeleton-${index}`}
+                width={120}
+                animation="wave"
+                style={{
+                  gridColumn: "2 / 4",
+                }}
+              />
+            </>
+          ))
+        )}
       </div>
 
       <div className={classes.countSumBoxWrapper}>
