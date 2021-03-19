@@ -63,7 +63,7 @@ const StayStatus: React.FC<StayStatusCardProps> = (props) => {
 
   return (
     <div className={classes.main}>
-      {statusCount && limit && terms ? (
+      {statusCount && terms ? (
         <StayStatusPieChart
           statusCount={statusCount}
           limit={limit}
@@ -74,12 +74,12 @@ const StayStatus: React.FC<StayStatusCardProps> = (props) => {
       )}
       <Divider orientation="vertical" flexItem />
       <div className={classes.termList}>
-        {statusCount && limit && terms
+        {statusCount && terms
           ? Object.entries(statusCount).map(([termId, count], index) => (
               <>
                 {termId in terms && (
                   <span
-                    key={index}
+                    key={`termColorBadge-${index}`}
                     className={classes.termColorBadge}
                     style={{
                       background: wristBandPaletteColor(
@@ -88,7 +88,7 @@ const StayStatus: React.FC<StayStatusCardProps> = (props) => {
                     }}
                   />
                 )}
-                <Typography key={index} variant="body2">
+                <Typography key={`termTime-${index}`} variant="body2">
                   {termId in terms
                     ? terms[termId].guest_type === "StudentGray"
                       ? `生徒`
@@ -99,19 +99,21 @@ const StayStatus: React.FC<StayStatusCardProps> = (props) => {
                         )}`
                     : termId}
                 </Typography>
-                <Typography key={index} variant="body2">
+                <Typography key={`termCount-${index}`} variant="body2">
                   {`${count}人`}
                 </Typography>
               </>
             ))
-          : [...Array(5)].map(() => (
+          : [...Array(5)].map((value, index) => (
               <>
                 <Skeleton
+                  key={`circleSkeleton-${index}`}
                   variant="circle"
                   className={classes.termColorBadge}
                   animation="wave"
                 />
                 <Skeleton
+                  key={`textSkeleton-${index}`}
                   width={120}
                   animation="wave"
                   style={{
@@ -126,7 +128,7 @@ const StayStatus: React.FC<StayStatusCardProps> = (props) => {
         {statusCount && (
           <span>
             <span className={classes.countSum}>{sum}</span>
-            <span className={classes.countLimit}>/{limit}人</span>
+            <span className={classes.countLimit}>{limit && `/${limit}`}人</span>
           </span>
         )}
       </div>
@@ -150,7 +152,7 @@ const useChartStyles = makeStyles(() =>
 
 interface StayStatusPieChartProps {
   statusCount: ExhStatus["count"];
-  limit: number;
+  limit: number | null;
   terms: Terms;
 }
 
@@ -177,34 +179,36 @@ const StayStatusPieChart: React.FC<StayStatusPieChartProps> = (props) => {
       : "#ccc"
   );
 
-  data = [...data, { termId: "None", count: limit - sum }];
-  colors = [...colors, "transparent"];
-
-  const data2 = [
-    { key: "valid", value: sum },
-    { key: "disabled", value: limit - sum },
-  ];
+  if (limit) {
+    data = [...data, { termId: "None", count: limit - sum }];
+    colors = [...colors, "transparent"];
+  }
 
   return (
     <PieChart height={120} width={120}>
-      <Pie
-        data={data2}
-        dataKey="value"
-        outerRadius={55}
-        innerRadius={40}
-        startAngle={90}
-        endAngle={-270}
-        paddingAngle={0}
-        isAnimationActive={false}
-        nameKey="key"
-        fill={
-          theme.palette.type === "light"
-            ? "rgba(0, 0, 0, 0.12)"
-            : "rgba(255, 255, 255, 0.12)"
-        }
-        stroke="none"
-        className={classes.shadowChart}
-      />
+      {limit && (
+        <Pie
+          data={[
+            { key: "valid", value: sum },
+            { key: "disabled", value: limit - sum },
+          ]}
+          dataKey="value"
+          outerRadius={55}
+          innerRadius={40}
+          startAngle={90}
+          endAngle={-270}
+          paddingAngle={0}
+          isAnimationActive={false}
+          nameKey="key"
+          fill={
+            theme.palette.type === "light"
+              ? "rgba(0, 0, 0, 0.12)"
+              : "rgba(255, 255, 255, 0.12)"
+          }
+          stroke="none"
+          className={classes.shadowChart}
+        />
+      )}
       <Pie
         data={data}
         dataKey="count"

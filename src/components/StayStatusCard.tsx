@@ -23,6 +23,7 @@ const StatusCard: React.FC<{
   title: string;
   paragraph: string;
   getStatus: () => Promise<Status>;
+  showCountLimit: boolean;
 }> = (props) => {
   const auth = useContext(AuthContext).val;
   const classes = useStyles();
@@ -60,7 +61,7 @@ const StatusCard: React.FC<{
         </Typography>
         <StayStatus
           statusCount={status?.count || null}
-          limit={status?.limit || null}
+          limit={(props.showCountLimit ? status?.limit : null) || null}
           terms={terms || null}
         />
       </CardContent>
@@ -86,6 +87,7 @@ export const GeneralStatusCard: React.FC = () => {
             return status.all;
           })
       }
+      showCountLimit={false}
     />
   );
 };
@@ -106,6 +108,7 @@ export const ExhStatusCard: React.FC = () => {
             },
           })
       }
+      showCountLimit={true}
     />
   );
 };
