@@ -44,7 +44,7 @@ const Home: React.FC = () => {
           <ExhStatusCard />
           <HomeCard
             title="入退室スキャン履歴"
-            paragraphs={["自展示への入退室スキャンの履歴を閲覧できます。"]}
+            paragraphs={["自展示の入退室履歴をすべて表示します。"]}
             buttons={[["スキャン履歴", routes.ExhScanHistory.route.create({})]]}
           />
         </>
