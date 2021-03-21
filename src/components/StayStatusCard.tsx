@@ -3,8 +3,17 @@ import { AuthContext } from "@/libs/auth";
 import api, { ExhStatus, Terms } from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import StayStatus from "@/components/StayStatus";
-import { Card, CardContent, Typography } from "@material-ui/core";
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Divider,
+  Typography,
+} from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
+import routes from "@/libs/routes";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -24,6 +33,7 @@ const StatusCard: React.FC<{
   paragraph: string;
   getStatus: () => Promise<Status>;
   showCountLimit: boolean;
+  children?: React.ReactNode;
 }> = (props) => {
   const auth = useContext(AuthContext).val;
   const classes = useStyles();
@@ -65,11 +75,35 @@ const StatusCard: React.FC<{
           terms={terms || null}
         />
       </CardContent>
+      {props.children && props.children}
     </Card>
   );
 };
 
+const useHomeCardStyles = makeStyles((theme) =>
+  createStyles({
+    title: {
+      marginBottom: theme.spacing(1.5),
+    },
+    paragraph: {
+      marginBottom: theme.spacing(2),
+    },
+    actionsWrapper: {
+      position: "relative",
+      display: "flex",
+      justifyContent: "space-around",
+      padding: theme.spacing(0.5),
+    },
+    // divider: {
+    //   position: "absolute",
+    //   top: 0,
+    //   left: "50%",
+    // },
+  })
+);
+
 export const GeneralStatusCard: React.FC = () => {
+  const classes = useHomeCardStyles();
   const auth = useContext(AuthContext).val;
 
   return (
@@ -88,7 +122,20 @@ export const GeneralStatusCard: React.FC = () => {
           })
       }
       showCountLimit={false}
-    />
+    >
+      <>
+        <Divider />
+        <CardActions className={classes.actionsWrapper} disableSpacing>
+          <Button
+            color="secondary"
+            component={Link}
+            to={routes.AllExhStatus.route.create({})}
+          >
+            全展示の滞在状況一覧
+          </Button>
+        </CardActions>
+      </>
+    </StatusCard>
   );
 };
 
