@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Avatar,
   CircularProgress,
@@ -17,6 +17,7 @@ import { useTitleSet } from "@/libs/title";
 import api, { AllStatus, ExhStatus, Terms } from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import { useWristBandPaletteColor } from "@/libs/wristBandColor";
+import PullToRefresh from "@/components/PullToRefresh";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -58,26 +59,34 @@ const AllExhStatus: React.FC = () => {
   const [status, setStatus] = useState<AllStatus | null>(null);
   const [terms, setTerms] = useState<Terms | null>(null);
 
+  const fetch = useCallback(
+    () =>
+      Promise.all([
+        api(aspida())
+          .onsite.exhibition.status.$get({
+            headers: {
+              Authorization: "bearer " + auth.get_current_user()?.token,
+            },
+          })
+          .then((res) => {
+            setStatus(res);
+          }),
+        api(aspida())
+          .onsite.general.term.$get({
+            headers: {
+              Authorization: "bearer " + auth.get_current_user()?.token,
+            },
+          })
+          .then((terms) => {
+            setTerms(terms);
+          }),
+      ]),
+    [auth]
+  );
+
   useEffect(() => {
-    api(aspida())
-      .onsite.exhibition.status.$get({
-        headers: {
-          Authorization: "bearer " + auth.get_current_user()?.token,
-        },
-      })
-      .then((res) => {
-        setStatus(res);
-      });
-    api(aspida())
-      .onsite.general.term.$get({
-        headers: {
-          Authorization: "bearer " + auth.get_current_user()?.token,
-        },
-      })
-      .then((terms) => {
-        setTerms(terms);
-      });
-  }, [auth]);
+    fetch();
+  }, [auth, fetch]);
 
   if (status === null || terms === null)
     return (
@@ -91,55 +100,57 @@ const AllExhStatus: React.FC = () => {
     .reduce((a, b) => Math.max(a, b));
 
   return (
-    <div className={classes.root}>
-      <Typography align="center" variant="body2" color="textSecondary">
-        展示番号順に、すべての展示を表示しています。
-      </Typography>
-      <List>
-        {Object.entries(status.exh)
-          .sort(([, a], [, b]) => {
-            if (a.info.room_id < b.info.room_id) return -1;
-            if (a.info.room_id > b.info.room_id) return 1;
-            return 0;
-          })
-          .map(([exhId, exhStatus]) => (
-            <ListItem key={exhId} divider className={classes.listItem}>
-              <ListItemIcon>
-                <Avatar
-                  alt={exhStatus.info.name}
-                  src={api(aspida())
-                    .images._id(exhStatus.info.thumbnail_image_id)
-                    .$path()}
+    <PullToRefresh onRefresh={fetch}>
+      <div className={classes.root}>
+        <Typography align="center" variant="body2" color="textSecondary">
+          展示番号順に、すべての展示を表示しています。
+        </Typography>
+        <List>
+          {Object.entries(status.exh)
+            .sort(([, a], [, b]) => {
+              if (a.info.room_id < b.info.room_id) return -1;
+              if (a.info.room_id > b.info.room_id) return 1;
+              return 0;
+            })
+            .map(([exhId, exhStatus]) => (
+              <ListItem key={exhId} divider className={classes.listItem}>
+                <ListItemIcon>
+                  <Avatar
+                    alt={exhStatus.info.name}
+                    src={api(aspida())
+                      .images._id(exhStatus.info.thumbnail_image_id)
+                      .$path()}
+                  />
+                </ListItemIcon>
+                <ListItemText
+                  primary={exhStatus.info.name}
+                  secondary={exhStatus.info.room_id + " • " + `@${exhId}`}
                 />
-              </ListItemIcon>
-              <ListItemText
-                primary={exhStatus.info.name}
-                secondary={exhStatus.info.room_id + " • " + `@${exhId}`}
-              />
-              <ListItemSecondaryAction>
-                <Typography display="inline">
-                  {Object.entries(exhStatus.count)
-                    .map(([, count]) => count)
-                    .reduce((prev, curr) => prev + curr, 0)}
-                </Typography>
-                <Typography
-                  display="inline"
-                  variant="caption"
-                  className={classes.countLimit}
-                >
-                  {`/${exhStatus.limit}人`}
-                </Typography>
-              </ListItemSecondaryAction>
-              <LinearChart
-                className={classes.linearChart}
-                status={exhStatus}
-                terms={terms}
-                maxLimit={maxLimit}
-              />
-            </ListItem>
-          ))}
-      </List>
-    </div>
+                <ListItemSecondaryAction>
+                  <Typography display="inline">
+                    {Object.entries(exhStatus.count)
+                      .map(([, count]) => count)
+                      .reduce((prev, curr) => prev + curr, 0)}
+                  </Typography>
+                  <Typography
+                    display="inline"
+                    variant="caption"
+                    className={classes.countLimit}
+                  >
+                    {`/${exhStatus.limit}人`}
+                  </Typography>
+                </ListItemSecondaryAction>
+                <LinearChart
+                  className={classes.linearChart}
+                  status={exhStatus}
+                  terms={terms}
+                  maxLimit={maxLimit}
+                />
+              </ListItem>
+            ))}
+        </List>
+      </div>
+    </PullToRefresh>
   );
 };
 
