@@ -87,7 +87,6 @@ const ToggleThemeProvider: React.FC<{
   const _setTheme = (mode: ThemeType) => {
     _setThemeState((old) => ({ ...old, theme: themes[mode] }));
     setThemeModeToLocalStorage(mode);
-    window.location.reload();
   };
 
   const [themeState, _setThemeState] = React.useState({
