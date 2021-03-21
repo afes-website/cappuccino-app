@@ -10580,6 +10580,11 @@ react-scripts@4.0.3:
   optionalDependencies:
     fsevents "^2.1.3"
 
+react-simple-pull-to-refresh@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/react-simple-pull-to-refresh/-/react-simple-pull-to-refresh-1.2.3.tgz#e2fc67ba25e688c9866670e08c455ebc464f497f"
+  integrity sha512-GH4dJn3954IavyOg6rkF00LPqr2lG0DzLNGMhTYXDaOP5mjAduW3TCThexExS/sDWrRpN37IU8gzaimCvUse+w==
+
 react-smooth@^1.0.6:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/react-smooth/-/react-smooth-1.0.6.tgz#18b964f123f7bca099e078324338cd8739346d0a"
