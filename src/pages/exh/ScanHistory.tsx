@@ -51,9 +51,12 @@ const ScanHistory: React.FC = () => {
 
   useEffect(() => {
     api(aspida())
-      .onsite.exhibition.log.$get({
+      .onsite.general.log.$get({
         headers: {
           Authorization: "bearer " + auth.get_current_user()?.token,
+        },
+        query: {
+          exh_id: auth.get_current_user_id() || undefined,
         },
       })
       .then((res) => {
