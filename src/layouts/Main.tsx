@@ -12,10 +12,10 @@ import { TitleContextProvider } from "@/libs/title";
 import {
   getThemeModeFromLocalStorage,
   setThemeModeToLocalStorage,
-  ToggleThemeContextProvider,
+  SwitchThemeContextProvider,
 } from "@/libs/toggleTheme";
 import { useHistory } from "react-router-dom";
-import { ThemeType } from "@/libs/toggleTheme";
+import { ThemeMode } from "@/libs/toggleTheme";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -84,19 +84,21 @@ export default MainLayout;
 const ToggleThemeProvider: React.FC<{
   children: React.ReactNode;
 }> = (props) => {
-  const _setTheme = (mode: ThemeType) => {
-    _setThemeState((old) => ({ ...old, theme: themes[mode] }));
+  const _setTheme = (mode: ThemeMode) => {
+    setCurrentThemeMode(mode);
+    console.log("switched!", mode);
     setThemeModeToLocalStorage(mode);
   };
 
-  const [themeState, _setThemeState] = React.useState({
-    theme: themes[getThemeModeFromLocalStorage() || "light"],
-    _setTheme,
-  });
+  const [currentThemeMode, setCurrentThemeMode] = React.useState(
+    getThemeModeFromLocalStorage() || "light"
+  );
 
   return (
-    <ToggleThemeContextProvider value={themeState}>
-      <ThemeProvider theme={themeState.theme}>{props.children}</ThemeProvider>
-    </ToggleThemeContextProvider>
+    <SwitchThemeContextProvider value={{ _setTheme }}>
+      <ThemeProvider theme={themes[currentThemeMode]}>
+        {props.children}
+      </ThemeProvider>
+    </SwitchThemeContextProvider>
   );
 };

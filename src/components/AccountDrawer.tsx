@@ -25,7 +25,7 @@ import {
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
 import { AuthContext } from "@/libs/auth";
 import AccountIcon from "@/components/AccountIcon";
-import { useToggleTheme } from "@/libs/toggleTheme";
+import { useSwitchTheme } from "@/libs/toggleTheme";
 import { DarkMode, LightMode } from "@/components/MaterialSvgIcons";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -69,7 +69,7 @@ const AccountDrawer: React.FC<Props> = (props) => {
   const auth = useContext(AuthContext).val;
   const [isLogoutAlertVisible, setIsLogoutAlertVisible] = useState(false);
   const theme = useTheme<Theme>();
-  const toggleTheme = useToggleTheme();
+  const toggleTheme = useSwitchTheme();
 
   return (
     <Drawer
