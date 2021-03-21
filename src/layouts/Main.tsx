@@ -9,7 +9,13 @@ import TopBar from "@/components/TopBar";
 import BottomNav from "@/components/BottomNav";
 import themes from "@/assets/styles/theme";
 import { TitleContextProvider } from "@/libs/title";
+import {
+  getThemeModeFromLocalStorage,
+  setThemeModeToLocalStorage,
+  ToggleThemeContextProvider,
+} from "@/libs/toggleTheme";
 import { useHistory } from "react-router-dom";
+import { ThemeType } from "@/libs/toggleTheme";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -57,7 +63,7 @@ const MainLayout: React.FC<Props> = (props) => {
   }
 
   return (
-    <ThemeProvider theme={themes.light}>
+    <ToggleThemeProvider>
       <TitleContextProvider value={titleState}>
         <Paper className={classes.root} square={true}>
           <div className={classes.topBar}>
@@ -69,8 +75,29 @@ const MainLayout: React.FC<Props> = (props) => {
           </div>
         </Paper>
       </TitleContextProvider>
-    </ThemeProvider>
+    </ToggleThemeProvider>
   );
 };
 
 export default MainLayout;
+
+const ToggleThemeProvider: React.FC<{
+  children: React.ReactNode;
+}> = (props) => {
+  const _setTheme = (mode: ThemeType) => {
+    _setThemeState((old) => ({ ...old, theme: themes[mode] }));
+    setThemeModeToLocalStorage(mode);
+    window.location.reload();
+  };
+
+  const [themeState, _setThemeState] = React.useState({
+    theme: themes[getThemeModeFromLocalStorage() || "light"],
+    _setTheme,
+  });
+
+  return (
+    <ToggleThemeContextProvider value={themeState}>
+      <ThemeProvider theme={themeState.theme}>{props.children}</ThemeProvider>
+    </ToggleThemeContextProvider>
+  );
+};
