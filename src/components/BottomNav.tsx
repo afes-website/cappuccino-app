@@ -4,6 +4,7 @@ import {
   BottomNavigationAction,
   createStyles,
   makeStyles,
+  Paper,
   Theme,
 } from "@material-ui/core";
 import routes from "@/libs/routes";
@@ -15,9 +16,7 @@ import { UserInfo } from "@afes-website/docs";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      borderTop: "1px solid " + theme.palette.secondary.main,
-    },
+    root: {},
     selected: {
       color: theme.palette.secondary.main + " !important",
     },
@@ -58,31 +57,33 @@ const BottomNav: React.FC = () => {
 
   if (auth.get_current_user_id())
     return (
-      <BottomNavigation
-        value={value}
-        onChange={(event, newValue) => {
-          setValue(newValue);
-        }}
-        className={classes.root}
-        showLabels={true}
-      >
-        {get_menus().map(([label, route, Component]) => {
-          return (
-            <BottomNavigationAction
-              label={label}
-              icon={Component}
-              className={classes.button}
-              classes={{
-                selected: classes.selected,
-              }}
-              key={label}
-              component={Link}
-              to={route}
-              value={route}
-            />
-          );
-        })}
-      </BottomNavigation>
+      <Paper elevation={6}>
+        <BottomNavigation
+          value={value}
+          onChange={(event, newValue) => {
+            setValue(newValue);
+          }}
+          className={classes.root}
+          showLabels={true}
+        >
+          {get_menus().map(([label, route, Component]) => {
+            return (
+              <BottomNavigationAction
+                label={label}
+                icon={Component}
+                className={classes.button}
+                classes={{
+                  selected: classes.selected,
+                }}
+                key={label}
+                component={Link}
+                to={route}
+                value={route}
+              />
+            );
+          })}
+        </BottomNavigation>
+      </Paper>
     );
   else return <React.Fragment />;
 };
