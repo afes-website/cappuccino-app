@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import createCtx from "@/libs/createCtx";
 import { themeOptions } from "@/assets/styles/theme";
 import { createMuiTheme, Theme } from "@material-ui/core";
@@ -36,7 +36,11 @@ export const useTheme = (): [Theme, (mode: ThemeMode) => void] => {
     setThemeModeToLocalStorage(mode);
   };
 
-  return [createMuiTheme(themeOptions[mode]), setThemeMode];
+  const theme: Theme = useMemo(() => createMuiTheme(themeOptions[mode]), [
+    mode,
+  ]);
+
+  return [theme, setThemeMode];
 };
 
 export const useSetThemeMode = (): ((mode: ThemeMode) => void) => {
