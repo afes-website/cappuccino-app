@@ -7,15 +7,9 @@ import {
 } from "@material-ui/core";
 import TopBar from "@/components/TopBar";
 import BottomNav from "@/components/BottomNav";
-import themes from "@/assets/styles/theme";
 import { TitleContextProvider } from "@/libs/title";
-import {
-  getThemeModeFromLocalStorage,
-  setThemeModeToLocalStorage,
-  SwitchThemeContextProvider,
-} from "@/libs/toggleTheme";
+import { ThemeContextProvider, useTheme } from "@/libs/themeMode";
 import { useHistory } from "react-router-dom";
-import { ThemeMode } from "@/libs/toggleTheme";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -84,21 +78,11 @@ export default MainLayout;
 const ToggleThemeProvider: React.FC<{
   children: React.ReactNode;
 }> = (props) => {
-  const _setTheme = (mode: ThemeMode) => {
-    setCurrentThemeMode(mode);
-    console.log("switched!", mode);
-    setThemeModeToLocalStorage(mode);
-  };
-
-  const [currentThemeMode, setCurrentThemeMode] = React.useState(
-    getThemeModeFromLocalStorage() || "light"
-  );
+  const [theme, setThemeMode] = useTheme();
 
   return (
-    <SwitchThemeContextProvider value={{ _setTheme }}>
-      <ThemeProvider theme={themes[currentThemeMode]}>
-        {props.children}
-      </ThemeProvider>
-    </SwitchThemeContextProvider>
+    <ThemeContextProvider value={{ setThemeMode }}>
+      <ThemeProvider theme={theme}>{props.children}</ThemeProvider>
+    </ThemeContextProvider>
   );
 };

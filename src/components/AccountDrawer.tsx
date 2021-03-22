@@ -21,11 +21,12 @@ import {
   Typography,
   useTheme,
   IconButton,
+  Toolbar,
 } from "@material-ui/core";
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
 import { AuthContext } from "@/libs/auth";
 import AccountIcon from "@/components/AccountIcon";
-import { useSwitchTheme } from "@/libs/toggleTheme";
+import { useSetThemeMode } from "@/libs/themeMode";
 import { DarkMode, LightMode } from "@/components/MaterialSvgIcons";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -69,7 +70,7 @@ const AccountDrawer: React.FC<Props> = (props) => {
   const auth = useContext(AuthContext).val;
   const [isLogoutAlertVisible, setIsLogoutAlertVisible] = useState(false);
   const theme = useTheme<Theme>();
-  const toggleTheme = useSwitchTheme();
+  const setThemeMode = useSetThemeMode();
 
   return (
     <Drawer
@@ -153,13 +154,15 @@ const AccountDrawer: React.FC<Props> = (props) => {
       {/* ==== bottom buttons ==== */}
       <div className={classes.bottomWrapper}>
         <Divider />
-        <IconButton
-          onClick={() => {
-            toggleTheme(theme.palette.type === "light" ? "dark" : "light");
-          }}
-        >
-          {theme.palette.type === "light" ? <DarkMode /> : <LightMode />}
-        </IconButton>
+        <Toolbar>
+          <IconButton
+            onClick={() => {
+              setThemeMode(theme.palette.type === "light" ? "dark" : "light");
+            }}
+          >
+            {theme.palette.type === "light" ? <DarkMode /> : <LightMode />}
+          </IconButton>
+        </Toolbar>
       </div>
 
       {/* ==== dialogs ==== */}
