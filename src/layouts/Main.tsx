@@ -5,11 +5,12 @@ import BottomNav from "@/components/BottomNav";
 import { useTitleContext } from "@/libs/title";
 import ProvidersProvider from "@/components/ProvidersProvider";
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
       minHeight: "100vh",
       height: "max-content",
+      background: theme.palette.background.default,
     },
     topBar: {
       position: "sticky",
