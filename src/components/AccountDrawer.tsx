@@ -19,10 +19,15 @@ import {
   Paper,
   Theme,
   Typography,
+  useTheme,
+  IconButton,
+  Toolbar,
 } from "@material-ui/core";
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
 import { AuthContext } from "@/libs/auth";
 import AccountIcon from "@/components/AccountIcon";
+import { useSetThemeMode } from "@/libs/themeMode";
+import { DarkMode, LightMode } from "@/components/MaterialSvgIcons";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -48,6 +53,9 @@ const useStyles = makeStyles((theme: Theme) =>
     logoutButton: {
       color: theme.palette.error.main,
     },
+    bottomWrapper: {
+      marginTop: "auto",
+    },
   })
 );
 
@@ -61,6 +69,8 @@ const AccountDrawer: React.FC<Props> = (props) => {
   const classes = useStyles();
   const auth = useContext(AuthContext).val;
   const [isLogoutAlertVisible, setIsLogoutAlertVisible] = useState(false);
+  const theme = useTheme<Theme>();
+  const toggleThemeMode = useSetThemeMode();
 
   return (
     <Drawer
@@ -70,6 +80,7 @@ const AccountDrawer: React.FC<Props> = (props) => {
         paper: classes.paper,
       }}
     >
+      {/* ==== current list ==== */}
       <Paper className={classes.nowAccount} square={true}>
         <AccountIcon
           account={auth.get_current_user()}
@@ -83,14 +94,11 @@ const AccountDrawer: React.FC<Props> = (props) => {
           @{auth.get_current_user()?.id || ""}
         </Typography>
       </Paper>
+
+      {/* ==== account list ==== */}
       <List>
         {Object.values(auth.get_all_users())
-          .map((info) => {
-            return info;
-          })
-          .filter((account) => {
-            return account.id !== auth.get_current_user()?.id;
-          })
+          .filter((account) => account.id !== auth.get_current_user()?.id)
           .map((account, index, array) => {
             return (
               <React.Fragment key={account.id}>
@@ -112,15 +120,15 @@ const AccountDrawer: React.FC<Props> = (props) => {
                     secondary={"@" + account.id}
                   />
                 </ListItem>
-                {index !== array.length - 1 ? (
+                {index !== array.length - 1 && (
                   <Divider variant="inset" component="li" />
-                ) : (
-                  <React.Fragment />
                 )}
               </React.Fragment>
             );
           })}
       </List>
+
+      {/* ==== login / logout ==== */}
       <Button
         className={classes.actionButton}
         color="secondary"
@@ -142,6 +150,18 @@ const AccountDrawer: React.FC<Props> = (props) => {
       >
         @{auth.get_current_user_id()} からログアウト
       </Button>
+
+      {/* ==== bottom buttons ==== */}
+      <div className={classes.bottomWrapper}>
+        <Divider />
+        <Toolbar>
+          <IconButton onClick={toggleThemeMode}>
+            {theme.palette.type === "light" ? <DarkMode /> : <LightMode />}
+          </IconButton>
+        </Toolbar>
+      </div>
+
+      {/* ==== dialogs ==== */}
       <Dialog open={isLogoutAlertVisible}>
         <DialogTitle>ログアウトしますか？</DialogTitle>
         <DialogContent>
