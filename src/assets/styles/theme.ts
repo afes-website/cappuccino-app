@@ -55,18 +55,27 @@ const typography: TypographyOptions = {
   },
 };
 
-export const themeLight: Theme = createMuiTheme({
+export const themeLightOptions = {
   palette: lightPalette,
   props,
   overrides,
   typography,
-});
+};
 
-export const themeDark: Theme = createMuiTheme({
+export const themeDarkOptions = {
   palette: darkPalette,
   props,
   overrides,
   typography,
-});
+};
+
+export const themeOptions = {
+  light: themeLightOptions,
+  dark: themeDarkOptions,
+};
+
+export const themeLight: Theme = createMuiTheme(themeLightOptions);
+
+export const themeDark: Theme = createMuiTheme(themeDarkOptions);
 
 export default { light: themeLight, dark: themeDark };
