@@ -51,6 +51,7 @@ const useStyles = makeStyles((theme) =>
       height: 6,
       bottom: 0,
       left: 0,
+      borderRadius: "4px 4px 0 0",
     },
     countLimit: {
       marginLeft: 4,
@@ -282,7 +283,7 @@ const LinearChart: React.FC<{
     [
       theme.palette.type === "light"
         ? "rgba(0, 0, 0, 0.12)"
-        : "rgba(255, 255, 255, 0.12)",
+        : "rgba(255, 255, 255, 0.2)",
       [`${(sum / maxLimit) * 100}%`, `${(status.limit / maxLimit) * 100}%`],
     ],
     ["transparent", [`${(status.limit / maxLimit) * 100}%`, "100%"]],
