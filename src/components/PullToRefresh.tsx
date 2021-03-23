@@ -6,6 +6,9 @@ import { Refresh } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
+    root: {
+      paddingBottom: 64,
+    },
     pulling: {
       display: "block",
       margin: "0 auto",
@@ -56,6 +59,9 @@ const PullToRefresh: React.FC<PullToRefreshProps> = (props) => {
           <CircularProgress color="inherit" size={18} thickness={6} />
         </Paper>
       }
+      pullDownThreshold={56}
+      maxPullDownDistance={80}
+      className={classes.root}
       {...libProps}
     >
       {children}
