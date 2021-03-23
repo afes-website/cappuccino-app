@@ -3,9 +3,11 @@ import createCtx from "@/libs/createCtx";
 import { themeOptions } from "@/assets/styles/theme";
 import { createMuiTheme, Theme } from "@material-ui/core";
 
-const storage_key_mode = "theme_mode";
-
 export type ThemeMode = "light" | "dark";
+
+/* ======== Local Storage ======== */
+
+const storage_key_mode = "theme_mode";
 
 const getThemeModeFromLocalStorage = (): ThemeMode | undefined => {
   const _mode = localStorage.getItem(storage_key_mode);
@@ -17,8 +19,10 @@ const setThemeModeToLocalStorage = (mode: ThemeMode): void => {
   localStorage.setItem(storage_key_mode, mode);
 };
 
+/* ======== Context ======== */
+
 export const [useThemeContext, ThemeContextProvider] = createCtx<{
-  setThemeMode: (mode: ThemeMode) => void;
+  toggleThemeMode: () => void;
 }>();
 
 export const ThemeCtx = {
@@ -26,26 +30,29 @@ export const ThemeCtx = {
   ThemeContextProvider,
 };
 
-export const useTheme = (): [Theme, (mode: ThemeMode) => void] => {
+/* ======== Hooks ======== */
+
+export const useTheme = (): [Theme, () => void] => {
   const [mode, setMode] = useState<ThemeMode>(
     getThemeModeFromLocalStorage() || "light"
   );
-
-  const setThemeMode = (mode: ThemeMode) => {
-    setMode(mode);
-    setThemeModeToLocalStorage(mode);
-  };
 
   const theme: Theme = useMemo(() => createMuiTheme(themeOptions[mode]), [
     mode,
   ]);
 
-  return [theme, setThemeMode];
+  const toggleThemeMode = () => {
+    const _mode = mode === "light" ? "dark" : "light";
+    setMode(_mode);
+    setThemeModeToLocalStorage(_mode);
+  };
+
+  return [theme, toggleThemeMode];
 };
 
-export const useSetThemeMode = (): ((mode: ThemeMode) => void) => {
+export const useSetThemeMode = (): (() => void) => {
   const Theme = useThemeContext();
-  return Theme.setThemeMode;
+  return Theme.toggleThemeMode;
 };
 
 export default { useSetThemeMode, ThemeCtx };

@@ -7,10 +7,10 @@ import { useHistory } from "react-router-dom";
 export const CustomThemeProvider: React.FC<{
   children: React.ReactNode;
 }> = (props) => {
-  const [theme, setThemeMode] = useTheme();
+  const [theme, toggleThemeMode] = useTheme();
 
   return (
-    <ThemeContextProvider value={{ setThemeMode }}>
+    <ThemeContextProvider value={{ toggleThemeMode }}>
       <ThemeProvider theme={theme}>{props.children}</ThemeProvider>
     </ThemeContextProvider>
   );

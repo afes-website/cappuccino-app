@@ -70,7 +70,7 @@ const AccountDrawer: React.FC<Props> = (props) => {
   const auth = useContext(AuthContext).val;
   const [isLogoutAlertVisible, setIsLogoutAlertVisible] = useState(false);
   const theme = useTheme<Theme>();
-  const setThemeMode = useSetThemeMode();
+  const toggleThemeMode = useSetThemeMode();
 
   return (
     <Drawer
@@ -155,11 +155,7 @@ const AccountDrawer: React.FC<Props> = (props) => {
       <div className={classes.bottomWrapper}>
         <Divider />
         <Toolbar>
-          <IconButton
-            onClick={() => {
-              setThemeMode(theme.palette.type === "light" ? "dark" : "light");
-            }}
-          >
+          <IconButton onClick={toggleThemeMode}>
             {theme.palette.type === "light" ? <DarkMode /> : <LightMode />}
           </IconButton>
         </Toolbar>
