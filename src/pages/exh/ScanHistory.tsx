@@ -50,7 +50,7 @@ const ScanHistory: React.FC = () => {
 
   const [logs, setLogs] = useState<ActivityLog[] | null>(null);
 
-  const fetch = useCallback(
+  const load = useCallback(
     () =>
       api(aspida())
         .onsite.general.log.$get({
@@ -68,8 +68,8 @@ const ScanHistory: React.FC = () => {
   );
 
   useEffect(() => {
-    fetch();
-  }, [auth, fetch]);
+    load();
+  }, [auth, load]);
 
   if (logs === null)
     return (
@@ -79,7 +79,7 @@ const ScanHistory: React.FC = () => {
     );
 
   return (
-    <PullToRefresh onRefresh={fetch}>
+    <PullToRefresh onRefresh={load}>
       <div className={classes.root}>
         {logs.length > 0 && (
           <Typography align="center" variant="body2" color="textSecondary">

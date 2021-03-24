@@ -74,7 +74,7 @@ const AllExhStatus: React.FC = () => {
 
   const [sortKey, setSortKey] = useState<SortKey>("roomId");
 
-  const fetch = useCallback(
+  const load = useCallback(
     () =>
       Promise.all([
         api(aspida())
@@ -100,8 +100,8 @@ const AllExhStatus: React.FC = () => {
   );
 
   useEffect(() => {
-    fetch();
-  }, [auth, fetch]);
+    load();
+  }, [auth, load]);
 
   if (status === null || terms === null)
     return (
@@ -121,7 +121,7 @@ const AllExhStatus: React.FC = () => {
   };
 
   return (
-    <PullToRefresh onRefresh={fetch}>
+    <PullToRefresh onRefresh={load}>
       <div className={classes.root}>
         <ButtonGroup fullWidth className={classes.sortKeySelector}>
           {Object.entries(sortOptions).map(([key, { label }]) => (
