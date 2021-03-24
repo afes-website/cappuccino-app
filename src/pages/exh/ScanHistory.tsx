@@ -114,12 +114,11 @@ const ScanHistory: React.FC = () => {
               </ListItem>
             ))}
         </List>
-        {logs.length > 0 && (
+        {logs.length > 0 ? (
           <Typography align="center" variant="body2" color="textSecondary">
             履歴は以上です。お疲れさまでした！
           </Typography>
-        )}
-        {logs.length === 0 && (
+        ) : (
           <Typography align="center" variant="body2" color="textSecondary">
             まだスキャン履歴はありません。
           </Typography>
