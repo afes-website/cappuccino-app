@@ -44,7 +44,7 @@ export interface ResultChipProps {
 const getResultIcon = (
   color: ResultChipColors | null
 ): React.ReactElement<typeof SvgIcon> => {
-  if (!color) return <></>;
+  if (!color) return <SvgIcon />;
   return color === "success" ? <CheckCircleOutline /> : <ErrorOutline />;
 };
 
@@ -99,24 +99,22 @@ const ResultChipRenderFunction: React.ForwardRefRenderFunction<
   }, [chipStatus, duration]);
 
   return (
-    <>
-      {color && (
-        <Fade
-          in={chipStatus === "opened"}
-          timeout={{ appear: 0, enter: 200, exit: 0 }}
-        >
-          <Chip
-            icon={getResultIcon(color)}
-            label={message}
-            className={clsx(
-              classes.root,
-              color === "success" ? classes.success : classes.error,
-              props.className
-            )}
-          />
-        </Fade>
-      )}
-    </>
+    color && (
+      <Fade
+        in={chipStatus === "opened"}
+        timeout={{ appear: 0, enter: 200, exit: 0 }}
+      >
+        <Chip
+          icon={getResultIcon(color)}
+          label={message}
+          className={clsx(
+            classes.root,
+            color === "success" ? classes.success : classes.error,
+            props.className
+          )}
+        />
+      </Fade>
+    )
   );
 };
 

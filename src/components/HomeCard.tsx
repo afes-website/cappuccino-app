@@ -67,11 +67,9 @@ const HomeCard: React.FC<Props> = (props) => {
       <CardActions className={classes.actionsWrapper} disableSpacing>
         {props.buttons.map(([label, route]) => {
           return (
-            <>
-              <Button color="secondary" key={label} component={Link} to={route}>
-                {label}
-              </Button>
-            </>
+            <Button color="secondary" key={label} component={Link} to={route}>
+              {label}
+            </Button>
           );
         })}
         {props.buttons.length === 2 && (

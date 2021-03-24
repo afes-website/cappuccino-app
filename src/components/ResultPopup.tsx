@@ -104,49 +104,46 @@ const ResultPopupRenderFunction: React.ForwardRefRenderFunction<
     }
   }, [dialogStatus, props.status, props.duration, handleClose]);
 
-  const StatusIcon: React.FC = () => {
-    switch (props.status) {
-      case "loading":
-        return (
-          <Fade in={true} timeout={{ enter: 1000, exit: 0 }}>
-            <CircularProgress
-              className={clsx(classes.icon, classes.progress)}
-              size={54}
-              thickness={5.1}
-            />
-          </Fade>
-        );
-      case "success":
-        return (
-          <Fade in={true} timeout={{ enter: 300, exit: 0 }}>
-            <CheckCircleOutline
-              className={clsx(classes.icon, classes.success)}
-            />
-          </Fade>
-        );
-      case "error":
-        return (
-          <Fade in={true} timeout={{ enter: 300, exit: 0 }}>
-            <ErrorOutline className={clsx(classes.icon, classes.error)} />
-          </Fade>
-        );
-    }
-    return <></>;
-  };
-
   return (
-    <>
-      <Dialog open={dialogStatus === "opened"} TransitionComponent={Transition}>
-        <DialogContent className={classes.iconWrapper}>
-          <StatusIcon />
-        </DialogContent>
-      </Dialog>
-    </>
+    <Dialog open={dialogStatus === "opened"} TransitionComponent={Transition}>
+      <DialogContent className={classes.iconWrapper}>
+        {props.status && <StatusIcon status={props.status} />}
+      </DialogContent>
+    </Dialog>
   );
 };
 
 const ResultPopup = forwardRef<ResultPopupRefs, ResultPopupProps>(
   ResultPopupRenderFunction
 );
+
+const StatusIcon: React.FC<{ status: StatusColor }> = ({ status }) => {
+  const classes = useStyles();
+
+  switch (status) {
+    case "loading":
+      return (
+        <Fade in={true} timeout={{ enter: 1000, exit: 0 }}>
+          <CircularProgress
+            className={clsx(classes.icon, classes.progress)}
+            size={54}
+            thickness={5.1}
+          />
+        </Fade>
+      );
+    case "success":
+      return (
+        <Fade in={true} timeout={{ enter: 300, exit: 0 }}>
+          <CheckCircleOutline className={clsx(classes.icon, classes.success)} />
+        </Fade>
+      );
+    case "error":
+      return (
+        <Fade in={true} timeout={{ enter: 300, exit: 0 }}>
+          <ErrorOutline className={clsx(classes.icon, classes.error)} />
+        </Fade>
+      );
+  }
+};
 
 export default ResultPopup;

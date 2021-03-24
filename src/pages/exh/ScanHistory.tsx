@@ -97,19 +97,17 @@ const ScanHistory: React.FC = () => {
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    <>
-                      <Typography>
-                        <span
-                          className={classes.termColorBadge}
-                          style={{
-                            background: wristBandPaletteColor(
-                              log.guest.term.guest_type
-                            ).main,
-                          }}
-                        />
-                        {log.guest.id}
-                      </Typography>
-                    </>
+                    <Typography>
+                      <span
+                        className={classes.termColorBadge}
+                        style={{
+                          background: wristBandPaletteColor(
+                            log.guest.term.guest_type
+                          ).main,
+                        }}
+                      />
+                      {log.guest.id}
+                    </Typography>
                   }
                   secondary={getStringDateTime(log.timestamp)}
                 />
