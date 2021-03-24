@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) =>
 );
 
 export interface PullToRefreshProps {
-  onRefresh: () => Promise<void>;
+  onRefresh: () => Promise<unknown>;
   // isPullable?: boolean;
   children: JSX.Element;
 }

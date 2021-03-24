@@ -200,7 +200,11 @@ const sortOptions: {
   roomId: {
     label: "展示番号",
     message: "展示番号順に、すべての展示を表示しています。",
-    compareFn: ([, a], [, b]) => a.info.room_id - b.info.room_id,
+    compareFn: ([, a], [, b]) => {
+      if (a.info.room_id < b.info.room_id) return -1;
+      if (a.info.room_id > b.info.room_id) return 1;
+      return 0;
+    },
   },
   count: {
     label: "滞在人数",
