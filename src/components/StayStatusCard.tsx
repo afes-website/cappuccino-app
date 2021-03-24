@@ -71,11 +71,11 @@ const StatusCard: React.FC<{
         </Typography>
         <StayStatus
           statusCount={status?.count || null}
-          limit={(props.showCountLimit ? status?.limit : null) || null}
+          limit={(props.showCountLimit && status?.limit) || null}
           terms={terms || null}
         />
       </CardContent>
-      {props.children && props.children}
+      {props.children}
     </Card>
   );
 };

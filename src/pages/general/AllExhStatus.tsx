@@ -200,11 +200,7 @@ const sortOptions: {
   roomId: {
     label: "展示番号",
     message: "展示番号順に、すべての展示を表示しています。",
-    compareFn: ([, a], [, b]) => {
-      if (a.info.room_id < b.info.room_id) return -1;
-      if (a.info.room_id > b.info.room_id) return 1;
-      return 0;
-    },
+    compareFn: ([, a], [, b]) => a.info.room_id - b.info.room_id,
   },
   count: {
     label: "滞在人数",
@@ -218,7 +214,7 @@ const sortOptions: {
         (prev, curr) => prev + curr,
         0
       );
-      return (sum_a - sum_b) * -1;
+      return -(sum_a - sum_b);
     },
   },
   congestion: {
@@ -234,7 +230,7 @@ const sortOptions: {
         0
       );
       // ソート順序: (上限人数 - 滞在人数) 等しい場合は人数が多いほうが混雑
-      return a.limit - sum_a - (b.limit - sum_b) || sum_b - sum_a;
+      return a.limit - sum_a - (b.limit - sum_b) ?? sum_b - sum_a;
     },
   },
 };

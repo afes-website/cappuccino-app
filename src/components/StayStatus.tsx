@@ -121,7 +121,7 @@ const StayStatus: React.FC<StayStatusCardProps> = (props) => {
             </Typography>
           )
         ) : (
-          [...Array(5)].map((value, index) => (
+          [...Array(5)].map((_, index) => (
             <>
               <Skeleton
                 key={`circleSkeleton-${index}`}
@@ -233,7 +233,7 @@ const StayStatusPieChart: React.FC<StayStatusPieChartProps> = (props) => {
         nameKey="termId"
         stroke="none"
       >
-        {data.map((entry, index) => (
+        {data.map((_, index) => (
           <Cell key={`cell-${index}`} fill={colors[index]} />
         ))}
       </Pie>
