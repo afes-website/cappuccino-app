@@ -204,29 +204,23 @@ const StayStatusPieChart: React.FC<StayStatusPieChartProps> = (props) => {
 
   return (
     <PieChart height={120} width={120}>
-      {limit && (
-        <Pie
-          data={[
-            { key: "valid", value: sum },
-            { key: "disabled", value: limit - sum },
-          ]}
-          dataKey="value"
-          outerRadius={55}
-          innerRadius={40}
-          startAngle={90}
-          endAngle={-270}
-          paddingAngle={0}
-          isAnimationActive={false}
-          nameKey="key"
-          fill={
-            theme.palette.type === "light"
-              ? "rgba(0, 0, 0, 0.12)"
-              : "rgba(255, 255, 255, 0.12)"
-          }
-          stroke="none"
-          className={classes.shadowChart}
-        />
-      )}
+      <Pie
+        data={[
+          { key: "valid", value: sum },
+          { key: "disabled", value: limit ? limit - sum : 1 },
+        ]}
+        dataKey="value"
+        outerRadius={55}
+        innerRadius={40}
+        startAngle={90}
+        endAngle={-270}
+        paddingAngle={0}
+        isAnimationActive={false}
+        nameKey="key"
+        fill={theme.palette.action.disabledBackground}
+        stroke="none"
+        className={classes.shadowChart}
+      />
       <Pie
         data={data}
         dataKey="count"

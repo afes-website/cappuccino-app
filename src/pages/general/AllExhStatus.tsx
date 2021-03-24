@@ -281,9 +281,7 @@ const LinearChart: React.FC<{
   const gradientString: string = [
     ...gradientArgs,
     [
-      theme.palette.type === "light"
-        ? "rgba(0, 0, 0, 0.12)"
-        : "rgba(255, 255, 255, 0.2)",
+      theme.palette.action.disabledBackground,
       [`${(sum / maxLimit) * 100}%`, `${(status.limit / maxLimit) * 100}%`],
     ],
     ["transparent", [`${(status.limit / maxLimit) * 100}%`, "100%"]],
