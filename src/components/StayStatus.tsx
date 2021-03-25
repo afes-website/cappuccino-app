@@ -71,12 +71,17 @@ const StayStatus: React.FC<StayStatusCardProps> = ({
     ? Object.values(statusCount).reduce((prev, curr) => prev + curr, 0)
     : 0;
 
+  const statusCountArray: [string, number][] =
+    statusCount && terms
+      ? Object.entries(statusCount).sort(([a], [b]) => compareTerm(a, b, terms))
+      : [];
+
   return (
     <div className={classes.main}>
       {statusCount && terms ? (
         <div className={classes.chartWrapper}>
           <StayStatusPieChart
-            statusCount={statusCount}
+            statusCountArray={statusCountArray}
             limit={limit}
             terms={terms}
           />
@@ -96,37 +101,35 @@ const StayStatus: React.FC<StayStatusCardProps> = ({
       <div className={classes.termList}>
         {statusCount && terms ? (
           Object.keys(statusCount).length > 0 ? (
-            Object.entries(statusCount)
-              .sort(([a], [b]) => compareTerm(a, b, terms))
-              .map(([termId, count], index) => (
-                <>
-                  {termId in terms && (
-                    <span
-                      key={`termColorBadge-${index}`}
-                      className={classes.termColorBadge}
-                      style={{
-                        background: wristBandPaletteColor(
-                          terms[termId].guest_type
-                        )[theme.palette.type === "light" ? "main" : "dark"],
-                      }}
-                    />
-                  )}
-                  <Typography key={`termTime-${index}`} variant="body2">
-                    {termId in terms
-                      ? terms[termId].guest_type === "StudentGray"
-                        ? `生徒`
-                        : `${getStringTime(
-                            terms[termId].enter_scheduled_time
-                          )} - ${getStringTime(
-                            terms[termId].exit_scheduled_time
-                          )}`
-                      : termId}
-                  </Typography>
-                  <Typography key={`termCount-${index}`} variant="body2">
-                    {`${count}人`}
-                  </Typography>
-                </>
-              ))
+            statusCountArray.map(([termId, count], index) => (
+              <>
+                {termId in terms && (
+                  <span
+                    key={`termColorBadge-${index}`}
+                    className={classes.termColorBadge}
+                    style={{
+                      background: wristBandPaletteColor(
+                        terms[termId].guest_type
+                      )[theme.palette.type === "light" ? "main" : "dark"],
+                    }}
+                  />
+                )}
+                <Typography key={`termTime-${index}`} variant="body2">
+                  {termId in terms
+                    ? terms[termId].guest_type === "StudentGray"
+                      ? `生徒`
+                      : `${getStringTime(
+                          terms[termId].enter_scheduled_time
+                        )} - ${getStringTime(
+                          terms[termId].exit_scheduled_time
+                        )}`
+                    : termId}
+                </Typography>
+                <Typography key={`termCount-${index}`} variant="body2">
+                  {`${count}人`}
+                </Typography>
+              </>
+            ))
           ) : (
             <Typography
               align="center"
@@ -182,13 +185,13 @@ const useChartStyles = makeStyles(() =>
 );
 
 interface StayStatusPieChartProps {
-  statusCount: ExhStatus["count"];
+  statusCountArray: [string, number][];
   limit: number | null;
   terms: Terms;
 }
 
 const StayStatusPieChart: React.FC<StayStatusPieChartProps> = ({
-  statusCount,
+  statusCountArray,
   limit,
   terms,
 }) => {
@@ -196,18 +199,18 @@ const StayStatusPieChart: React.FC<StayStatusPieChartProps> = ({
   const theme = useTheme<Theme>();
   const classes = useChartStyles();
 
-  const sum = Object.values(statusCount).reduce((prev, curr) => prev + curr, 0);
+  const sum = statusCountArray
+    .map(([, count]) => count)
+    .reduce((prev, curr) => prev + curr, 0);
 
-  let data = Object.entries(statusCount)
-    .sort(([a], [b]) => compareTerm(a, b, terms))
-    .map(([termId, count]) => {
-      return {
-        termId,
-        count,
-      };
-    });
+  let data = statusCountArray.map(([termId, count]) => {
+    return {
+      termId,
+      count,
+    };
+  });
 
-  let colors: string[] = Object.keys(statusCount)
+  let colors: string[] = Object.keys(statusCountArray)
     .sort((a, b) => compareTerm(a, b, terms))
     .map((termId) =>
       termId in terms
