@@ -18,6 +18,7 @@ import PullToRefresh from "@/components/PullToRefresh";
 import { useWristBandPaletteColor } from "@/libs/wristBandColor";
 import { AuthContext, useVerifyPermission } from "@/libs/auth";
 import { useTitleSet } from "@/libs/title";
+import { compareTerm } from "@/libs/compare";
 import api, { AllStatus, ExhStatus, Terms } from "@afes-website/docs";
 import aspida from "@aspida/axios";
 
@@ -246,9 +247,10 @@ const LinearChart: React.FC<{
   terms: Terms;
   maxLimit: number;
   className: string;
-}> = (props) => {
-  const { status, terms, maxLimit } = props;
-  const { count } = status;
+}> = ({ status, terms, maxLimit, ...props }) => {
+  const count: ExhStatus["count"] = Object.fromEntries(
+    Object.entries(status.count).sort(([a], [b]) => compareTerm(a, b, terms))
+  );
 
   const wristBandPaletteColor = useWristBandPaletteColor();
   const theme = useTheme<Theme>();
