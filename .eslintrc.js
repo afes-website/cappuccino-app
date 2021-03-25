@@ -44,6 +44,7 @@ module.exports = {
           "warn",
           { ignoreRestSiblings: true },
         ],
+        "react/jsx-no-useless-fragment": "warn",
       },
     },
   ],

@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { createStyles, makeStyles, Paper } from "@material-ui/core";
 import TopBar from "@/components/TopBar";
 import BottomNav from "@/components/BottomNav";
 import { useTitleContext } from "@/libs/title";
 import ProvidersProvider from "@/components/ProvidersProvider";
+import { AuthContext } from "@/libs/auth";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -33,6 +34,7 @@ const useStyles = makeStyles((theme) =>
 const MainLayout: React.FC = (props) => {
   const classes = useStyles();
   const titleCtx = useTitleContext();
+  const auth = useContext(AuthContext).val;
 
   return (
     <Paper className={classes.root} square={true}>
@@ -41,7 +43,7 @@ const MainLayout: React.FC = (props) => {
       </div>
       <main className={classes.main}>{props.children}</main>
       <div className={classes.bottomNav}>
-        <BottomNav />
+        {auth.get_current_user_id() && <BottomNav />}
       </div>
     </Paper>
   );

@@ -34,6 +34,8 @@
     "react-qr-reader": "^2.2.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "react-simple-pull-to-refresh": "^1.2.3",
+    "recharts": "^2.0.8",
     "sass": "^1.26.10",
     "typesafe-react-router": "^2.2.4"
   },

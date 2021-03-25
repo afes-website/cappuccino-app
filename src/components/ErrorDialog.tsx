@@ -36,34 +36,32 @@ const ErrorDialog: React.FC<UniversalErrorDialogProps> = (props) => {
   const history = useHistory();
 
   return (
-    <>
-      <Dialog open={props.open} onClose={props.onClose}>
-        <DialogTitle>
-          <ErrorOutline className={classes.errorIcon} />
-          {props.title || "エラーが発生しました"}
-        </DialogTitle>
-        <DialogContent>
-          {props.message.map((message, index) => (
-            <DialogContentText key={index}>{message}</DialogContentText>
-          ))}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={props.onClose} color="secondary">
-            閉じる
-          </Button>
-          <Button
-            onClick={() => {
-              props.onClose();
-              history.goBack();
-            }}
-            color="secondary"
-            autoFocus
-          >
-            前の画面に戻る
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
+    <Dialog open={props.open} onClose={props.onClose}>
+      <DialogTitle>
+        <ErrorOutline className={classes.errorIcon} />
+        {props.title || "エラーが発生しました"}
+      </DialogTitle>
+      <DialogContent>
+        {props.message.map((message, index) => (
+          <DialogContentText key={index}>{message}</DialogContentText>
+        ))}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={props.onClose} color="secondary">
+          閉じる
+        </Button>
+        <Button
+          onClick={() => {
+            props.onClose();
+            history.goBack();
+          }}
+          color="secondary"
+          autoFocus
+        >
+          前の画面に戻る
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

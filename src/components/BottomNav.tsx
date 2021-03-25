@@ -55,37 +55,35 @@ const BottomNav: React.FC = () => {
     };
   });
 
-  if (auth.get_current_user_id())
-    return (
-      <Paper elevation={6}>
-        <BottomNavigation
-          value={value}
-          onChange={(event, newValue) => {
-            setValue(newValue);
-          }}
-          className={classes.root}
-          showLabels={true}
-        >
-          {get_menus().map(([label, route, Component]) => {
-            return (
-              <BottomNavigationAction
-                label={label}
-                icon={Component}
-                className={classes.button}
-                classes={{
-                  selected: classes.selected,
-                }}
-                key={label}
-                component={Link}
-                to={route}
-                value={route}
-              />
-            );
-          })}
-        </BottomNavigation>
-      </Paper>
-    );
-  else return <React.Fragment />;
+  return (
+    <Paper elevation={6}>
+      <BottomNavigation
+        value={value}
+        onChange={(event, newValue) => {
+          setValue(newValue);
+        }}
+        className={classes.root}
+        showLabels={true}
+      >
+        {get_menus().map(([label, route, Component]) => {
+          return (
+            <BottomNavigationAction
+              label={label}
+              icon={Component}
+              className={classes.button}
+              classes={{
+                selected: classes.selected,
+              }}
+              key={label}
+              component={Link}
+              to={route}
+              value={route}
+            />
+          );
+        })}
+      </BottomNavigation>
+    </Paper>
+  );
 };
 
 export default BottomNav;
