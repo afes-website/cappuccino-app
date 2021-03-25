@@ -210,15 +210,13 @@ const StayStatusPieChart: React.FC<StayStatusPieChartProps> = ({
     };
   });
 
-  let colors: string[] = Object.keys(statusCountArray)
-    .sort((a, b) => compareTerm(a, b, terms))
-    .map((termId) =>
-      termId in terms
-        ? wristBandPaletteColor(terms[termId].guest_type)[
-            theme.palette.type === "light" ? "main" : "dark"
-          ]
-        : "#ccc"
-    );
+  let colors: string[] = statusCountArray.map(([termId]) =>
+    termId in terms
+      ? wristBandPaletteColor(terms[termId].guest_type)[
+          theme.palette.type === "light" ? "main" : "dark"
+        ]
+      : "#ccc"
+  );
 
   if (limit) {
     data = [...data, { termId: "None", count: limit - sum }];
