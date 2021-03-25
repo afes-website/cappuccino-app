@@ -14,6 +14,7 @@ const useStyles = makeStyles(() =>
       display: "flex",
       position: "relative",
       justifyContent: "space-between",
+      alignItems: "center",
     },
     termList: {
       display: "grid",
@@ -27,6 +28,9 @@ const useStyles = makeStyles(() =>
       borderRadius: 6,
       marginTop: 3,
     },
+    chartWrapper: {
+      position: "relative",
+    },
     countSumBoxWrapper: {
       position: "absolute",
       top: 0,
@@ -38,9 +42,11 @@ const useStyles = makeStyles(() =>
       alignItems: "center",
     },
     countSum: {
+      display: "inline",
       fontSize: 22,
     },
     countLimit: {
+      display: "inline",
       fontSize: 14,
     },
   })
@@ -68,11 +74,21 @@ const StayStatus: React.FC<StayStatusCardProps> = ({
   return (
     <div className={classes.main}>
       {statusCount && terms ? (
-        <StayStatusPieChart
-          statusCount={statusCount}
-          limit={limit}
-          terms={terms}
-        />
+        <div className={classes.chartWrapper}>
+          <StayStatusPieChart
+            statusCount={statusCount}
+            limit={limit}
+            terms={terms}
+          />
+          <div className={classes.countSumBoxWrapper}>
+            <span>
+              <Typography className={classes.countSum}>{sum}</Typography>
+              <Typography className={classes.countLimit}>
+                {limit && `/${limit}`}人
+              </Typography>
+            </span>
+          </div>
+        </div>
       ) : (
         <Skeleton variant="circle" width={120} height={120} animation="wave" />
       )}
@@ -145,15 +161,6 @@ const StayStatus: React.FC<StayStatusCardProps> = ({
               />
             </>
           ))
-        )}
-      </div>
-
-      <div className={classes.countSumBoxWrapper}>
-        {statusCount && (
-          <span>
-            <span className={classes.countSum}>{sum}</span>
-            <span className={classes.countLimit}>{limit && `/${limit}`}人</span>
-          </span>
         )}
       </div>
     </div>
