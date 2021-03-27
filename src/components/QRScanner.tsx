@@ -1,10 +1,13 @@
-import React, { useState } from "react";
-import { CircularProgress, Fade } from "@material-ui/core";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
+import React, { useEffect, useState } from "react";
 import QrReader from "react-qr-reader";
+import { CircularProgress, Fade, IconButton } from "@material-ui/core";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
+import { Settings } from "@material-ui/icons";
 import { CameraOff } from "@/components/MaterialSvgIcons";
-import { StatusColor } from "@/types/statusColor";
 import ErrorDialog from "@/components/ErrorDialog";
+import VideoDeviceSelectModal from "@/components/VideoDeviceSelectModal";
+import { getDeviceIdFromStorage } from "@/libs/videoDeviceId";
+import { StatusColor } from "@/types/statusColor";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>
@@ -90,6 +93,10 @@ const useStyles = makeStyles((theme) =>
         color: "#fff",
       },
     },
+    videoDeviceSelectButton: {
+      color: "#fff",
+      right: 0,
+    },
   })
 );
 
@@ -101,12 +108,25 @@ export interface QRScannerProps {
 
 const QRScanner: React.FC<QRScannerProps> = (props) => {
   const classes = useStyles();
+
+  const [videoDeviceId, setVideoDeviceId] = useState<string>(
+    getDeviceIdFromStorage() || ""
+  );
+  const [videoDeviceModalOpen, setVideoDeviceModalOpen] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [errorDialogTitle, setErrorDialogTitle] = useState("");
   const [errorDialogMessage, setErrorDialogMessage] = useState<string[]>([]);
   const [scannerStatus, setScannerStatus] = useState<
     "loading" | "waiting" | "error"
   >("loading");
+  const [showQrReader, setShowQrReader] = useState(true);
+
+  useEffect(() => {
+    if (!showQrReader) {
+      setShowQrReader(true);
+      setScannerStatus("loading");
+    }
+  }, [showQrReader]);
 
   const getBorderClassName = (color: StatusColor | undefined): string => {
     switch (color) {
@@ -165,15 +185,19 @@ const QRScanner: React.FC<QRScannerProps> = (props) => {
             )}
           </div>
         )}
-        <QrReader
-          onScan={props.onScanFunc}
-          onError={errorHandler}
-          onLoad={() => {
-            setScannerStatus("waiting");
-          }}
-          delay={props.videoStop ? false : 500}
-          showViewFinder={false}
-        />
+        {showQrReader && (
+          <QrReader
+            onScan={props.onScanFunc}
+            onError={errorHandler}
+            onLoad={() => {
+              setScannerStatus("waiting");
+            }}
+            delay={props.videoStop ? false : 500}
+            showViewFinder={false}
+            facingMode="environment"
+            constraints={{ deviceId: videoDeviceId, facingMode: "environment" }}
+          />
+        )}
         <div className={classes.shadowBox}>
           <div
             className={clsx(classes.borderBox, getBorderClassName(props.color))}
@@ -187,7 +211,25 @@ const QRScanner: React.FC<QRScannerProps> = (props) => {
             <CircularProgress size={64} />
           </Fade>
         </div>
+        <div className={classes.videoDeviceSelectButton}>
+          <IconButton
+            color="inherit"
+            onClick={() => {
+              setVideoDeviceModalOpen(true);
+            }}
+          >
+            <Settings />
+          </IconButton>
+        </div>
       </div>
+      <VideoDeviceSelectModal
+        open={videoDeviceModalOpen}
+        setOpen={setVideoDeviceModalOpen}
+        onChange={(deviceId) => {
+          setVideoDeviceId(deviceId);
+          setShowQrReader(false);
+        }}
+      />
       <ErrorDialog
         open={errorDialogOpen}
         title={errorDialogTitle}
