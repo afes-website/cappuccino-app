@@ -1,0 +1,36 @@
+name: Deploy to production server
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: prepare .ssh dir
+        run: mkdir -p .ssh && chmod 700 .ssh
+      - name: ssh key generate
+        run: echo "$SSH_PRIVATE_KEY" > .ssh/id_ed25519 && chmod 600 .ssh/id_ed25519
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Cache yarn packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/yarn
+          key: ${{ runner.os }}-yarn-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
+          restore-keys:
+            ${{ runner.os }}-yarn-
+      - name: install packages
+        run: yarn install
+      - name: build
+        run: yarn build
+      - name: push with scp
+        run: scp -r -o StrictHostKeyChecking=no -P $SSH_PORT -i .ssh/id_ed25519 ./dist/. $SSH_USER@$SSH_HOST:$DIR
+        env:
+          DIR: ~/public_html/app.afes.info
+          SSH_HOST: ${{ secrets.SERVER_HOST }}
+          SSH_USER: ${{ secrets.SERVER_USER }}
+          SSH_PORT: ${{ secrets.SERVER_PORT }}
