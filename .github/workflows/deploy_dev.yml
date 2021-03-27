@@ -16,6 +16,11 @@ jobs:
         run: echo "$SSH_PRIVATE_KEY" > .ssh/id_ed25519 && chmod 600 .ssh/id_ed25519
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: make local environment file
+      run: |
+        cat<<EOF > .env.production.local
+        REACT_APP_API_BASE_URL="https://dev.api.app.afes.info"
+        EOF
       - name: Cache yarn packages
         uses: actions/cache@v1
         with:
