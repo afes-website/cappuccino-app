@@ -80,7 +80,7 @@ const CameraDeviceSelectModal: React.FC<Props> = (props) => {
         )}
         <DialogContentText>
           <Alert severity="info">
-            切り替え後にカメラが読み込まれない場合は、再読み込みをお試しください。
+            切り替え後にカメラが読み込まれない場合は、ページを再読み込みしてください。
           </Alert>
         </DialogContentText>
       </DialogContent>
