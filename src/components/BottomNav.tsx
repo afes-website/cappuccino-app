@@ -7,11 +7,11 @@ import {
   Paper,
   Theme,
 } from "@material-ui/core";
-import routes from "@/libs/routes";
+import routes from "libs/routes";
 import { Link, useHistory } from "react-router-dom";
 import { Assignment, Home } from "@material-ui/icons";
-import { Login, Logout } from "@/components/MaterialSvgIcons";
-import { AuthContext } from "@/libs/auth";
+import { Login, Logout } from "components/MaterialSvgIcons";
+import { AuthContext } from "libs/auth";
 import { UserInfo } from "@afes-website/docs";
 
 const useStyles = makeStyles((theme: Theme) =>

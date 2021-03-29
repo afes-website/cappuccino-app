@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
-import routes from "@/libs/routes";
-import HomeCard from "@/components/HomeCard";
-import CardList from "@/components/CardList";
-import { GeneralStatusCard, ExhStatusCard } from "@/components/StayStatusCard";
-import { useTitleSet } from "@/libs/title";
-import { AuthContext, verifyPermission } from "@/libs/auth";
+import routes from "libs/routes";
+import HomeCard from "components/HomeCard";
+import CardList from "components/CardList";
+import { GeneralStatusCard, ExhStatusCard } from "components/StayStatusCard";
+import { useTitleSet } from "libs/title";
+import { AuthContext, verifyPermission } from "libs/auth";
 
 const Home: React.FC = () => {
   useTitleSet("Manager for Exhibition");
@@ -26,6 +26,7 @@ const Home: React.FC = () => {
               ["退場スキャン", routes.GeneralExitScan.route.create({})],
             ]}
           />
+          <span>v16.19.20</span>
         </>
       )}
       {verifyPermission("exhibition", auth) && (

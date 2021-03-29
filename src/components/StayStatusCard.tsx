@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "@/libs/auth";
+import { AuthContext } from "libs/auth";
 import api, { ExhStatus, Terms } from "@afes-website/docs";
 import aspida from "@aspida/axios";
-import StayStatus from "@/components/StayStatus";
+import StayStatus from "components/StayStatus";
 import {
   Button,
   Card,
@@ -13,7 +13,7 @@ import {
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
-import routes from "@/libs/routes";
+import routes from "libs/routes";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

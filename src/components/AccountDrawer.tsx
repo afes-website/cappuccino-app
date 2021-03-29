@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import routes from "@/libs/routes";
+import routes from "libs/routes";
 import {
   Button,
   createStyles,
@@ -24,10 +24,10 @@ import {
   Toolbar,
 } from "@material-ui/core";
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
-import { AuthContext } from "@/libs/auth";
-import AccountIcon from "@/components/AccountIcon";
-import { useSetThemeMode } from "@/libs/themeMode";
-import { DarkMode, LightMode } from "@/components/MaterialSvgIcons";
+import { AuthContext } from "libs/auth";
+import AccountIcon from "components/AccountIcon";
+import { useSetThemeMode } from "libs/themeMode";
+import { DarkMode, LightMode } from "components/MaterialSvgIcons";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import createCtx from "@/libs/createCtx";
-import { themeOptions } from "@/assets/styles/theme";
+import createCtx from "libs/createCtx";
+import { themeOptions } from "assets/styles/theme";
 import { createMuiTheme, Theme } from "@material-ui/core";
 
 export type ThemeMode = "light" | "dark";

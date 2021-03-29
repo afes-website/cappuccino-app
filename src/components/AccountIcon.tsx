@@ -1,7 +1,7 @@
 import React from "react";
-import { StorageUserInfo } from "@/libs/auth";
+import { StorageUserInfo } from "libs/auth";
 import { Person } from "@material-ui/icons";
-import { PersonSetting, PersonSecurity } from "@/components/MaterialSvgIcons";
+import { PersonSetting, PersonSecurity } from "components/MaterialSvgIcons";
 import { SvgIconProps } from "@material-ui/core";
 
 const AccountIcon: React.FC<

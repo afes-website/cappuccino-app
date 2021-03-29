@@ -11,16 +11,16 @@ import {
 import { Alert } from "@material-ui/lab";
 import { CheckCircle } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
-import { WristBand } from "@/components/MaterialSvgIcons";
-import CardList from "@/components/CardList";
-import QRScanner from "@/components/QRScanner";
-import DirectInputModal from "@/components/DirectInputModal";
-import DirectInputFab from "@/components/DirectInputFab";
-import ResultChip, { ResultChipRefs } from "@/components/ResultChip";
-import ErrorDialog from "@/components/ErrorDialog";
-import { AuthContext } from "@/libs/auth";
-import isAxiosError from "@/libs/isAxiosError";
-import { StatusColor } from "@/types/statusColor";
+import { WristBand } from "components/MaterialSvgIcons";
+import CardList from "components/CardList";
+import QRScanner from "components/QRScanner";
+import DirectInputModal from "components/DirectInputModal";
+import DirectInputFab from "components/DirectInputFab";
+import ResultChip, { ResultChipRefs } from "components/ResultChip";
+import ErrorDialog from "components/ErrorDialog";
+import { AuthContext } from "libs/auth";
+import isAxiosError from "libs/isAxiosError";
+import { StatusColor } from "types/statusColor";
 import clsx from "clsx";
 import { Guest } from "@afes-website/docs";
 

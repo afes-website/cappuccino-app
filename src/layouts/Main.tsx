@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import { createStyles, makeStyles, Paper } from "@material-ui/core";
-import TopBar from "@/components/TopBar";
-import BottomNav from "@/components/BottomNav";
-import { useTitleContext } from "@/libs/title";
-import ProvidersProvider from "@/components/ProvidersProvider";
-import { AuthContext } from "@/libs/auth";
+import TopBar from "components/TopBar";
+import BottomNav from "components/BottomNav";
+import { useTitleContext } from "libs/title";
+import ProvidersProvider from "components/ProvidersProvider";
+import { AuthContext } from "libs/auth";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -45,6 +45,7 @@ const MainLayout: React.FC = (props) => {
       <div className={classes.bottomNav}>
         {auth.get_current_user_id() && <BottomNav />}
       </div>
+      <div className="sw-update-dialog" />
     </Paper>
   );
 };

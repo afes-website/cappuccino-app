@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import TypesafeRouter from "@/components/TypesafeRouter";
-import routes from "@/libs/routes";
+import TypesafeRouter from "components/TypesafeRouter";
+import routes from "libs/routes";
 import { createBrowserHistory } from "history";
-import NotFound from "@/pages/NotFound";
-import MainLayout from "@/layouts/Main";
-import Auth, { AuthContext } from "@/libs/auth";
+import NotFound from "pages/NotFound";
+import MainLayout from "layouts/Main";
+import Auth, { AuthContext } from "libs/auth";
 
 const App: React.FC = () => {
   const [history] = useState(createBrowserHistory());

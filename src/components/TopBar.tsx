@@ -9,9 +9,9 @@ import {
 } from "@material-ui/core";
 import { ArrowBackIos } from "@material-ui/icons";
 import { useHistory } from "react-router-dom";
-import AccountIcon from "@/components/AccountIcon";
-import AccountDrawer from "@/components/AccountDrawer";
-import { AuthContext } from "@/libs/auth";
+import AccountIcon from "components/AccountIcon";
+import AccountDrawer from "components/AccountDrawer";
+import { AuthContext } from "libs/auth";
 
 const useStyles = makeStyles(() =>
   createStyles({

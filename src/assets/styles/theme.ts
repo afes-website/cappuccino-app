@@ -1,5 +1,5 @@
 import { Theme, createMuiTheme } from "@material-ui/core";
-import { afesBlue, afesDark, afesLight } from "@/assets/styles/origPalette";
+import { afesBlue, afesDark, afesLight } from "assets/styles/origPalette";
 import { PaletteOptions } from "@material-ui/core/styles/createPalette";
 import { ComponentsProps } from "@material-ui/core/styles/props";
 import { Overrides } from "@material-ui/core/styles/overrides";

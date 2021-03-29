@@ -15,11 +15,11 @@ import {
 } from "@material-ui/core";
 import api from "@afes-website/docs";
 import axios from "@aspida/axios";
-import CardList from "@/components/CardList";
-import { AuthContext } from "@/libs/auth";
-import routes from "@/libs/routes";
-import isAxiosError from "@/libs/isAxiosError";
-import { useTitleSet } from "@/libs/title";
+import CardList from "components/CardList";
+import { AuthContext } from "libs/auth";
+import routes from "libs/routes";
+import isAxiosError from "libs/isAxiosError";
+import { useTitleSet } from "libs/title";
 import { createStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) =>

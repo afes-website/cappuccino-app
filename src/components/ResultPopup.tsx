@@ -15,7 +15,7 @@ import {
 import { CheckCircleOutline, ErrorOutline } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
 import { TransitionProps } from "@material-ui/core/transitions";
-import { StatusColor } from "@/types/statusColor";
+import { StatusColor } from "types/statusColor";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import createCtx from "@/libs/createCtx";
+import createCtx from "libs/createCtx";
 
 export function useTitleSet(_new_title: string): void {
   const titleCtx = useTitleContext();

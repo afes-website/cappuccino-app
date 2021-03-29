@@ -14,11 +14,11 @@ import {
   Button,
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import PullToRefresh from "@/components/PullToRefresh";
-import { useWristBandPaletteColor } from "@/libs/wristBandColor";
-import { AuthContext, useVerifyPermission } from "@/libs/auth";
-import { useTitleSet } from "@/libs/title";
-import { compareTerm } from "@/libs/compare";
+import PullToRefresh from "components/PullToRefresh";
+import { useWristBandPaletteColor } from "libs/wristBandColor";
+import { AuthContext, useVerifyPermission } from "libs/auth";
+import { useTitleSet } from "libs/title";
+import { compareTerm } from "libs/compare";
 import api, { AllStatus, ExhStatus, Terms } from "@afes-website/docs";
 import aspida from "@aspida/axios";
 

@@ -2,8 +2,8 @@ import React from "react";
 import { Button, Typography } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
-import { useTitleSet } from "@/libs/title";
-import routes from "@/libs/routes";
+import { useTitleSet } from "libs/title";
+import routes from "libs/routes";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
