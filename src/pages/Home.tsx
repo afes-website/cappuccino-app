@@ -26,7 +26,7 @@ const Home: React.FC = () => {
               ["退場スキャン", routes.GeneralExitScan.route.create({})],
             ]}
           />
-          <span>v16.19.20</span>
+          <GeneralStatusCard />
         </>
       )}
       {verifyPermission("exhibition", auth) && (

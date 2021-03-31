@@ -23,7 +23,11 @@ import {
   IconButton,
   Toolbar,
 } from "@material-ui/core";
-import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
+import {
+  AddCircleOutline,
+  RemoveCircleOutline,
+  Replay,
+} from "@material-ui/icons";
 import { AuthContext } from "libs/auth";
 import AccountIcon from "components/AccountIcon";
 import { useSetThemeMode } from "libs/themeMode";
@@ -38,6 +42,7 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.primary.contrastText,
       background: theme.palette.primary.main,
       padding: theme.spacing(2),
+      paddingTop: `calc(${theme.spacing(2)}px + env(safe-area-inset-top))`,
     },
     menuIcon: {
       marginBottom: theme.spacing(1),
@@ -157,6 +162,13 @@ const AccountDrawer: React.FC<Props> = (props) => {
         <Toolbar>
           <IconButton onClick={toggleThemeMode}>
             {theme.palette.type === "light" ? <DarkMode /> : <LightMode />}
+          </IconButton>
+          <IconButton
+            onClick={() => {
+              window.location.reload();
+            }}
+          >
+            <Replay />
           </IconButton>
         </Toolbar>
       </div>

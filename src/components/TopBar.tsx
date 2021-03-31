@@ -12,11 +12,15 @@ import { useHistory } from "react-router-dom";
 import AccountIcon from "components/AccountIcon";
 import AccountDrawer from "components/AccountDrawer";
 import { AuthContext } from "libs/auth";
+import clsx from "clsx";
 
 const useStyles = makeStyles(() =>
   createStyles({
     root: {
       flexGrow: 1,
+    },
+    appBar: {
+      paddingTop: "env(safe-area-inset-top)",
     },
     menuIcon: {
       position: "absolute",
@@ -29,9 +33,10 @@ const useStyles = makeStyles(() =>
 
 interface Props {
   title: string;
+  className?: string;
 }
 
-const TopBar: React.FC<Props> = (props) => {
+const TopBar: React.FC<Props> = ({ title, className }) => {
   const classes = useStyles();
   const history = useHistory();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -55,8 +60,8 @@ const TopBar: React.FC<Props> = (props) => {
   });
 
   return (
-    <div className={classes.root}>
-      <AppBar position="static">
+    <div className={clsx(classes.root, className)}>
+      <AppBar position="static" className={classes.appBar}>
         <Toolbar>
           {auth.get_current_user_id() &&
             (isNeedBackButton ? (
@@ -86,7 +91,7 @@ const TopBar: React.FC<Props> = (props) => {
               </IconButton>
             ))}
           <Typography variant="h6" align="center" className={classes.title}>
-            {props.title}
+            {title}
           </Typography>
         </Toolbar>
       </AppBar>

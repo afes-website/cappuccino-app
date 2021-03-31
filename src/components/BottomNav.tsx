@@ -13,10 +13,14 @@ import { Assignment, Home } from "@material-ui/icons";
 import { Login, Logout } from "components/MaterialSvgIcons";
 import { AuthContext } from "libs/auth";
 import { UserInfo } from "@afes-website/docs";
+import clsx from "clsx";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {},
+    root: {
+      display: "block",
+      paddingBottom: "env(safe-area-inset-bottom)",
+    },
     selected: {
       color: theme.palette.secondary.main + " !important",
     },
@@ -26,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const BottomNav: React.FC = () => {
+const BottomNav: React.FC<{ className?: string }> = ({ className }) => {
   const history = useHistory();
   const classes = useStyles();
   const [value, setValue] = useState(history.location.pathname);
@@ -56,13 +60,12 @@ const BottomNav: React.FC = () => {
   });
 
   return (
-    <Paper elevation={6}>
+    <Paper elevation={6} className={clsx(classes.root, className)}>
       <BottomNavigation
         value={value}
         onChange={(event, newValue) => {
           setValue(newValue);
         }}
-        className={classes.root}
         showLabels={true}
       >
         {get_menus().map(([label, route, Component]) => {
