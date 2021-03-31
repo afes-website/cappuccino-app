@@ -2,7 +2,7 @@
 	"name": "Afes CAPPUCCINO",
 	"short_name":	"CAPPUCCINO",
 	"description": "Control APPlication for United Contactless Check-IN Operation",
-	"start_url": "/?source=pwa",
+	"start_url": "/",
 	"display": "standalone",
 	"orientation": "any",
 	"background_color":	"#fff",
