@@ -60,6 +60,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     bottomWrapper: {
       marginTop: "auto",
+      marginBottom: "env(safe-area-inset-bottom)",
     },
   })
 );
