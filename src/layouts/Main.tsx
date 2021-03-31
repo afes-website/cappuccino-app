@@ -9,11 +9,11 @@ import { AuthContext } from "libs/auth";
 const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
-      height: "100%",
+      height: "100vh",
+      width: "100vw",
       overflowY: "scroll",
       overscrollBehavior: "none",
       background: theme.palette.background.default,
-      width: "100vw",
     },
     topBar: {
       position: "absolute",
@@ -24,8 +24,8 @@ const useStyles = makeStyles((theme) =>
     },
     main: {
       width: "100%",
-      paddingTop: 56,
-      paddingBottom: "calc(env(safe-area-inset-bottom) + 56px)", // bottom Nav
+      paddingTop: "calc(env(safe-area-inset-top) + 56px)",
+      paddingBottom: "calc(env(safe-area-inset-bottom) + 56px)",
     },
     bottomNav: {
       position: "fixed",

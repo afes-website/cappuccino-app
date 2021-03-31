@@ -6,13 +6,7 @@
 body {
   margin: 0;
   background: #457fb3;
-  height: min-content;
+  height: 100vh;
   width: 100vw;
   overscroll-behavior: none;
-}
-
-#root {
-  margin-top: env(safe-area-inset-top);
-  height: calc(100vh - env(safe-area-inset-top));
-  overflow: visible;
 }
