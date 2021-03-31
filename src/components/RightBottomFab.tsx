@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) =>
     bottomButton: {
       position: "fixed",
       right: "16px",
-      bottom: "72px",
+      bottom: "calc(env(safe-area-inset-bottom) + 72px)",
       zIndex: 500,
       "&.Mui-disabled":
         theme.palette.type === "light"
