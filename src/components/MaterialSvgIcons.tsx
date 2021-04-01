@@ -25,6 +25,8 @@ const iconPaths = {
   // mode_night
   DarkMode:
     "M9.5,2c-1.82,0-3.53,0.5-5,1.35c2.99,1.73,5,4.95,5,8.65s-2.01,6.92-5,8.65C5.97,21.5,7.68,22,9.5,22c5.52,0,10-4.48,10-10 S15.02,2,9.5,2z",
+  Reload:
+    "M21,10.1h-6.8L17,7.3c-2.7-2.7-7.1-2.8-9.9-0.1c-2.7,2.7-2.7,7.1,0,9.8s7.2,2.7,9.9,0c1.4-1.3,2-2.9,2-4.9h2c0,2-0.9,4.6-2.6,6.3c-3.5,3.5-9.2,3.5-12.7,0c-3.5-3.5-3.5-9.1,0-12.6s9.1-3.5,12.6,0L21,3V10.1z",
 } as const;
 
 type IconType = keyof typeof iconPaths;
@@ -73,4 +75,7 @@ export const LightMode: React.FC<SvgIconProps> = (props) => (
 );
 export const DarkMode: React.FC<SvgIconProps> = (props) => (
   <CustomSvgIcon iconType="DarkMode" {...props} />
+);
+export const Reload: React.FC<SvgIconProps> = (props) => (
+  <CustomSvgIcon iconType="Reload" {...props} />
 );

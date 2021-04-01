@@ -23,15 +23,11 @@ import {
   IconButton,
   Toolbar,
 } from "@material-ui/core";
-import {
-  AddCircleOutline,
-  RemoveCircleOutline,
-  Replay,
-} from "@material-ui/icons";
+import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
 import { AuthContext } from "libs/auth";
 import AccountIcon from "components/AccountIcon";
 import { useSetThemeMode } from "libs/themeMode";
-import { DarkMode, LightMode } from "components/MaterialSvgIcons";
+import { DarkMode, LightMode, Reload } from "components/MaterialSvgIcons";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -169,7 +165,7 @@ const AccountDrawer: React.FC<Props> = (props) => {
               window.location.reload();
             }}
           >
-            <Replay />
+            <Reload />
           </IconButton>
         </Toolbar>
       </div>
