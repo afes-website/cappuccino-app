@@ -5,6 +5,7 @@ import CardList from "components/CardList";
 import { GeneralStatusCard, ExhStatusCard } from "components/StayStatusCard";
 import { useTitleSet } from "libs/title";
 import { AuthContext, verifyPermission } from "libs/auth";
+import PwaAlertCard from "../components/PwaAlertCard";
 
 const Home: React.FC = () => {
   useTitleSet("Manager for Exhibition");
@@ -12,6 +13,7 @@ const Home: React.FC = () => {
 
   return (
     <CardList>
+      <PwaAlertCard />
       {verifyPermission("general", auth) && (
         <>
           <GeneralStatusCard />
