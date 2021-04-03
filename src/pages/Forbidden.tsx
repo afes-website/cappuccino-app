@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) =>
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      height: "calc(100vh - 200px)",
+      height: "calc(var(--100vh, 100vh) - 200px)",
       padding: theme.spacing(2),
     },
     inner: {

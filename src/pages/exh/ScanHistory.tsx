@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) =>
       marginRight: theme.spacing(0.75),
     },
     loadingWrapper: {
-      height: "calc(100vh - 112px)",
+      height: "calc(var(--100vh, 100vh) - 112px)",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",

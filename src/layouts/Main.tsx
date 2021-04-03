@@ -9,7 +9,7 @@ import { AuthContext } from "libs/auth";
 const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
-      height: "100vh",
+      height: "var(--100vh, 100vh)",
       width: "100vw",
       overflowY: "scroll",
       overscrollBehavior: "none",

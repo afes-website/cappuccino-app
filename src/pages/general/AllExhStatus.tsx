@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) =>
       paddingBottom: theme.spacing(1),
     },
     loadingWrapper: {
-      height: "calc(100vh - 112px)",
+      height: "calc(var(--100vh, 100vh) - 112px)",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
