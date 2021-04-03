@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) =>
     },
     alertTitle: {
       margin: 0,
+      fontSize: 14,
     },
     alertActionButton: {
       position: "absolute",
