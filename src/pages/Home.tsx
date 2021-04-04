@@ -8,7 +8,7 @@ import { AuthContext, verifyPermission } from "libs/auth";
 import PwaAlertCard from "../components/PwaAlertCard";
 
 const Home: React.FC = () => {
-  useTitleSet("Manager for Exhibition");
+  useTitleSet("CAPPUCCINO");
   const auth = useContext(AuthContext).val;
 
   return (

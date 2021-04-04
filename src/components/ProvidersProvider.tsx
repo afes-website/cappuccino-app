@@ -16,8 +16,8 @@ export const CustomThemeProvider: React.FC<{
   );
 };
 
-const TITLE_SUFFIX = "73rd Afes Manage App";
-const TOP_TITLE = "73rd Afes Manage App";
+const TITLE_SUFFIX = "CAPPUCCINO";
+const TOP_TITLE = "CAPPUCCINO";
 
 export const CustomTitleProvider: React.FC<{
   children: React.ReactNode;
