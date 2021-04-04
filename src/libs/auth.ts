@@ -2,8 +2,8 @@ import { createContext, useContext, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import api, { UserInfo } from "@afes-website/docs";
 import axios from "@aspida/axios";
-import routes from "@/libs/routes";
-import isAxiosError from "@/libs/isAxiosError";
+import routes from "libs/routes";
+import isAxiosError from "libs/isAxiosError";
 
 const storage_key_users = "users";
 const storage_key_current_user = "current_user";

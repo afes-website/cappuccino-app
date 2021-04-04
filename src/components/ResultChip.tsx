@@ -7,7 +7,7 @@ import React, {
 import { Chip, Fade, SvgIcon } from "@material-ui/core";
 import { CheckCircleOutline, ErrorOutline } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
-import { StatusColor } from "@/types/statusColor";
+import { StatusColor } from "types/statusColor";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>

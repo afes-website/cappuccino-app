@@ -3,11 +3,11 @@ import QrReader from "react-qr-reader";
 import { CircularProgress, Fade, IconButton } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Settings } from "@material-ui/icons";
-import { CameraOff } from "@/components/MaterialSvgIcons";
-import ErrorDialog from "@/components/ErrorDialog";
-import VideoDeviceSelectModal from "@/components/VideoDeviceSelectModal";
-import { getDeviceIdFromStorage } from "@/libs/videoDeviceId";
-import { StatusColor } from "@/types/statusColor";
+import { CameraOff } from "components/MaterialSvgIcons";
+import ErrorDialog from "components/ErrorDialog";
+import VideoDeviceSelectModal from "components/VideoDeviceSelectModal";
+import { getDeviceIdFromStorage } from "libs/videoDeviceId";
+import { StatusColor } from "types/statusColor";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>

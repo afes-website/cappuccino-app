@@ -1,30 +1,36 @@
 import React, { useContext } from "react";
 import { createStyles, makeStyles, Paper } from "@material-ui/core";
-import TopBar from "@/components/TopBar";
-import BottomNav from "@/components/BottomNav";
-import { useTitleContext } from "@/libs/title";
-import ProvidersProvider from "@/components/ProvidersProvider";
-import { AuthContext } from "@/libs/auth";
+import TopBar from "components/TopBar";
+import BottomNav from "components/BottomNav";
+import { useTitleContext } from "libs/title";
+import ProvidersProvider from "components/ProvidersProvider";
+import { AuthContext } from "libs/auth";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
-      minHeight: "100vh",
-      height: "max-content",
+      height: "calc(var(--100vh, 100vh) + env(safe-area-inset-top, 0))",
+      width: "100vw",
+      overflowY: "scroll",
+      overscrollBehavior: "none",
       background: theme.palette.background.default,
     },
     topBar: {
-      position: "sticky",
+      position: "absolute",
       top: 0,
+      left: 0,
       width: "100%",
       zIndex: 600,
     },
     main: {
-      paddingBottom: "56px", // bottom Nav
+      width: "100%",
+      paddingTop: "calc(env(safe-area-inset-top) + 56px)",
+      paddingBottom: "calc(env(safe-area-inset-bottom) + 56px)",
     },
     bottomNav: {
       position: "fixed",
       bottom: 0,
+      left: 0,
       width: "100%",
       zIndex: 600,
     },
@@ -38,13 +44,11 @@ const MainLayout: React.FC = (props) => {
 
   return (
     <Paper className={classes.root} square={true}>
-      <div className={classes.topBar}>
-        <TopBar title={titleCtx.title} />
-      </div>
+      <TopBar title={titleCtx.title} className={classes.topBar} />
       <main className={classes.main}>{props.children}</main>
-      <div className={classes.bottomNav}>
-        {auth.get_current_user_id() && <BottomNav />}
-      </div>
+      {auth.get_current_user_id() && (
+        <BottomNav className={classes.bottomNav} />
+      )}
     </Paper>
   );
 };

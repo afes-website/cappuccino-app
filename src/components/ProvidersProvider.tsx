@@ -1,7 +1,7 @@
 import React from "react";
 import { ThemeProvider } from "@material-ui/core";
-import { ThemeContextProvider, useTheme } from "@/libs/themeMode";
-import { TitleContextProvider } from "@/libs/title";
+import { ThemeContextProvider, useTheme } from "libs/themeMode";
+import { TitleContextProvider } from "libs/title";
 import { useHistory } from "react-router-dom";
 
 export const CustomThemeProvider: React.FC<{
@@ -16,8 +16,8 @@ export const CustomThemeProvider: React.FC<{
   );
 };
 
-const TITLE_SUFFIX = "73rd Afes Manage App";
-const TOP_TITLE = "73rd Afes Manage App";
+const TITLE_SUFFIX = "CAPPUCCINO";
+const TOP_TITLE = "CAPPUCCINO";
 
 export const CustomTitleProvider: React.FC<{
   children: React.ReactNode;

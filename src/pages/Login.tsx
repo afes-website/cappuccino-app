@@ -15,12 +15,13 @@ import {
 } from "@material-ui/core";
 import api from "@afes-website/docs";
 import axios from "@aspida/axios";
-import CardList from "@/components/CardList";
-import { AuthContext } from "@/libs/auth";
-import routes from "@/libs/routes";
-import isAxiosError from "@/libs/isAxiosError";
-import { useTitleSet } from "@/libs/title";
+import CardList from "components/CardList";
+import { AuthContext } from "libs/auth";
+import routes from "libs/routes";
+import isAxiosError from "libs/isAxiosError";
+import { useTitleSet } from "libs/title";
 import { createStyles } from "@material-ui/core/styles";
+import PwaAlertCard from "../components/PwaAlertCard";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -81,6 +82,7 @@ const Login: React.FC = () => {
 
   return (
     <CardList>
+      <PwaAlertCard />
       <Card>
         <form onSubmit={login} className={classes.form}>
           <CardContent>

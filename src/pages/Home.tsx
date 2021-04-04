@@ -1,17 +1,19 @@
 import React, { useContext } from "react";
-import routes from "@/libs/routes";
-import HomeCard from "@/components/HomeCard";
-import CardList from "@/components/CardList";
-import { GeneralStatusCard, ExhStatusCard } from "@/components/StayStatusCard";
-import { useTitleSet } from "@/libs/title";
-import { AuthContext, verifyPermission } from "@/libs/auth";
+import routes from "libs/routes";
+import HomeCard from "components/HomeCard";
+import CardList from "components/CardList";
+import { GeneralStatusCard, ExhStatusCard } from "components/StayStatusCard";
+import { useTitleSet } from "libs/title";
+import { AuthContext, verifyPermission } from "libs/auth";
+import PwaAlertCard from "../components/PwaAlertCard";
 
 const Home: React.FC = () => {
-  useTitleSet("Manager for Exhibition");
+  useTitleSet("CAPPUCCINO");
   const auth = useContext(AuthContext).val;
 
   return (
     <CardList>
+      <PwaAlertCard />
       {verifyPermission("general", auth) && (
         <>
           <GeneralStatusCard />

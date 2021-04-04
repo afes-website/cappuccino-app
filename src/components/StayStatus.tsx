@@ -3,9 +3,9 @@ import { Divider, Theme, Typography, useTheme } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { PieChart, Pie, Cell } from "recharts";
 import { Skeleton } from "@material-ui/lab";
-import { useWristBandPaletteColor } from "@/libs/wristBandColor";
-import { getStringTime } from "@/libs/stringDate";
-import { compareTerm } from "@/libs/compare";
+import { useWristBandPaletteColor } from "libs/wristBandColor";
+import { getStringTime } from "libs/stringDate";
+import { compareTerm } from "libs/compare";
 import { ExhStatus, Terms } from "@afes-website/docs";
 
 const useStyles = makeStyles(() =>

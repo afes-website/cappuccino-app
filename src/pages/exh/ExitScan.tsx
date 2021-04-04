@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
-import { useTitleSet } from "@/libs/title";
-import { AuthContext, useVerifyPermission } from "@/libs/auth";
+import { useTitleSet } from "libs/title";
+import { AuthContext, useVerifyPermission } from "libs/auth";
 import api from "@afes-website/docs";
 import aspida from "@aspida/axios";
-import GuestScan from "@/components/GuestScan";
+import GuestScan from "components/GuestScan";
 
 const ExitScan: React.FC = () => {
   useTitleSet("展示教室 退室スキャン");

@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import TypesafeRouter from "@/components/TypesafeRouter";
-import routes from "@/libs/routes";
+import React, { useEffect, useState } from "react";
+import TypesafeRouter from "components/TypesafeRouter";
+import routes from "libs/routes";
 import { createBrowserHistory } from "history";
-import NotFound from "@/pages/NotFound";
-import MainLayout from "@/layouts/Main";
-import Auth, { AuthContext } from "@/libs/auth";
+import NotFound from "pages/NotFound";
+import MainLayout from "layouts/Main";
+import Auth, { AuthContext } from "libs/auth";
 
 const App: React.FC = () => {
   const [history] = useState(createBrowserHistory());
@@ -30,6 +30,14 @@ const App: React.FC = () => {
     return history.listen(redirect_to_login);
   });
 
+  useEffect(() => {
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   return (
     <AuthContext.Provider value={provideVal}>
       <TypesafeRouter
@@ -43,3 +51,8 @@ const App: React.FC = () => {
 };
 
 export default App;
+
+const handleResize = () => {
+  const height = window.innerHeight;
+  document.documentElement.style.setProperty("--100vh", `${height}px`);
+};

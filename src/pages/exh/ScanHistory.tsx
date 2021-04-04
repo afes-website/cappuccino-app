@@ -8,14 +8,14 @@ import {
   Typography,
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { Login, Logout } from "@/components/MaterialSvgIcons";
-import { AuthContext, useVerifyPermission } from "@/libs/auth";
-import { useTitleSet } from "@/libs/title";
-import { useWristBandPaletteColor } from "@/libs/wristBandColor";
-import { getStringDateTime } from "@/libs/stringDate";
+import { Login, Logout } from "components/MaterialSvgIcons";
+import { AuthContext, useVerifyPermission } from "libs/auth";
+import { useTitleSet } from "libs/title";
+import { useWristBandPaletteColor } from "libs/wristBandColor";
+import { getStringDateTime } from "libs/stringDate";
 import api, { ActivityLog } from "@afes-website/docs";
 import aspida from "@aspida/axios";
-import PullToRefresh from "@/components/PullToRefresh";
+import PullToRefresh from "components/PullToRefresh";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) =>
       marginRight: theme.spacing(0.75),
     },
     loadingWrapper: {
-      height: "calc(100vh - 112px)",
+      height: "calc(var(--100vh, 100vh) - 112px)",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",

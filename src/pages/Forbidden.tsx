@@ -2,8 +2,8 @@ import React from "react";
 import { Button, Typography } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router-dom";
-import { useTitleSet } from "@/libs/title";
-import routes from "@/libs/routes";
+import { useTitleSet } from "libs/title";
+import routes from "libs/routes";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) =>
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      height: "calc(100vh - 200px)",
+      height: "calc(var(--100vh, 100vh) - 200px)",
       padding: theme.spacing(2),
     },
     inner: {
