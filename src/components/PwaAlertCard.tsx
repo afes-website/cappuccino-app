@@ -136,7 +136,9 @@ const HowToInstall: React.FC = () => {
         <MoreVert className={classes.inlineIcon} />
         メニューから「
         <AddToHomeScreen className={classes.inlineIcon} />
-        アプリをインストール」を選ぶ
+        アプリをインストール」または「
+        <AddToHomeScreen className={classes.inlineIcon} />
+        ホーム画面に追加」を選ぶ
       </li>
     );
   // Android Firefox
