@@ -49,15 +49,9 @@ const BottomNav: React.FC<{ className?: string }> = ({ className }) => {
     return menus;
   };
 
-  const unListen = history.listen(() => {
-    setValue(history.location.pathname);
-  });
-
   useEffect(() => {
-    return () => {
-      unListen();
-    };
-  });
+    setValue(history.location.pathname);
+  }, [history.location.pathname]);
 
   return (
     <Paper elevation={6} className={clsx(classes.root, className)}>

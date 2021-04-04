@@ -50,14 +50,9 @@ const TopBar: React.FC<Props> = ({ title, className }) => {
     return undefined;
   }
 
-  const unListen = history.listen(() => {
-    setIsNeedBackButton(history.location.pathname !== "/");
-  });
   useEffect(() => {
-    return () => {
-      unListen();
-    };
-  });
+    setIsNeedBackButton(history.location.pathname !== "/");
+  }, [history.location.pathname]);
 
   return (
     <div className={clsx(classes.root, className)}>
