@@ -22,12 +22,14 @@ import {
   useTheme,
   IconButton,
   Toolbar,
+  Snackbar,
 } from "@material-ui/core";
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
 import { AuthContext } from "libs/auth";
 import AccountIcon from "components/AccountIcon";
 import { useSetThemeMode } from "libs/themeMode";
 import { DarkMode, LightMode, Reload } from "components/MaterialSvgIcons";
+import { Alert } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -58,6 +60,9 @@ const useStyles = makeStyles((theme: Theme) =>
       marginTop: "auto",
       marginBottom: "env(safe-area-inset-bottom)",
     },
+    snackBar: {
+      bottom: theme.spacing(8),
+    },
   })
 );
 
@@ -70,9 +75,11 @@ interface Props {
 const AccountDrawer: React.FC<Props> = (props) => {
   const classes = useStyles();
   const auth = useContext(AuthContext).val;
-  const [isLogoutAlertVisible, setIsLogoutAlertVisible] = useState(false);
   const theme = useTheme<Theme>();
   const toggleThemeMode = useSetThemeMode();
+
+  const [isLogoutAlertVisible, setIsLogoutAlertVisible] = useState(false);
+  const [snackBarOpen, setSnackBarOpen] = useState(false);
 
   return (
     <Drawer
@@ -162,7 +169,14 @@ const AccountDrawer: React.FC<Props> = (props) => {
           </IconButton>
           <IconButton
             onClick={() => {
-              window.location.reload();
+              navigator.serviceWorker.getRegistration().then((reg) => {
+                if (reg)
+                  reg.update().then(() => {
+                    setTimeout(() => {
+                      setSnackBarOpen(true);
+                    }, 500);
+                  });
+              });
             }}
           >
             <Reload />
@@ -202,6 +216,31 @@ const AccountDrawer: React.FC<Props> = (props) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* ==== already up to date snack bar ==== */}
+      <Snackbar
+        open={snackBarOpen}
+        onClose={() => {
+          setSnackBarOpen(false);
+        }}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        autoHideDuration={3000}
+        className={classes.snackBar}
+      >
+        <Alert
+          severity="success"
+          variant="filled"
+          elevation={6}
+          onClose={() => {
+            setSnackBarOpen(false);
+          }}
+        >
+          すでに最新版です！
+        </Alert>
+      </Snackbar>
     </Drawer>
   );
 };
