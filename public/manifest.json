@@ -64,26 +64,44 @@
 			"type": "image/png"
 		},
     {
-      "src": "/icons/apple-touch-icon-120.png",
-      "sizes": "120x120",
+      "src": "/icons/android-maskable-icon-128.png",
+      "sizes": "128x128",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/icons/apple-touch-icon-152.png",
+      "src": "/icons/android-maskable-icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/android-maskable-icon-152.png",
       "sizes": "152x152",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/icons/apple-touch-icon-167.png",
-      "sizes": "167x167",
+      "src": "/icons/android-maskable-icon-192.png",
+      "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/icons/apple-touch-icon-180.png",
-      "sizes": "180x180",
+      "src": "/icons/android-maskable-icon-256.png",
+      "sizes": "256x256",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/android-maskable-icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/android-maskable-icon-512.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
