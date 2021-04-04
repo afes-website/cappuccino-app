@@ -12,11 +12,15 @@ import {
 import { useDeviceId } from "libs/videoDeviceId";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Alert } from "@material-ui/lab";
+import { Reload } from "./MaterialSvgIcons";
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     selectBox: {
       width: "100%",
+    },
+    reloadButtonWrapper: {
+      marginTop: theme.spacing(1),
     },
   })
 );
@@ -81,6 +85,19 @@ const CameraDeviceSelectModal: React.FC<Props> = (props) => {
         <DialogContentText>
           <Alert severity="info">
             切り替え後にカメラが読み込まれない場合は、ページを再読み込みしてください。
+            <div className={classes.reloadButtonWrapper}>
+              <Button
+                variant="outlined"
+                color="inherit"
+                size="small"
+                startIcon={<Reload />}
+                onClick={() => {
+                  location.reload();
+                }}
+              >
+                再読み込み
+              </Button>
+            </div>
           </Alert>
         </DialogContentText>
       </DialogContent>
