@@ -4,7 +4,7 @@
 	"description": "Control APPlication for United Contactless Check-IN Operation",
 	"start_url": "/",
 	"display": "standalone",
-	"orientation": "any",
+	"orientation": "natural",
 	"background_color":	"#fff",
 	"theme_color": "#457fb3",
 	"icons": [
