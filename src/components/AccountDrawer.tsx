@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: "env(safe-area-inset-bottom)",
     },
     snackBar: {
-      bottom: theme.spacing(8),
+      bottom: "calc(64px + env(safe-area-inset-bottom))",
     },
   })
 );
