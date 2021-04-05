@@ -102,6 +102,7 @@ const Login: React.FC = () => {
             </FormGroup>
             <TextField
               label="ID"
+              type="email"
               value={id}
               onChange={(e) => {
                 setId(e.target.value);

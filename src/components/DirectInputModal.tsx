@@ -37,6 +37,7 @@ const DirectInputModal: React.FC<{
         <TextField
           autoFocus
           margin="dense"
+          type="email"
           label={`${props.type === "rsv" ? "予約" : "ゲスト"} ID`}
           defaultValue={props.currentId}
           onChange={(event) => {
