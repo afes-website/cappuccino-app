@@ -21,10 +21,14 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=%REACT_APP_GA_ID%"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', '%REACT_APP_GA_ID%');
+      if ("%REACT_APP_GA_ID%" !== `%${"REACT_APP_GA_ID"}%`) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', '%REACT_APP_GA_ID%');
+      }
     </script>
   </head>
   <body>
