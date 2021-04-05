@@ -13,6 +13,7 @@ import AccountIcon from "components/AccountIcon";
 import AccountDrawer from "components/AccountDrawer";
 import { AuthContext } from "libs/auth";
 import clsx from "clsx";
+import routes from "../libs/routes";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -58,7 +59,8 @@ const TopBar: React.FC<Props> = ({ title, className }) => {
     <div className={clsx(classes.root, className)}>
       <AppBar position="static" className={classes.appBar}>
         <Toolbar>
-          {auth.get_current_user_id() &&
+          {(auth.get_current_user_id() ||
+            routes.Terms.route.create({}) === history.location.pathname) &&
             (isNeedBackButton ? (
               <IconButton
                 edge="start"

@@ -20,7 +20,9 @@ const App: React.FC = () => {
   const redirect_to_login = () => {
     if (
       !provideVal.val.get_current_user_id() &&
-      history.location.pathname !== routes.Login.route.create({})
+      ![routes.Login.route.create({}), routes.Terms.route.create({})].includes(
+        history.location.pathname
+      )
     ) {
       history.push(routes.Login.route.create({}));
     }

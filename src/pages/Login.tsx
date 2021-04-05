@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import {
   Button,
   Card,
@@ -16,12 +16,12 @@ import {
 import api from "@afes-website/docs";
 import axios from "@aspida/axios";
 import CardList from "components/CardList";
+import PwaAlertCard from "components/PwaAlertCard";
 import { AuthContext } from "libs/auth";
 import routes from "libs/routes";
 import isAxiosError from "libs/isAxiosError";
 import { useTitleSet } from "libs/title";
 import { createStyles } from "@material-ui/core/styles";
-import PwaAlertCard from "../components/PwaAlertCard";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -32,6 +32,9 @@ const useStyles = makeStyles((theme) =>
     },
     mb: {
       marginBottom: theme.spacing(1),
+    },
+    terms: {
+      width: "100%",
     },
   })
 );
@@ -145,6 +148,15 @@ const Login: React.FC = () => {
           </CardActions>
         </form>
       </Card>
+      <Button
+        variant="text"
+        color="inherit"
+        component={Link}
+        to={routes.Terms.route.create({})}
+        className={classes.terms}
+      >
+        利用規約・プライバシーポリシー
+      </Button>
     </CardList>
   );
 };
