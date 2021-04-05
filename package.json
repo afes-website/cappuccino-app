@@ -40,6 +40,7 @@
     "ua-parser-js": "^0.7.27"
   },
   "devDependencies": {
+    "@types/gtag.js": "^0.0.4",
     "@types/node": "^14.14.34",
     "@types/react": "^17.0.3",
     "@types/react-qr-reader": "^2.1.3",
