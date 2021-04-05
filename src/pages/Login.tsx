@@ -109,6 +109,9 @@ const Login: React.FC = () => {
               className={classes.mb}
               fullWidth={true}
               error={isError}
+              inputProps={{
+                autocapitalize: "off",
+              }}
             />
             <TextField
               label="パスワード"

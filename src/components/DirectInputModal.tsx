@@ -45,6 +45,9 @@ const DirectInputModal: React.FC<{
           fullWidth
           placeholder={props.type === "rsv" ? "R-00000-00000" : "GX-00000"}
           color="secondary"
+          inputProps={{
+            autocapitalize: "off",
+          }}
         />
       </DialogContent>
       <DialogActions>
