@@ -59,6 +59,7 @@ const Login: React.FC = () => {
       .then((res) => {
         auth.register_user(res.token).then(() => {
           auth.switch_user(id);
+          if (gtag) gtag("event", "login");
           history.push(routes.Home.route.create({}));
         });
       })
