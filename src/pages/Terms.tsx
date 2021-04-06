@@ -39,7 +39,7 @@ const Terms: React.FC = () => {
   return (
     <article className={classes.root}>
       <Typography variant="h6" align="center">
-        利用規約・プライバシーポリシー
+        利用規約 & プライバシーポリシー
       </Typography>
       <Divider className={classes.divider} />
       <section>

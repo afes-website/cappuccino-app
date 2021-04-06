@@ -176,7 +176,7 @@ const AccountDrawer: React.FC<Props> = (props) => {
           }}
           className={classes.actionButton}
         >
-          利用規約・プライバシーポリシー
+          利用規約 & プライバシーポリシー
         </Button>
         <Divider />
         <Toolbar>

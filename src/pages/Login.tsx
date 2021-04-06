@@ -155,7 +155,7 @@ const Login: React.FC = () => {
         to={routes.Terms.route.create({})}
         className={classes.terms}
       >
-        利用規約・プライバシーポリシー
+        利用規約 & プライバシーポリシー
       </Button>
     </CardList>
   );
