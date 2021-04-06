@@ -108,7 +108,11 @@ const Login: React.FC = () => {
               }}
               className={classes.mb}
               fullWidth={true}
+              color="secondary"
               error={isError}
+              inputProps={{
+                autocapitalize: "off",
+              }}
             />
             <TextField
               label="パスワード"
@@ -118,6 +122,7 @@ const Login: React.FC = () => {
                 setPassword(e.target.value);
               }}
               fullWidth={true}
+              color="secondary"
               error={isError}
             />
           </CardContent>
