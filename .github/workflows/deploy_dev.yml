@@ -20,6 +20,7 @@ jobs:
         run: |
           cat<<EOF > .env.production.local
           REACT_APP_API_BASE_URL="https://dev.api.app.afes.info"
+          REACT_APP_GA_ID="G-4V1K3DWMVK"
           EOF
       - name: Cache yarn packages
         uses: actions/cache@v1

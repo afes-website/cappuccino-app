@@ -52,6 +52,7 @@ const useStyles = makeStyles((theme: Theme) =>
     actionButton: {
       paddingLeft: theme.spacing(2),
       justifyContent: "left",
+      width: "100%",
     },
     logoutButton: {
       color: theme.palette.error.main,
@@ -59,6 +60,9 @@ const useStyles = makeStyles((theme: Theme) =>
     bottomWrapper: {
       marginTop: "auto",
       marginBottom: "env(safe-area-inset-bottom)",
+      "& hr": {
+        marginTop: theme.spacing(0.5),
+      },
     },
     snackBar: {
       bottom: "calc(64px + env(safe-area-inset-bottom))",
@@ -162,6 +166,18 @@ const AccountDrawer: React.FC<Props> = (props) => {
 
       {/* ==== bottom buttons ==== */}
       <div className={classes.bottomWrapper}>
+        <Button
+          variant="text"
+          color="inherit"
+          component={Link}
+          to={routes.Terms.route.create({})}
+          onClick={() => {
+            props.setIsOpen(false);
+          }}
+          className={classes.actionButton}
+        >
+          利用規約 & プライバシーポリシー
+        </Button>
         <Divider />
         <Toolbar>
           <IconButton onClick={toggleThemeMode}>
