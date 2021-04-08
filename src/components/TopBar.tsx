@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -7,13 +7,14 @@ import {
   createStyles,
   makeStyles,
 } from "@material-ui/core";
-import { ArrowBackIos } from "@material-ui/icons";
+import { ArrowBack, ArrowBackIos } from "@material-ui/icons";
 import { useHistory } from "react-router-dom";
 import AccountIcon from "components/AccountIcon";
 import AccountDrawer from "components/AccountDrawer";
 import { AuthContext } from "libs/auth";
+import routes from "libs/routes";
 import clsx from "clsx";
-import routes from "../libs/routes";
+import UAParser from "ua-parser-js";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -46,6 +47,11 @@ const TopBar: React.FC<Props> = ({ title, className }) => {
   );
   const auth = useContext(AuthContext).val;
 
+  const isApple = useMemo(() => {
+    const parser = new UAParser(navigator.userAgent);
+    return parser.getDevice().vendor === "Apple";
+  }, []);
+
   function onDrawerClose(): undefined {
     setIsDrawerOpen(false);
     return undefined;
@@ -70,7 +76,7 @@ const TopBar: React.FC<Props> = ({ title, className }) => {
                   history.goBack();
                 }}
               >
-                <ArrowBackIos />
+                {isApple ? <ArrowBackIos /> : <ArrowBack />}
               </IconButton>
             ) : (
               <IconButton
