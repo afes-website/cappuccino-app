@@ -2,10 +2,10 @@ import React, { useContext } from "react";
 import routes from "libs/routes";
 import HomeCard from "components/HomeCard";
 import CardList from "components/CardList";
+import PwaAlertCard from "components/PwaAlertCard";
 import { GeneralStatusCard, ExhStatusCard } from "components/StayStatusCard";
 import { useTitleSet } from "libs/title";
 import { AuthContext, verifyPermission } from "libs/auth";
-import PwaAlertCard from "../components/PwaAlertCard";
 
 const Home: React.FC = () => {
   useTitleSet("CAPPUCCINO");
