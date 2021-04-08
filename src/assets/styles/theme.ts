@@ -20,6 +20,10 @@ const darkPalette: PaletteOptions = {
   afesBlue,
   afesDark,
   afesLight,
+  background: {
+    default: "#202125",
+    paper: "#2d2e32",
+  },
 };
 
 const props: ComponentsProps = {
