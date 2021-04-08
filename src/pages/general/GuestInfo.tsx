@@ -26,7 +26,14 @@ import api, {
 } from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import { Login, Logout, WristBand } from "components/MaterialSvgIcons";
-import { AccessTime } from "@material-ui/icons";
+import {
+  AccessTime,
+  Assignment,
+  Email,
+  Face,
+  Group,
+  Phone,
+} from "@material-ui/icons";
 import { getStringDateTime, getStringDateTimeBrief } from "libs/stringDate";
 import clsx from "clsx";
 import DirectInputFab from "components/DirectInputFab";
@@ -34,6 +41,7 @@ import DirectInputModal from "components/DirectInputModal";
 import { StatusColor } from "types/statusColor";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
 import moment from "moment";
+import ToggleVisibilityListItem from "components/ToggleVisibilityListItem";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -74,7 +82,6 @@ const GuestInfo: React.FC = () => {
   const classes = useStyles();
   const auth = useContext(AuthContext).val;
   const resultChipRef = useRef<ResultChipRefs>(null);
-  const wristBandPaletteColor = useWristBandPaletteColor();
 
   const [mode, setMode] = useState<"guest" | "rsv">(
     auth.get_current_user()?.permissions.general ? "guest" : "rsv"
@@ -114,46 +121,54 @@ const GuestInfo: React.FC = () => {
   };
 
   const handleGuestIdScan = (_guestId: string) => {
-    api(aspida())
-      .onsite.general.guest._id(_guestId)
-      .$get({
-        headers: { Authorization: "bearer " + auth.get_current_user()?.token },
-      })
-      .then((_info) => {
-        setGuestInfo(_info);
-      });
-    api(aspida())
-      .onsite.general.log.$get({
-        headers: {
-          Authorization: "bearer " + auth.get_current_user()?.token,
-        },
-        query: { guest_id: _guestId },
-      })
-      .then((_logs) => {
-        setActivityLogs(_logs);
-      });
-    api(aspida())
-      .onsite.exhibition.status.$get({
-        headers: {
-          Authorization: "bearer " + auth.get_current_user()?.token,
-        },
-      })
-      .then((_status) => {
-        setExhStatus(_status);
-      });
+    if (_guestId !== guestId) {
+      setGuestId(_guestId);
+      api(aspida())
+        .onsite.general.guest._id(_guestId)
+        .$get({
+          headers: {
+            Authorization: "bearer " + auth.get_current_user()?.token,
+          },
+        })
+        .then((_info) => {
+          setGuestInfo(_info);
+        });
+      api(aspida())
+        .onsite.general.log.$get({
+          headers: {
+            Authorization: "bearer " + auth.get_current_user()?.token,
+          },
+          query: { guest_id: _guestId },
+        })
+        .then((_logs) => {
+          setActivityLogs(_logs);
+        });
+      api(aspida())
+        .onsite.exhibition.status.$get({
+          headers: {
+            Authorization: "bearer " + auth.get_current_user()?.token,
+          },
+        })
+        .then((_status) => {
+          setExhStatus(_status);
+        });
+    }
   };
 
   const handleRsvIdScan = (_rsvId: string) => {
-    api(aspida())
-      .onsite.reservation._id(_rsvId)
-      .$get({
-        headers: {
-          Authorization: "bearer " + auth.get_current_user()?.token,
-        },
-      })
-      .then((_rsvInfo) => {
-        setRsvInfo(_rsvInfo);
-      });
+    if (_rsvId !== rsvId) {
+      setRsvId(_rsvId);
+      api(aspida())
+        .onsite.reservation._id(_rsvId)
+        .$get({
+          headers: {
+            Authorization: "bearer " + auth.get_current_user()?.token,
+          },
+        })
+        .then((_rsvInfo) => {
+          setRsvInfo(_rsvInfo);
+        });
+    }
   };
 
   return (
@@ -185,7 +200,6 @@ const GuestInfo: React.FC = () => {
           <QRScanner onScanFunc={handleScan} videoStop={false} />
           <ResultChip ref={resultChipRef} className={classes.resultChip} />
         </Card>
-
         {mode === "guest" && (
           <>
             <Card>
@@ -195,7 +209,7 @@ const GuestInfo: React.FC = () => {
                 })}
               >
                 <Typography
-                  style={{ fontSize: 14 }}
+                  variant="body2"
                   color="textSecondary"
                   gutterBottom={true}
                 >
@@ -216,7 +230,7 @@ const GuestInfo: React.FC = () => {
                 })}
               >
                 <Typography
-                  style={{ fontSize: 14 }}
+                  variant="body2"
                   color="textSecondary"
                   gutterBottom={true}
                 >
@@ -238,6 +252,29 @@ const GuestInfo: React.FC = () => {
               )}
             </Card>
           </>
+        )}
+        {mode === "rsv" && (
+          <Card>
+            <CardContent
+              className={clsx({
+                [classes.cardTitle]: rsvInfo,
+              })}
+            >
+              <Typography
+                variant="body2"
+                color="textSecondary"
+                gutterBottom={true}
+              >
+                予約情報
+              </Typography>
+              {!rsvInfo && (
+                <Typography variant="caption" align="center">
+                  まだ予約QRコードをスキャンしていません。
+                </Typography>
+              )}
+            </CardContent>
+            {rsvInfo && <PrivateInfoList info={rsvInfo} />}
+          </Card>
         )}
       </CardList>
 
@@ -402,3 +439,69 @@ const LogList: React.FC<{ logs: ActivityLog[]; status: AllStatus }> = ({
       ))}
   </List>
 );
+
+const PrivateInfoList: React.FC<{ info: ReservationWithPrivateInfo }> = ({
+  info,
+}) => {
+  const classes = useComponentsStyles();
+  const wristBandPaletteColor = useWristBandPaletteColor();
+
+  return (
+    <List>
+      <ListItem>
+        <ListItemIcon>
+          <Assignment />
+        </ListItemIcon>
+        <ListItemText primary={info.id} secondary="予約 ID" />
+      </ListItem>
+      <ListItem>
+        <ListItemIcon>
+          <Group />
+        </ListItemIcon>
+        <ListItemText
+          primary={`${info.people_count} 人`}
+          secondary="予約人数"
+        />
+      </ListItem>
+      <ListItem>
+        <ListItemIcon>
+          <AccessTime />
+        </ListItemIcon>
+        <ListItemText
+          primary={
+            <>
+              <span
+                className={classes.termColorBadge}
+                style={{
+                  background: wristBandPaletteColor(info.term.guest_type).main,
+                }}
+              />
+              {`${getStringDateTimeBrief(
+                info.term.enter_scheduled_time
+              )} - ${getStringDateTimeBrief(info.term.exit_scheduled_time)}`}
+            </>
+          }
+          secondary="予約時間帯"
+        />
+      </ListItem>
+      <ToggleVisibilityListItem
+        icon={<Face />}
+        primary={info.name}
+        secondary="代表者氏名"
+        deps={[info.id]}
+      />
+      <ToggleVisibilityListItem
+        icon={<Email />}
+        primary={info.email}
+        secondary="メールアドレス"
+        deps={[info.id]}
+      />
+      <ToggleVisibilityListItem
+        icon={<Phone />}
+        primary={info.cellphone}
+        secondary="携帯電話番号"
+        deps={[info.id]}
+      />
+    </List>
+  );
+};
