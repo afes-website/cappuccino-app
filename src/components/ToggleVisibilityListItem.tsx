@@ -13,8 +13,7 @@ export interface ToggleVisibilityListItemProps {
   icon?: React.ReactElement<typeof SvgIcon>;
   primary: string;
   secondary: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  deps?: ReadonlyArray<any>;
+  deps?: ReadonlyArray<unknown>;
 }
 
 const ToggleVisibilityListItem: React.FC<ToggleVisibilityListItemProps> = ({
