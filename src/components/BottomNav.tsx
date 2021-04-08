@@ -9,8 +9,8 @@ import {
 } from "@material-ui/core";
 import routes from "libs/routes";
 import { Link, useHistory } from "react-router-dom";
-import { Assignment, Home } from "@material-ui/icons";
-import { Login, Logout } from "components/MaterialSvgIcons";
+import { Home } from "@material-ui/icons";
+import { Login, Logout, QrCodeScanner } from "components/MaterialSvgIcons";
 import { AuthContext } from "libs/auth";
 import { UserInfo } from "@afes-website/docs";
 import clsx from "clsx";
@@ -103,8 +103,12 @@ const menuItems: { [key in keyof UserInfo["permissions"]]?: MenuItem[] } = {
       routes.GeneralExitScan.route.create({}),
       <Logout key="Exit" />,
     ],
+    [
+      "情報照会",
+      routes.GuestInfo.route.create({}),
+      <QrCodeScanner key="guestInfo" />,
+    ],
   ],
-  admin: [["予約", "/admin/reservations", <Assignment key="reservation" />]],
 };
 
 const commonMenus: MenuItem[] = [
