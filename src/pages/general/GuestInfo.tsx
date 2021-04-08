@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Card,
   CardContent,
@@ -12,20 +12,7 @@ import {
   Tabs,
   Typography,
 } from "@material-ui/core";
-import { AuthContext, useVerifyPermission } from "libs/auth";
-import { useTitleSet } from "libs/title";
-import CardList from "components/CardList";
-import QRScanner from "components/QRScanner";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
-import ResultChip, { ResultChipRefs } from "components/ResultChip";
-import api, {
-  ActivityLog,
-  AllStatus,
-  Guest,
-  ReservationWithPrivateInfo,
-} from "@afes-website/docs";
-import aspida from "@aspida/axios";
-import { Login, Logout, WristBand } from "components/MaterialSvgIcons";
+import { Alert } from "@material-ui/lab";
 import {
   AccessTime,
   Assignment,
@@ -34,14 +21,29 @@ import {
   Group,
   Phone,
 } from "@material-ui/icons";
-import { getStringDateTime, getStringDateTimeBrief } from "libs/stringDate";
-import clsx from "clsx";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
+import { Login, Logout, WristBand } from "components/MaterialSvgIcons";
+import CardList from "components/CardList";
+import QRScanner from "components/QRScanner";
+import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import DirectInputFab from "components/DirectInputFab";
 import DirectInputModal from "components/DirectInputModal";
-import { StatusColor } from "types/statusColor";
-import { useWristBandPaletteColor } from "libs/wristBandColor";
-import moment from "moment";
 import ToggleVisibilityListItem from "components/ToggleVisibilityListItem";
+import { AuthContext, useVerifyPermission } from "libs/auth";
+import { useTitleSet } from "libs/title";
+import isAxiosError from "libs/isAxiosError";
+import { getStringDateTime, getStringDateTimeBrief } from "libs/stringDate";
+import { useWristBandPaletteColor } from "libs/wristBandColor";
+import { StatusColor } from "types/statusColor";
+import api, {
+  ActivityLog,
+  AllStatus,
+  Guest,
+  ReservationWithPrivateInfo,
+} from "@afes-website/docs";
+import aspida from "@aspida/axios";
+import moment from "moment";
+import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -64,13 +66,8 @@ const useStyles = makeStyles((theme) =>
     cardTitle: {
       paddingBottom: 0,
     },
-    termColorBadge: {
-      display: "inline-block",
-      width: 14,
-      height: 14,
-      borderRadius: 7,
-      marginBottom: -1,
-      marginRight: theme.spacing(0.75),
+    alertMessage: {
+      display: "block",
     },
   })
 );
@@ -103,19 +100,40 @@ const GuestInfo: React.FC = () => {
   const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
   const [opensRsvInputModal, setOpensRsvInputModal] = useState(false);
 
-  // 予約ID・ゲストIDそれぞれのチェック結果
-  const [rsvCheckStatus, setRsvCheckStatus] = useState<StatusColor | null>(
-    null
-  );
-  const [guestCheckStatus, setGuestCheckStatus] = useState<StatusColor | null>(
-    null
-  );
+  const [status, setStatus] = useState<StatusColor | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string[] | null>(null);
+
+  const clearInfo = () => {
+    // guest
+    setGuestInfo(null);
+    setActivityLogs(null);
+    setExhStatus(null);
+
+    // rsv
+    setRsvInfo(null);
+  };
+
+  // モード切り替え時の初期化
+  useEffect(() => {
+    setGuestId("");
+    setRsvId("");
+    clearInfo();
+
+    // error
+    setStatus(null);
+    setErrorMessage(null);
+    if (resultChipRef.current) resultChipRef.current.close();
+  }, [mode]);
 
   const handleScan = (value: string | null) => {
     if (value) {
       switch (mode) {
         case "guest":
           handleGuestIdScan(value);
+          break;
+        case "rsv":
+          handleRsvIdScan(value);
+          break;
       }
     }
   };
@@ -123,34 +141,46 @@ const GuestInfo: React.FC = () => {
   const handleGuestIdScan = (_guestId: string) => {
     if (_guestId !== guestId) {
       setGuestId(_guestId);
-      api(aspida())
-        .onsite.general.guest._id(_guestId)
-        .$get({
-          headers: {
-            Authorization: "bearer " + auth.get_current_user()?.token,
-          },
+      setStatus("loading");
+      Promise.all([
+        api(aspida())
+          .onsite.general.guest._id(_guestId)
+          .$get({
+            headers: {
+              Authorization: "bearer " + auth.get_current_user()?.token,
+            },
+          })
+          .then((_info) => {
+            setGuestInfo(_info);
+          }),
+        api(aspida())
+          .onsite.general.log.$get({
+            headers: {
+              Authorization: "bearer " + auth.get_current_user()?.token,
+            },
+            query: { guest_id: _guestId },
+          })
+          .then((_logs) => {
+            setActivityLogs(_logs);
+          }),
+        api(aspida())
+          .onsite.exhibition.status.$get({
+            headers: {
+              Authorization: "bearer " + auth.get_current_user()?.token,
+            },
+          })
+          .then((_status) => {
+            setExhStatus(_status);
+          }),
+      ])
+        .then(() => {
+          setStatus("success");
         })
-        .then((_info) => {
-          setGuestInfo(_info);
-        });
-      api(aspida())
-        .onsite.general.log.$get({
-          headers: {
-            Authorization: "bearer " + auth.get_current_user()?.token,
-          },
-          query: { guest_id: _guestId },
-        })
-        .then((_logs) => {
-          setActivityLogs(_logs);
-        });
-      api(aspida())
-        .onsite.exhibition.status.$get({
-          headers: {
-            Authorization: "bearer " + auth.get_current_user()?.token,
-          },
-        })
-        .then((_status) => {
-          setExhStatus(_status);
+        .catch((e) => {
+          setStatus("error");
+          if (isAxiosError(e) && e.response?.status === 404)
+            setErrorMessage(["合致する来場者情報がありません。"]);
+          else networkErrorHandler(e);
         });
     }
   };
@@ -158,6 +188,7 @@ const GuestInfo: React.FC = () => {
   const handleRsvIdScan = (_rsvId: string) => {
     if (_rsvId !== rsvId) {
       setRsvId(_rsvId);
+      setStatus("loading");
       api(aspida())
         .onsite.reservation._id(_rsvId)
         .$get({
@@ -166,8 +197,76 @@ const GuestInfo: React.FC = () => {
           },
         })
         .then((_rsvInfo) => {
+          setStatus("success");
           setRsvInfo(_rsvInfo);
+        })
+        .catch((e) => {
+          setStatus("error");
+          if (isAxiosError(e) && e.response?.status === 404)
+            setErrorMessage([
+              "合致する予約情報がありません。",
+              "マニュアルを参照し、権限の強い人を呼んでください。",
+            ]);
+          else networkErrorHandler(e);
         });
+    }
+  };
+
+  useEffect(() => {
+    const name = { guest: "ゲスト", rsv: "予約" };
+    const id = { guest: guestId, rsv: rsvId };
+    switch (status) {
+      case "loading":
+        clearInfo();
+        setErrorMessage(null);
+        if (resultChipRef.current) resultChipRef.current.close();
+        break;
+      case "success":
+        if (resultChipRef.current)
+          resultChipRef.current.open(
+            "success",
+            `取得成功 / ${name[mode]} ID: ${id[mode]}`,
+            3000
+          );
+        break;
+      case "error":
+        if (resultChipRef.current)
+          resultChipRef.current.open(
+            "error",
+            `取得失敗 / ${name[mode]} ID: ${id[mode]}`
+          );
+        break;
+    }
+  }, [mode, status, guestId, rsvId]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const networkErrorHandler = (e: any): void => {
+    console.error(e);
+    if (isAxiosError(e)) {
+      // axios error
+      if (e.response?.status) {
+        // status code があるとき
+        setErrorMessage([
+          `サーバーエラーが発生しました。総務局にお問い合わせください。`,
+          `status code: ${e.response?.status || "undefined"}`,
+          e.message,
+        ]);
+      }
+      // ないとき
+      else {
+        setErrorMessage([
+          `通信エラーが発生しました。通信環境を確認し、はじめからやり直してください。`,
+          `状況が改善しない場合は、総務局にお問い合わせください。`,
+          e.message,
+        ]);
+      }
+    }
+    // なにもわからないとき
+    else {
+      setErrorMessage([
+        "通信エラーが発生しました。通信環境を確認し、はじめからやり直してください。",
+        "状況が改善しない場合は、総務局にお問い合わせください。",
+      ]);
     }
   };
 
@@ -197,15 +296,34 @@ const GuestInfo: React.FC = () => {
       </Paper>
       <CardList className={classes.list}>
         <Card className={classes.resultChipBase}>
-          <QRScanner onScanFunc={handleScan} videoStop={false} />
-          <ResultChip ref={resultChipRef} className={classes.resultChip} />
+          <QRScanner
+            onScanFunc={handleScan}
+            videoStop={false}
+            color={status || undefined}
+          />
+          {status && (
+            <ResultChip ref={resultChipRef} className={classes.resultChip} />
+          )}
         </Card>
+        {status == "error" && (
+          <Card>
+            <Alert severity="error">
+              {errorMessage
+                ? errorMessage.map((msg) => (
+                    <span key={msg} className={classes.alertMessage}>
+                      {msg}
+                    </span>
+                  ))
+                : "原因不明のエラーです。総務局にお問い合わせください。"}
+            </Alert>
+          </Card>
+        )}
         {mode === "guest" && (
           <>
             <Card>
               <CardContent
                 className={clsx({
-                  [classes.cardTitle]: guestInfo,
+                  [classes.cardTitle]: guestId,
                 })}
               >
                 <Typography
@@ -215,13 +333,13 @@ const GuestInfo: React.FC = () => {
                 >
                   ゲスト情報
                 </Typography>
-                {!guestInfo && (
+                {!guestId && (
                   <Typography variant="caption" align="center">
                     まだゲストQRコードをスキャンしていません。
                   </Typography>
                 )}
               </CardContent>
-              {guestInfo && <GuestInfoList guest={guestInfo} />}
+              {guestId && <GuestInfoList guestId={guestId} guest={guestInfo} />}
             </Card>
             <Card>
               <CardContent
@@ -236,10 +354,16 @@ const GuestInfo: React.FC = () => {
                 >
                   行動履歴一覧
                 </Typography>
-                {!activityLogs && (
+                {!guestId ? (
                   <Typography variant="caption" align="center">
                     まだゲストQRコードをスキャンしていません。
                   </Typography>
+                ) : (
+                  !activityLogs && (
+                    <Typography variant="caption" align="center">
+                      まだゲストQRコードをスキャンしていません。
+                    </Typography>
+                  )
                 )}
                 {activityLogs?.length === 0 && (
                   <Typography variant="caption" align="center">
@@ -257,7 +381,7 @@ const GuestInfo: React.FC = () => {
           <Card>
             <CardContent
               className={clsx({
-                [classes.cardTitle]: rsvInfo,
+                [classes.cardTitle]: rsvId,
               })}
             >
               <Typography
@@ -267,13 +391,13 @@ const GuestInfo: React.FC = () => {
               >
                 予約情報
               </Typography>
-              {!rsvInfo && (
+              {!rsvId && (
                 <Typography variant="caption" align="center">
                   まだ予約QRコードをスキャンしていません。
                 </Typography>
               )}
             </CardContent>
-            {rsvInfo && <PrivateInfoList info={rsvInfo} />}
+            {rsvId && <PrivateInfoList rsvId={rsvId} info={rsvInfo} />}
           </Card>
         )}
       </CardList>
@@ -285,9 +409,7 @@ const GuestInfo: React.FC = () => {
             true
           ));
         }}
-        disabled={
-          { guest: guestCheckStatus, rsv: rsvCheckStatus }[mode] === "loading"
-        }
+        disabled={status === "loading"}
       />
 
       {/* 直接入力モーダル */}
@@ -324,7 +446,10 @@ const useComponentsStyles = makeStyles((theme) =>
   })
 );
 
-const GuestInfoList: React.FC<{ guest: Guest }> = ({ guest }) => {
+const GuestInfoList: React.FC<{ guestId: string; guest: Guest | null }> = ({
+  guestId,
+  guest,
+}) => {
   const classes = useComponentsStyles();
   const wristBandPaletteColor = useWristBandPaletteColor();
 
@@ -337,76 +462,85 @@ const GuestInfoList: React.FC<{ guest: Guest }> = ({ guest }) => {
         <ListItemText
           primary={
             <>
-              <span
-                className={classes.termColorBadge}
-                style={{
-                  background: wristBandPaletteColor(guest.term.guest_type).main,
-                }}
-              />
-              {guest.id}
+              {guest && (
+                <span
+                  className={classes.termColorBadge}
+                  style={{
+                    background: wristBandPaletteColor(guest.term.guest_type)
+                      .main,
+                  }}
+                />
+              )}
+              {guestId}
             </>
           }
           secondary="ゲスト ID"
         />
       </ListItem>
-      <Grid container spacing={0}>
-        <Grid item xs={6}>
-          <ListItem>
-            <ListItemIcon>
-              <Login />
-            </ListItemIcon>
-            <ListItemText
-              primary={getStringDateTimeBrief(guest.entered_at)}
-              secondary="入場時刻"
-            />
-          </ListItem>
-        </Grid>
-        <Grid item xs={6}>
-          <ListItem>
-            <ListItemIcon>
-              <Logout />
-            </ListItemIcon>
-            <ListItemText
-              primary={
-                guest.exited_at ? getStringDateTimeBrief(guest.exited_at) : "-"
-              }
-              secondary="退場時刻"
-            />
-          </ListItem>
-        </Grid>
-      </Grid>
-      <Grid container spacing={0}>
-        <Grid item xs={6}>
-          <ListItem>
-            <ListItemIcon>
-              <AccessTime />
-            </ListItemIcon>
-            <ListItemText
-              primary={
-                guest.term.enter_scheduled_time
-                  ? getStringDateTimeBrief(guest.term.enter_scheduled_time)
-                  : "-"
-              }
-              secondary="入場予定時刻"
-            />
-          </ListItem>
-        </Grid>
-        <Grid item xs={6}>
-          <ListItem>
-            <ListItemIcon>
-              <AccessTime />
-            </ListItemIcon>
-            <ListItemText
-              primary={
-                guest.term.exit_scheduled_time
-                  ? getStringDateTimeBrief(guest.term.exit_scheduled_time)
-                  : "-"
-              }
-              secondary="退場予定時刻"
-            />
-          </ListItem>
-        </Grid>
-      </Grid>
+      {guest && (
+        <>
+          <Grid container spacing={0}>
+            <Grid item xs={6}>
+              <ListItem>
+                <ListItemIcon>
+                  <Login />
+                </ListItemIcon>
+                <ListItemText
+                  primary={getStringDateTimeBrief(guest.entered_at)}
+                  secondary="入場時刻"
+                />
+              </ListItem>
+            </Grid>
+            <Grid item xs={6}>
+              <ListItem>
+                <ListItemIcon>
+                  <Logout />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    guest.exited_at
+                      ? getStringDateTimeBrief(guest.exited_at)
+                      : "-"
+                  }
+                  secondary="退場時刻"
+                />
+              </ListItem>
+            </Grid>
+          </Grid>
+          <Grid container spacing={0}>
+            <Grid item xs={6}>
+              <ListItem>
+                <ListItemIcon>
+                  <AccessTime />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    guest.term.enter_scheduled_time
+                      ? getStringDateTimeBrief(guest.term.enter_scheduled_time)
+                      : "-"
+                  }
+                  secondary="入場予定時刻"
+                />
+              </ListItem>
+            </Grid>
+            <Grid item xs={6}>
+              <ListItem>
+                <ListItemIcon>
+                  <AccessTime />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    guest.term.exit_scheduled_time
+                      ? getStringDateTimeBrief(guest.term.exit_scheduled_time)
+                      : "-"
+                  }
+                  secondary="退場予定時刻"
+                />
+              </ListItem>
+            </Grid>
+          </Grid>
+        </>
+      )}
     </List>
   );
 };
@@ -440,9 +574,10 @@ const LogList: React.FC<{ logs: ActivityLog[]; status: AllStatus }> = ({
   </List>
 );
 
-const PrivateInfoList: React.FC<{ info: ReservationWithPrivateInfo }> = ({
-  info,
-}) => {
+const PrivateInfoList: React.FC<{
+  rsvId: string;
+  info: ReservationWithPrivateInfo | null;
+}> = ({ rsvId, info }) => {
   const classes = useComponentsStyles();
   const wristBandPaletteColor = useWristBandPaletteColor();
 
@@ -452,56 +587,63 @@ const PrivateInfoList: React.FC<{ info: ReservationWithPrivateInfo }> = ({
         <ListItemIcon>
           <Assignment />
         </ListItemIcon>
-        <ListItemText primary={info.id} secondary="予約 ID" />
+        <ListItemText primary={rsvId} secondary="予約 ID" />
       </ListItem>
-      <ListItem>
-        <ListItemIcon>
-          <Group />
-        </ListItemIcon>
-        <ListItemText
-          primary={`${info.people_count} 人`}
-          secondary="予約人数"
-        />
-      </ListItem>
-      <ListItem>
-        <ListItemIcon>
-          <AccessTime />
-        </ListItemIcon>
-        <ListItemText
-          primary={
-            <>
-              <span
-                className={classes.termColorBadge}
-                style={{
-                  background: wristBandPaletteColor(info.term.guest_type).main,
-                }}
-              />
-              {`${getStringDateTimeBrief(
-                info.term.enter_scheduled_time
-              )} - ${getStringDateTimeBrief(info.term.exit_scheduled_time)}`}
-            </>
-          }
-          secondary="予約時間帯"
-        />
-      </ListItem>
-      <ToggleVisibilityListItem
-        icon={<Face />}
-        primary={info.name}
-        secondary="代表者氏名"
-        deps={[info.id]}
-      />
-      <ToggleVisibilityListItem
-        icon={<Email />}
-        primary={info.email}
-        secondary="メールアドレス"
-        deps={[info.id]}
-      />
-      <ToggleVisibilityListItem
-        icon={<Phone />}
-        primary={info.cellphone}
-        secondary="携帯電話番号"
-        deps={[info.id]}
-      />
+      {info && (
+        <>
+          <ListItem>
+            <ListItemIcon>
+              <Group />
+            </ListItemIcon>
+            <ListItemText
+              primary={`${info.people_count} 人`}
+              secondary="予約人数"
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <AccessTime />
+            </ListItemIcon>
+            <ListItemText
+              primary={
+                <>
+                  <span
+                    className={classes.termColorBadge}
+                    style={{
+                      background: wristBandPaletteColor(info.term.guest_type)
+                        .main,
+                    }}
+                  />
+                  {`${getStringDateTimeBrief(
+                    info.term.enter_scheduled_time
+                  )} - ${getStringDateTimeBrief(
+                    info.term.exit_scheduled_time
+                  )}`}
+                </>
+              }
+              secondary="予約時間帯"
+            />
+          </ListItem>
+          <ToggleVisibilityListItem
+            icon={<Face />}
+            primary={info.name}
+            secondary="代表者氏名"
+            deps={[info.id]}
+          />
+          <ToggleVisibilityListItem
+            icon={<Email />}
+            primary={info.email}
+            secondary="メールアドレス"
+            deps={[info.id]}
+          />
+          <ToggleVisibilityListItem
+            icon={<Phone />}
+            primary={info.cellphone}
+            secondary="携帯電話番号"
+            deps={[info.id]}
+          />
+        </>
+      )}
     </List>
   );
 };
