@@ -10,7 +10,7 @@ import {
 import routes from "libs/routes";
 import { Link, useHistory } from "react-router-dom";
 import { Home } from "@material-ui/icons";
-import { Login, Logout, QrCodeScanner } from "components/MaterialSvgIcons";
+import { Login, Logout, QRScannerIcon } from "components/MaterialSvgIcons";
 import { AuthContext } from "libs/auth";
 import { UserInfo } from "@afes-website/docs";
 import clsx from "clsx";
@@ -106,7 +106,7 @@ const menuItems: { [key in keyof UserInfo["permissions"]]?: MenuItem[] } = {
     [
       "情報照会",
       routes.GuestInfo.route.create({}),
-      <QrCodeScanner key="guestInfo" />,
+      <QRScannerIcon key="guestInfo" />,
     ],
   ],
 };
