@@ -636,19 +636,19 @@ const PrivateInfoList: React.FC<{
             icon={<Face />}
             primary={info.name}
             secondary="代表者氏名"
-            deps={[info.id]}
+            dependency={rsvId}
           />
           <ToggleVisibilityListItem
             icon={<Email />}
             primary={info.email}
             secondary="メールアドレス"
-            deps={[info.id]}
+            dependency={rsvId}
           />
           <ToggleVisibilityListItem
             icon={<Phone />}
             primary={info.cellphone}
             secondary="携帯電話番号"
-            deps={[info.id]}
+            dependency={rsvId}
           />
         </>
       )}

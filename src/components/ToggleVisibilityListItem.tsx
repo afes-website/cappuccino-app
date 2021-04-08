@@ -13,21 +13,20 @@ export interface ToggleVisibilityListItemProps {
   icon?: React.ReactElement<typeof SvgIcon>;
   primary: string;
   secondary: string;
-  deps?: ReadonlyArray<unknown>;
+  dependency?: unknown;
 }
 
 const ToggleVisibilityListItem: React.FC<ToggleVisibilityListItemProps> = ({
   icon,
   primary,
   secondary,
-  deps,
+  dependency,
 }) => {
   const [visibility, setVisibility] = useState(false);
 
   useEffect(() => {
     setVisibility(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps || []);
+  }, [dependency]);
 
   return (
     <ListItem>
