@@ -26,6 +26,13 @@ const useStyles = makeStyles(() =>
     },
     menuIcon: {
       position: "absolute",
+      height: 48,
+      width: 48,
+      top: 4,
+      left: 10,
+    },
+    accountButton: {
+      padding: 6.5,
     },
     title: {
       flexGrow: 1,
@@ -69,7 +76,6 @@ const TopBar: React.FC<Props> = ({ title, className }) => {
             routes.Terms.route.create({}) === history.location.pathname) &&
             (isNeedBackButton ? (
               <IconButton
-                edge="start"
                 className={classes.menuIcon}
                 color="inherit"
                 onClick={() => {
@@ -80,8 +86,7 @@ const TopBar: React.FC<Props> = ({ title, className }) => {
               </IconButton>
             ) : (
               <IconButton
-                edge="start"
-                className={classes.menuIcon}
+                className={clsx(classes.menuIcon, classes.accountButton)}
                 color="inherit"
                 onClick={() => {
                   setIsDrawerOpen(true);
