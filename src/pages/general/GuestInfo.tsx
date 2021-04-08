@@ -288,7 +288,7 @@ const GuestInfo: React.FC = () => {
           />
 
           <Tab
-            label="予約 登録情報"
+            label="予約 登録情報一覧"
             value="rsv"
             disabled={!auth.get_current_user()?.permissions.reservation}
           />
@@ -400,6 +400,14 @@ const GuestInfo: React.FC = () => {
             {rsvId && <PrivateInfoList rsvId={rsvId} info={rsvInfo} />}
           </Card>
         )}
+        <Typography
+          variant="body2"
+          color="textSecondary"
+          align="center"
+          gutterBottom={true}
+        >
+          情報の取り扱いには十分注意してください。
+        </Typography>
       </CardList>
 
       {/* 直接入力ボタン */}
