@@ -30,17 +30,34 @@ import AccountIcon from "components/AccountIcon";
 import { useSetThemeMode } from "libs/themeMode";
 import { DarkMode, LightMode, Reload } from "components/MaterialSvgIcons";
 import { Alert } from "@material-ui/lab";
+import PermissionIcon from "components/PermissionIcon";
+import clsx from "clsx";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     paper: {
       width: "70vw",
     },
-    nowAccount: {
+    currentUserIconWrapper: {
+      display: "flex",
+      justifyContent: "space-between",
+    },
+    currentUser: {
       color: theme.palette.primary.contrastText,
       background: theme.palette.primary.main,
       padding: theme.spacing(2),
       paddingTop: `calc(${theme.spacing(2)}px + env(safe-area-inset-top))`,
+    },
+    permissionsList: {
+      display: "flex",
+      height: "min-content",
+      marginTop: theme.spacing(0.5),
+      "& > * + *": {
+        marginLeft: theme.spacing(0.5),
+      },
+    },
+    disabledIcon: {
+      opacity: theme.palette.action.disabledOpacity,
     },
     menuIcon: {
       marginBottom: theme.spacing(1),
@@ -94,12 +111,15 @@ const AccountDrawer: React.FC<Props> = (props) => {
       }}
     >
       {/* ==== current list ==== */}
-      <Paper className={classes.nowAccount} square={true}>
-        <AccountIcon
-          account={auth.get_current_user()}
-          className={classes.menuIcon}
-          color="inherit"
-        />
+      <Paper className={classes.currentUser} square={true}>
+        <div className={classes.currentUserIconWrapper}>
+          <AccountIcon
+            account={auth.get_current_user()}
+            className={classes.menuIcon}
+            color="inherit"
+          />
+          <PermissionsList />
+        </div>
         <Typography variant="h6">
           {auth.get_current_user()?.name || ""}
         </Typography>
@@ -258,6 +278,26 @@ const AccountDrawer: React.FC<Props> = (props) => {
         </Alert>
       </Snackbar>
     </Drawer>
+  );
+};
+
+const PermissionsList: React.FC = () => {
+  const classes = useStyles();
+  const auth = useContext(AuthContext).val;
+
+  const currentUser = auth.get_current_user();
+  if (!currentUser) return null;
+  return (
+    <div className={classes.permissionsList}>
+      {Object.entries(currentUser.permissions).map(([name, val]) => (
+        <PermissionIcon
+          permName={name}
+          key={name}
+          fontSize="small"
+          className={clsx({ [classes.disabledIcon]: !val })}
+        />
+      ))}
+    </div>
   );
 };
 
