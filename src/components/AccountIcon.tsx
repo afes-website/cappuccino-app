@@ -6,6 +6,7 @@ import {
   PersonSecurity,
   PersonAssignment,
   PersonRoom,
+  PersonTeacher,
 } from "components/MaterialSvgIcons";
 import { SvgIconProps } from "@material-ui/core";
 
@@ -13,6 +14,7 @@ const AccountIcon: React.FC<
   { account: StorageUserInfo | null } & SvgIconProps
 > = (props) => {
   const { account, ...iconProps } = props;
+  if (account?.permissions.teacher) return <PersonTeacher {...iconProps} />;
   if (account?.permissions.admin) return <PersonSecurity {...iconProps} />;
   if (account?.permissions.reservation)
     return <PersonAssignment {...iconProps} />;
