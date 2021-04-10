@@ -138,12 +138,12 @@ const GuestInfo: React.FC = () => {
     }
   };
 
-  const handleGuestIdScan = (_guestId: string) => {
+  const handleGuestIdScan = async (_guestId: string) => {
     if (_guestId !== guestId) {
       setGuestId(_guestId);
       setStatus("loading");
-      Promise.all([
-        api(aspida())
+      try {
+        const getGuestInfo = api(aspida())
           .onsite.general.guest._id(_guestId)
           .$get({
             headers: {
@@ -152,8 +152,8 @@ const GuestInfo: React.FC = () => {
           })
           .then((_info) => {
             setGuestInfo(_info);
-          }),
-        api(aspida())
+          });
+        const getActivityLog = api(aspida())
           .onsite.general.log.$get({
             headers: {
               Authorization: "bearer " + auth.get_current_user()?.token,
@@ -162,8 +162,8 @@ const GuestInfo: React.FC = () => {
           })
           .then((_logs) => {
             setActivityLogs(_logs);
-          }),
-        api(aspida())
+          });
+        const getExhStatus = api(aspida())
           .onsite.exhibition.status.$get({
             headers: {
               Authorization: "bearer " + auth.get_current_user()?.token,
@@ -171,17 +171,17 @@ const GuestInfo: React.FC = () => {
           })
           .then((_status) => {
             setExhStatus(_status);
-          }),
-      ])
-        .then(() => {
-          setStatus("success");
-        })
-        .catch((e) => {
-          setStatus("error");
-          if (isAxiosError(e) && e.response?.status === 404)
-            setErrorMessage(["合致する来場者情報がありません。"]);
-          else networkErrorHandler(e);
-        });
+          });
+        await getGuestInfo;
+        await getActivityLog;
+        await getExhStatus;
+        setStatus("success");
+      } catch (e) {
+        setStatus("error");
+        if (isAxiosError(e) && e.response?.status === 404)
+          setErrorMessage(["合致する来場者情報がありません。"]);
+        else networkErrorHandler(e);
+      }
     }
   };
 
