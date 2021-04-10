@@ -10,6 +10,7 @@ import ExhScanHistory from "pages/exh/ScanHistory";
 import GeneralEnterScan from "pages/general/EnterScan";
 import GeneralExitScan from "pages/general/ExitScan";
 import AllExhStatus from "pages/general/AllExhStatus";
+import GuestInfo from "pages/general/GuestInfo";
 
 const routes = {
   Home: typedRoute(route(""), Home),
@@ -22,6 +23,7 @@ const routes = {
   GeneralEnterScan: typedRoute(route("general/enter"), GeneralEnterScan),
   GeneralExitScan: typedRoute(route("general/exit"), GeneralExitScan),
   AllExhStatus: typedRoute(route("general/status"), AllExhStatus),
+  GuestInfo: typedRoute(route("general/info"), GuestInfo),
 };
 
 export default routes;

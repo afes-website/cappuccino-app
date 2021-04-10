@@ -16,6 +16,7 @@ import { getStringDateTime } from "libs/stringDate";
 import api, { ActivityLog } from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import PullToRefresh from "components/PullToRefresh";
+import moment from "moment";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -88,8 +89,7 @@ const ScanHistory: React.FC = () => {
         )}
         <List>
           {logs
-            .slice()
-            .reverse()
+            .sort((a, b) => moment(b.timestamp).diff(a.timestamp)) // 新しいのが上
             .map((log) => (
               <ListItem key={log.id} divider>
                 <ListItemIcon>

@@ -290,8 +290,7 @@ const EnterScan: React.FC = () => {
     }
   }, [guestCheckStatus, latestGuestId]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const networkErrorHandler = (e: any): void => {
+  const networkErrorHandler = (e: unknown): void => {
     console.error(e);
     setErrorDialogOpen(true);
     if (isAxiosError(e)) {
