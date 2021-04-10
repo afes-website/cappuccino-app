@@ -9,7 +9,10 @@ import { AuthContext } from "libs/auth";
 const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
-      height: "calc(var(--100vh, 100vh) + env(safe-area-inset-top, 0))",
+      height: "var(--100vh, 0px)",
+      "@media screen and (display-mode: standalone)": {
+        height: "100vh",
+      },
       width: "100vw",
       overflowY: "scroll",
       overscrollBehavior: "none",
