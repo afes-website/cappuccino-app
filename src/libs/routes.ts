@@ -3,7 +3,7 @@ import { route } from "typesafe-react-router";
 import Home from "pages/Home";
 import Login from "pages/Login";
 import Forbidden from "pages/Forbidden";
-import Terms from "../pages/Terms";
+import Terms from "pages/Terms";
 import ExhEnterScan from "pages/exh/EnterScan";
 import ExhExitScan from "pages/exh/ExitScan";
 import ExhScanHistory from "pages/exh/ScanHistory";
