@@ -239,8 +239,7 @@ const GuestInfo: React.FC = () => {
     }
   }, [mode, status, guestId, rsvId]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const networkErrorHandler = (e: any): void => {
+  const networkErrorHandler = (e: unknown): void => {
     console.error(e);
     if (isAxiosError(e)) {
       // axios error
