@@ -558,13 +558,7 @@ const LogList: React.FC<{ logs: ActivityLog[]; status: AllStatus }> = ({
 }) => (
   <List>
     {logs
-      .sort((a, b) => {
-        const timeA = moment(a.timestamp);
-        const timeB = moment(b.timestamp);
-        if (timeA.isSame(timeB)) return 0;
-        if (timeA.isBefore(timeB)) return -1;
-        return 1;
-      })
+      .sort((a, b) => moment(a.timestamp).diff(b.timestamp))
       .map((log) => (
         <ListItem key={log.id}>
           <ListItemIcon>
