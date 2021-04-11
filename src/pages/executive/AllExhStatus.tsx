@@ -65,7 +65,7 @@ type SortKey = typeof sortKeys[number];
 
 const AllExhStatus: React.FC = () => {
   useTitleSet("全展示の滞在状況一覧");
-  useVerifyPermission("general");
+  useVerifyPermission("executive");
 
   const classes = useStyles();
   const auth = useContext(AuthContext).val;
@@ -79,7 +79,7 @@ const AllExhStatus: React.FC = () => {
     () =>
       Promise.all([
         api(aspida())
-          .onsite.exhibition.status.$get({
+          .exhibitions.$get({
             headers: {
               Authorization: "bearer " + auth.get_current_user()?.token,
             },
@@ -88,7 +88,7 @@ const AllExhStatus: React.FC = () => {
             setStatus(res);
           }),
         api(aspida())
-          .onsite.general.term.$get({
+          .terms.$get({
             headers: {
               Authorization: "bearer " + auth.get_current_user()?.token,
             },

@@ -77,9 +77,9 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const EnterScan: React.FC = () => {
+const CheckInScan: React.FC = () => {
   useTitleSet("文化祭 入場スキャン");
-  useVerifyPermission("general");
+  useVerifyPermission("executive");
   const classes = useStyles();
   const auth = useContext(AuthContext).val;
   const resultPopupRef = useRef<ResultPopupRefs>(null);
@@ -167,7 +167,7 @@ const EnterScan: React.FC = () => {
       setRsvCheckStatus("loading");
 
       api(aspida())
-        .onsite.reservation._id(rsvId)
+        .reservations._id(rsvId)
         .check.$get({
           headers: {
             Authorization: "bearer " + auth.get_current_user()?.token,
@@ -236,7 +236,7 @@ const EnterScan: React.FC = () => {
       setGuestCheckStatus("loading");
       // guest id 検証 (rsv id は有効性を確認済)
       api(aspida())
-        .onsite.general.enter.$post({
+        .guests.check_in.$post({
           body: {
             reservation_id: latestRsvId,
             guest_id: guestId,
@@ -583,4 +583,4 @@ const statusCodeList = [
 
 type StatusCode = typeof statusCodeList[number];
 
-export default EnterScan;
+export default CheckInScan;

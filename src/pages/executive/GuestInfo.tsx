@@ -74,14 +74,14 @@ const useStyles = makeStyles((theme) =>
 
 const GuestInfo: React.FC = () => {
   useTitleSet("来場者・予約情報照会");
-  useVerifyPermission(["general", "reservation"]);
+  useVerifyPermission(["executive", "reservation"]);
 
   const classes = useStyles();
   const auth = useContext(AuthContext).val;
   const resultChipRef = useRef<ResultChipRefs>(null);
 
   const [mode, setMode] = useState<"guest" | "rsv">(
-    auth.get_current_user()?.permissions.general ? "guest" : "rsv"
+    auth.get_current_user()?.permissions.executive ? "guest" : "rsv"
   );
 
   // guest
@@ -144,7 +144,7 @@ const GuestInfo: React.FC = () => {
       setStatus("loading");
       try {
         const getGuestInfo = api(aspida())
-          .onsite.general.guest._id(_guestId)
+          .guests._id(_guestId)
           .$get({
             headers: {
               Authorization: "bearer " + auth.get_current_user()?.token,
@@ -154,7 +154,7 @@ const GuestInfo: React.FC = () => {
             setGuestInfo(_info);
           });
         const getActivityLog = api(aspida())
-          .onsite.general.log.$get({
+          .log.$get({
             headers: {
               Authorization: "bearer " + auth.get_current_user()?.token,
             },
@@ -164,7 +164,7 @@ const GuestInfo: React.FC = () => {
             setActivityLogs(_logs);
           });
         const getExhStatus = api(aspida())
-          .onsite.exhibition.status.$get({
+          .exhibitions.$get({
             headers: {
               Authorization: "bearer " + auth.get_current_user()?.token,
             },
@@ -190,7 +190,7 @@ const GuestInfo: React.FC = () => {
       setRsvId(_rsvId);
       setStatus("loading");
       api(aspida())
-        .onsite.reservation._id(_rsvId)
+        .reservations._id(_rsvId)
         .$get({
           headers: {
             Authorization: "bearer " + auth.get_current_user()?.token,
@@ -283,7 +283,7 @@ const GuestInfo: React.FC = () => {
           <Tab
             label="来場者 行動履歴一覧"
             value="guest"
-            disabled={!auth.get_current_user()?.permissions.general}
+            disabled={!auth.get_current_user()?.permissions.executive}
           />
 
           <Tab

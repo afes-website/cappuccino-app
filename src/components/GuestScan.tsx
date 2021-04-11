@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-type Page = `exh/${"enter" | "exit"}` | "general/exit";
+type Page = `exhibition/${"enter" | "exit"}` | "executive/check-out";
 
 interface Props {
   handleScan: (guestId: string) => Promise<Guest>;
@@ -85,11 +85,11 @@ const GuestScan: React.FC<Props> = (props) => {
 
   const actionName = ((): string => {
     switch (props.page) {
-      case "exh/enter":
+      case "exhibition/enter":
         return "入室";
-      case "exh/exit":
+      case "exhibition/exit":
         return "退室";
-      case "general/exit":
+      case "executive/check-out":
         return "退場";
     }
   })();

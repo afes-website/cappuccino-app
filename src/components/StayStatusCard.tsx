@@ -46,7 +46,7 @@ const StatusCard: React.FC<{
       setStatus(status);
     });
     api(aspida())
-      .onsite.general.term.$get({
+      .terms.$get({
         headers: {
           Authorization: "bearer " + auth.get_current_user()?.token,
         },
@@ -112,7 +112,7 @@ export const GeneralStatusCard: React.FC = () => {
       paragraph="校内の来場者の滞在状況です。"
       getStatus={() =>
         api(aspida())
-          .onsite.exhibition.status.$get({
+          .exhibitions.$get({
             headers: {
               Authorization: "bearer " + auth.get_current_user()?.token,
             },
@@ -148,7 +148,7 @@ export const ExhStatusCard: React.FC = () => {
       paragraph="展示内の来場者の滞在状況です。"
       getStatus={() =>
         api(aspida())
-          .onsite.exhibition.status._id(auth.get_current_user_id() || "")
+          .exhibitions._id(auth.get_current_user_id() || "")
           .$get({
             headers: {
               Authorization: "bearer " + auth.get_current_user()?.token,

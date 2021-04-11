@@ -54,7 +54,7 @@ const ScanHistory: React.FC = () => {
   const load = useCallback(
     () =>
       api(aspida())
-        .onsite.general.log.$get({
+        .log.$get({
           headers: {
             Authorization: "bearer " + auth.get_current_user()?.token,
           },

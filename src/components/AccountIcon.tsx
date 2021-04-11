@@ -18,7 +18,7 @@ const AccountIcon: React.FC<
   if (account?.permissions.admin) return <PersonSecurity {...iconProps} />;
   if (account?.permissions.reservation)
     return <PersonAssignment {...iconProps} />;
-  if (account?.permissions.general) return <PersonSetting {...iconProps} />;
+  if (account?.permissions.executive) return <PersonSetting {...iconProps} />;
   if (account?.permissions.exhibition) return <PersonRoom {...iconProps} />;
   return <Person {...iconProps} />;
 };
