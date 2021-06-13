@@ -59,7 +59,7 @@ const ScanHistory: React.FC = () => {
             Authorization: "bearer " + auth.get_current_user()?.token,
           },
           query: {
-            exh_id: auth.get_current_user_id() || undefined,
+            exhibition_id: auth.get_current_user_id() || undefined,
           },
         })
         .then((res) => {

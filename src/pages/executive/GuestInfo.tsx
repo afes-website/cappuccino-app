@@ -565,9 +565,9 @@ const LogList: React.FC<{ logs: ActivityLog[]; status: AllStatus }> = ({
             {log.log_type === "enter" ? <Login /> : <Logout />}
           </ListItemIcon>
           <ListItemText
-            primary={`${status.exh[log.exh_id]?.info.name || "-"} ${
-              log.log_type === "enter" ? "入室" : "退室"
-            }`}
+            primary={`${
+              status.exhibition[log.exhibition_id]?.info.name || "-"
+            } ${log.log_type === "enter" ? "入室" : "退室"}`}
             secondary={getStringDateTime(log.timestamp)}
           />
         </ListItem>

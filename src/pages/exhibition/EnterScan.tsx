@@ -19,6 +19,9 @@ const EnterScan: React.FC = () => {
             headers: {
               Authorization: "bearer " + auth.get_current_user()?.token,
             },
+            body: {
+              exhibition_id: auth.get_current_user_id() || "",
+            },
           })
       }
       page="exhibition/enter"

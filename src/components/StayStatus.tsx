@@ -6,7 +6,7 @@ import { Skeleton } from "@material-ui/lab";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
 import { getStringTime } from "libs/stringDate";
 import { compareTerm } from "libs/compare";
-import { ExhStatus, Terms } from "@afes-website/docs";
+import { ExhibitionStatus, Terms } from "@afes-website/docs";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -53,7 +53,7 @@ const useStyles = makeStyles(() =>
 );
 
 export interface StayStatusCardProps {
-  statusCount: ExhStatus["count"] | null;
+  statusCount: ExhibitionStatus["count"] | null;
   limit: number | null;
   terms: Terms | null;
 }

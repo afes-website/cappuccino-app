@@ -19,7 +19,7 @@ import { useWristBandPaletteColor } from "libs/wristBandColor";
 import { AuthContext, useVerifyPermission } from "libs/auth";
 import { useTitleSet } from "libs/title";
 import { compareTerm } from "libs/compare";
-import api, { AllStatus, ExhStatus, Terms } from "@afes-website/docs";
+import api, { AllStatus, ExhibitionStatus, Terms } from "@afes-website/docs";
 import aspida from "@aspida/axios";
 
 const useStyles = makeStyles((theme) =>
@@ -111,8 +111,8 @@ const AllExhStatus: React.FC = () => {
       </div>
     );
 
-  const maxLimit = Object.values(status.exh)
-    .map((exh) => exh.limit)
+  const maxLimit = Object.values(status.exhibition)
+    .map((exh) => exh.capacity)
     .reduce((a, b) => Math.max(a, b));
 
   const onSortKeyChange = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -147,7 +147,7 @@ const AllExhStatus: React.FC = () => {
           {sortOptions[sortKey].message}
         </Typography>
         <List>
-          {Object.entries(status.exh)
+          {Object.entries(status.exhibition)
             .sort(sortOptions[sortKey].compareFn)
             .map(([exhId, exhStatus]) => (
               <ListItem key={exhId} divider className={classes.listItem}>
@@ -174,7 +174,7 @@ const AllExhStatus: React.FC = () => {
                     variant="caption"
                     className={classes.countLimit}
                   >
-                    {`/${exhStatus.limit}人`}
+                    {`/${exhStatus.capacity}人`}
                   </Typography>
                 </ListItemSecondaryAction>
                 <LinearChart
@@ -195,7 +195,10 @@ const sortOptions: {
   [key in SortKey]: {
     label: string;
     message: string;
-    compareFn: (a: [string, ExhStatus], b: [string, ExhStatus]) => number;
+    compareFn: (
+      a: [string, ExhibitionStatus],
+      b: [string, ExhibitionStatus]
+    ) => number;
   };
 } = {
   roomId: {
@@ -235,7 +238,7 @@ const sortOptions: {
         0
       );
       // ソート順序: (上限人数 - 滞在人数) 等しい場合は人数が多いほうが混雑
-      return a.limit - sum_a - (b.limit - sum_b) ?? sum_b - sum_a;
+      return a.capacity - sum_a - (b.capacity - sum_b) ?? sum_b - sum_a;
     },
   },
 };
@@ -243,12 +246,12 @@ const sortOptions: {
 export default AllExhStatus;
 
 const LinearChart: React.FC<{
-  status: ExhStatus;
+  status: ExhibitionStatus;
   terms: Terms;
   maxLimit: number;
   className: string;
 }> = ({ status, terms, maxLimit, ...props }) => {
-  const count: ExhStatus["count"] = Object.fromEntries(
+  const count: ExhibitionStatus["count"] = Object.fromEntries(
     Object.entries(status.count).sort(([a], [b]) => compareTerm(a, b, terms))
   );
 
@@ -284,9 +287,9 @@ const LinearChart: React.FC<{
     ...gradientArgs,
     [
       theme.palette.action.disabledBackground,
-      [`${(sum / maxLimit) * 100}%`, `${(status.limit / maxLimit) * 100}%`],
+      [`${(sum / maxLimit) * 100}%`, `${(status.capacity / maxLimit) * 100}%`],
     ],
-    ["transparent", [`${(status.limit / maxLimit) * 100}%`, "100%"]],
+    ["transparent", [`${(status.capacity / maxLimit) * 100}%`, "100%"]],
   ]
     .map((value) => value.flat().join(" "))
     .join(", ");

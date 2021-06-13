@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "libs/auth";
-import api, { ExhStatus, Terms } from "@afes-website/docs";
+import api, { ExhibitionStatus, Terms } from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import StayStatus from "components/StayStatus";
 import {
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-type Status = Pick<ExhStatus, "count" | "limit">;
+type Status = Pick<ExhibitionStatus, "count" | "capacity">;
 
 const StatusCard: React.FC<{
   title: string;
@@ -71,7 +71,7 @@ const StatusCard: React.FC<{
         </Typography>
         <StayStatus
           statusCount={status?.count || null}
-          limit={(props.showCountLimit && status?.limit) || null}
+          limit={(props.showCountLimit && status?.capacity) || null}
           terms={terms || null}
         />
       </CardContent>
