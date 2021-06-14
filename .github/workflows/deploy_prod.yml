@@ -23,14 +23,12 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
           restore-keys:
             ${{ runner.os }}-yarn-
-      - name: Set current date as env variable
-        run: echo "NOW_DATE::$(date +'%y%m%d')" >> $GITHUB_ENV
       - name: install packages
         run: yarn install
       - name: build
         run: yarn build:raw
         env:
-          REACT_APP_BUILD_NUMBER: ${{ format("{0}-{1}", env.NOW_DATE, github.run_number) }}
+          REACT_APP_BUILD_NUMBER: ${{ format("{0}-{1}", github.sha, github.run_number) }}
       - name: push with scp
         run: scp -r -o StrictHostKeyChecking=no -P $SSH_PORT -i .ssh/id_ed25519 ./build/. $SSH_USER@$SSH_HOST:$DIR
         env:
