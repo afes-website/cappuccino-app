@@ -40,11 +40,14 @@ const useStyles = makeStyles((theme) =>
 export interface PullToRefreshProps {
   onRefresh: () => Promise<unknown>;
   // isPullable?: boolean;
+  // ReactSimplePullToRefresh が JSX.Element しか受け付けない
   children: JSX.Element;
 }
 
-const PullToRefresh: React.FC<PullToRefreshProps> = (props) => {
-  const { children, ...libProps } = props;
+const PullToRefresh: React.VFC<PullToRefreshProps> = ({
+  children,
+  ...props
+}) => {
   const classes = useStyles();
 
   return (
@@ -62,7 +65,7 @@ const PullToRefresh: React.FC<PullToRefreshProps> = (props) => {
       pullDownThreshold={56}
       maxPullDownDistance={80}
       className={classes.root}
-      {...libProps}
+      {...props}
     >
       {children}
     </ReactSimplePullToRefresh>

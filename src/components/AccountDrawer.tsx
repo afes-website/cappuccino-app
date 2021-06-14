@@ -93,7 +93,7 @@ interface Props {
   onDrawerClose: () => undefined;
 }
 
-const AccountDrawer: React.FC<Props> = (props) => {
+const AccountDrawer: React.VFC<Props> = (props) => {
   const classes = useStyles();
   const auth = useContext(AuthContext).val;
   const theme = useTheme<Theme>();
@@ -281,7 +281,7 @@ const AccountDrawer: React.FC<Props> = (props) => {
   );
 };
 
-const PermissionsList: React.FC = () => {
+const PermissionsList: React.VFC = () => {
   const classes = useStyles();
   const auth = useContext(AuthContext).val;
 

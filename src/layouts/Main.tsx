@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { PropsWithChildren, useContext } from "react";
 import { createStyles, makeStyles, Paper } from "@material-ui/core";
 import TopBar from "components/TopBar";
 import BottomNav from "components/BottomNav";
@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const MainLayout: React.FC = (props) => {
+const MainLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
   const classes = useStyles();
   const titleCtx = useTitleContext();
   const auth = useContext(AuthContext).val;
@@ -48,7 +48,7 @@ const MainLayout: React.FC = (props) => {
   return (
     <Paper className={classes.root} square={true}>
       <TopBar title={titleCtx.title} className={classes.topBar} />
-      <main className={classes.main}>{props.children}</main>
+      <main className={classes.main}>{children}</main>
       {auth.get_current_user_id() && (
         <BottomNav className={classes.bottomNav} />
       )}
@@ -56,9 +56,11 @@ const MainLayout: React.FC = (props) => {
   );
 };
 
-const MainLayoutWithProviders: React.FC = (props) => (
+const MainLayoutWithProviders: React.VFC<PropsWithChildren<unknown>> = ({
+  children,
+}) => (
   <ProvidersProvider>
-    <MainLayout>{props.children}</MainLayout>
+    <MainLayout>{children}</MainLayout>
   </ProvidersProvider>
 );
 

@@ -31,7 +31,7 @@ export interface UniversalErrorDialogProps {
   onClose: () => void;
 }
 
-const ErrorDialog: React.FC<UniversalErrorDialogProps> = (props) => {
+const ErrorDialog: React.VFC<UniversalErrorDialogProps> = (props) => {
   const classes = useStyles();
   const history = useHistory();
 

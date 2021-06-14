@@ -1,17 +1,17 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import { ThemeProvider } from "@material-ui/core";
 import { ThemeContextProvider, useTheme } from "libs/themeMode";
 import { TitleContextProvider } from "libs/title";
 import { useHistory } from "react-router-dom";
 
-export const CustomThemeProvider: React.FC<{
-  children: React.ReactNode;
-}> = (props) => {
+export const CustomThemeProvider: React.VFC<PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   const [theme, toggleThemeMode] = useTheme();
 
   return (
     <ThemeContextProvider value={{ toggleThemeMode }}>
-      <ThemeProvider theme={theme}>{props.children}</ThemeProvider>
+      <ThemeProvider theme={theme}>{children}</ThemeProvider>
     </ThemeContextProvider>
   );
 };
@@ -19,9 +19,9 @@ export const CustomThemeProvider: React.FC<{
 const TITLE_SUFFIX = "CAPPUCCINO";
 const TOP_TITLE = "CAPPUCCINO";
 
-export const CustomTitleProvider: React.FC<{
-  children: React.ReactNode;
-}> = (props) => {
+export const CustomTitleProvider: React.VFC<PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   const history = useHistory();
   const [titleState, _setTitleState] = React.useState({
     title: "",
@@ -36,15 +36,15 @@ export const CustomTitleProvider: React.FC<{
   }
 
   return (
-    <TitleContextProvider value={titleState}>
-      {props.children}
-    </TitleContextProvider>
+    <TitleContextProvider value={titleState}>{children}</TitleContextProvider>
   );
 };
 
-const ProvidersProvider: React.FC = (props) => (
+const ProvidersProvider: React.VFC<PropsWithChildren<unknown>> = ({
+  children,
+}) => (
   <CustomThemeProvider>
-    <CustomTitleProvider>{props.children}</CustomTitleProvider>
+    <CustomTitleProvider>{children}</CustomTitleProvider>
   </CustomThemeProvider>
 );
 

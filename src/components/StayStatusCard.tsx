@@ -1,4 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { AuthContext } from "libs/auth";
 import api, { ExhStatus, Terms } from "@afes-website/docs";
 import aspida from "@aspida/axios";
@@ -28,13 +33,14 @@ const useStyles = makeStyles((theme) =>
 
 type Status = Pick<ExhStatus, "count" | "limit">;
 
-const StatusCard: React.FC<{
-  title: string;
-  paragraph: string;
-  getStatus: () => Promise<Status>;
-  showCountLimit: boolean;
-  children?: React.ReactNode;
-}> = (props) => {
+const StatusCard: React.VFC<
+  PropsWithChildren<{
+    title: string;
+    paragraph: string;
+    getStatus: () => Promise<Status>;
+    showCountLimit: boolean;
+  }>
+> = ({ children, ...props }) => {
   const auth = useContext(AuthContext).val;
   const classes = useStyles();
 
@@ -75,7 +81,7 @@ const StatusCard: React.FC<{
           terms={terms || null}
         />
       </CardContent>
-      {props.children}
+      {children}
     </Card>
   );
 };
@@ -102,7 +108,7 @@ const useHomeCardStyles = makeStyles((theme) =>
   })
 );
 
-export const GeneralStatusCard: React.FC = () => {
+export const GeneralStatusCard: React.VFC = () => {
   const classes = useHomeCardStyles();
   const auth = useContext(AuthContext).val;
 
@@ -139,7 +145,7 @@ export const GeneralStatusCard: React.FC = () => {
   );
 };
 
-export const ExhStatusCard: React.FC = () => {
+export const ExhStatusCard: React.VFC = () => {
   const auth = useContext(AuthContext).val;
 
   return (

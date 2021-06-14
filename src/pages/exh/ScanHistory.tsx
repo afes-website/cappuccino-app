@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const ScanHistory: React.FC = () => {
+const ScanHistory: React.VFC = () => {
   useTitleSet("入退室スキャン履歴");
   useVerifyPermission("exhibition");
 

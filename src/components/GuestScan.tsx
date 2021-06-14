@@ -65,7 +65,7 @@ interface Props {
   page: Page;
 }
 
-const GuestScan: React.FC<Props> = (props) => {
+const GuestScan: React.VFC<Props> = (props) => {
   const classes = useStyles();
   const auth = useContext(AuthContext).val;
   const resultChipRef = useRef<ResultChipRefs>(null);
