@@ -198,6 +198,14 @@ const AccountDrawer: React.FC<Props> = (props) => {
         >
           利用規約 & プライバシーポリシー
         </Button>
+        <Button
+          variant="text"
+          color="inherit"
+          className={classes.actionButton}
+          disabled
+        >
+          {`v${process.env.REACT_APP_VERSION}-${process.env.REACT_APP_BUILD_NUMBER}`}
+        </Button>
         <Divider />
         <Toolbar>
           <IconButton onClick={toggleThemeMode}>
