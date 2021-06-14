@@ -204,7 +204,7 @@ const AccountDrawer: React.FC<Props> = (props) => {
           className={classes.actionButton}
           disabled
         >
-          {`v${process.env.REACT_APP_VERSION}-${process.env.REACT_APP_BUILD_NUMBER}`}
+          {`Version ${process.env.REACT_APP_VERSION}-${process.env.REACT_APP_BUILD_NUMBER}`}
         </Button>
         <Divider />
         <Toolbar>
