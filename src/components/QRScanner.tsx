@@ -106,7 +106,7 @@ export interface QRScannerProps {
   color?: StatusColor;
 }
 
-const QRScanner: React.FC<QRScannerProps> = (props) => {
+const QRScanner: React.VFC<QRScannerProps> = (props) => {
   const classes = useStyles();
 
   const [videoDeviceId, setVideoDeviceId] = useState<string>(

@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) =>
 
 const storageKey = "pwaAlertOpen";
 
-const PwaAlertCard: React.FC = () => {
+const PwaAlertCard: React.VFC = () => {
   const classes = useStyles();
   const [open, _setOpen] = useState<boolean>(
     !!parseInt(localStorage.getItem(storageKey) ?? "1")
@@ -96,7 +96,7 @@ const PwaAlertCard: React.FC = () => {
   );
 };
 
-const HowToInstall: React.FC = () => {
+const HowToInstall: React.VFC = () => {
   const classes = useStyles();
 
   const parser = new UAParser(navigator.userAgent);

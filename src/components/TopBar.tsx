@@ -45,7 +45,7 @@ interface Props {
   className?: string;
 }
 
-const TopBar: React.FC<Props> = ({ title, className }) => {
+const TopBar: React.VFC<Props> = ({ title, className }) => {
   const classes = useStyles();
   const history = useHistory();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

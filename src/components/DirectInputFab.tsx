@@ -2,7 +2,7 @@ import React from "react";
 import { Edit } from "@material-ui/icons";
 import RightBottomFab from "components/RightBottomFab";
 
-const DirectInputFab: React.FC<{
+const DirectInputFab: React.VFC<{
   onClick: () => void;
   disabled?: boolean;
 }> = (props) => {

@@ -31,7 +31,7 @@ interface Props {
   onChange: (deviceId: string) => void;
 }
 
-const CameraDeviceSelectModal: React.FC<Props> = (props) => {
+const CameraDeviceSelectModal: React.VFC<Props> = (props) => {
   const classes = useStyles();
 
   const [deviceId, setDeviceId] = useDeviceId();

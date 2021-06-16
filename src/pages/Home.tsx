@@ -7,7 +7,7 @@ import { GeneralStatusCard, ExhStatusCard } from "components/StayStatusCard";
 import { useTitleSet } from "libs/title";
 import { AuthContext, verifyPermission } from "libs/auth";
 
-const Home: React.FC = () => {
+const Home: React.VFC = () => {
   useTitleSet("CAPPUCCINO");
   const auth = useContext(AuthContext).val;
 

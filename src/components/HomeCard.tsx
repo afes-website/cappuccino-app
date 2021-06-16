@@ -41,7 +41,7 @@ interface Props {
   buttons: [string, string][];
 }
 
-const HomeCard: React.FC<Props> = (props) => {
+const HomeCard: React.VFC<Props> = (props) => {
   const classes = useStyles();
 
   return (

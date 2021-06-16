@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const NotFound: React.FC = () => {
+const NotFound: React.VFC = () => {
   useTitleSet("404 Not Found");
   const classes = useStyles();
   const history = useHistory();

@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const BottomNav: React.FC<{ className?: string }> = ({ className }) => {
+const BottomNav: React.VFC<{ className?: string }> = ({ className }) => {
   const history = useHistory();
   const classes = useStyles();
   const [value, setValue] = useState(history.location.pathname);

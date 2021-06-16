@@ -6,7 +6,7 @@ import NotFound from "pages/NotFound";
 import MainLayout from "layouts/Main";
 import Auth, { AuthContext } from "libs/auth";
 
-const App: React.FC = () => {
+const App: React.VFC = () => {
   const [history] = useState(createBrowserHistory());
   const [provideVal, setProvideVal] = React.useState(() => ({
     val: new Auth(),
