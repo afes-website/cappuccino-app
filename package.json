@@ -4,9 +4,9 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "start": "REACT_APP_BUILD_NUMBER=$(date +%y%m%d.%H%M%S).0 react-scripts start",
+    "start": "REACT_APP_BUILD_NUMBER=local-dev react-scripts start",
     "start:raw": "react-scripts start",
-    "build": "REACT_APP_BUILD_NUMBER=$(date +%y%m%d.%H%M%S).1 react-scripts build",
+    "build": "REACT_APP_BUILD_NUMBER=$(date +%y%m%d.%H%M%S) react-scripts build",
     "build:raw": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
