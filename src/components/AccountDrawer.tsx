@@ -201,6 +201,7 @@ const AccountDrawer: React.FC<Props> = (props) => {
         <Button
           variant="text"
           color="inherit"
+          component="span"
           className={classes.actionButton}
           disabled
         >

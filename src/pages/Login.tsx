@@ -166,6 +166,7 @@ const Login: React.FC = () => {
         <Button
           variant="text"
           color="inherit"
+          component="span"
           className={classes.terms}
           disabled
         >
