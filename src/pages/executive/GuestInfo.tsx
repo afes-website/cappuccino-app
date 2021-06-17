@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const GuestInfo: React.FC = () => {
+const GuestInfo: React.VFC = () => {
   useTitleSet("来場者・予約情報照会");
   useVerifyPermission(["executive", "reservation"]);
 
@@ -443,7 +443,7 @@ const useComponentsStyles = makeStyles((theme) =>
   })
 );
 
-const GuestInfoList: React.FC<{ guestId: string; guest: Guest | null }> = ({
+const GuestInfoList: React.VFC<{ guestId: string; guest: Guest | null }> = ({
   guestId,
   guest,
 }) => {
@@ -542,7 +542,7 @@ const GuestInfoList: React.FC<{ guestId: string; guest: Guest | null }> = ({
   );
 };
 
-const LogList: React.FC<{ logs: ActivityLog[]; status: AllStatus }> = ({
+const LogList: React.VFC<{ logs: ActivityLog[]; status: AllStatus }> = ({
   logs,
   status,
 }) => (
@@ -565,7 +565,7 @@ const LogList: React.FC<{ logs: ActivityLog[]; status: AllStatus }> = ({
   </List>
 );
 
-const PrivateInfoList: React.FC<{
+const PrivateInfoList: React.VFC<{
   rsvId: string;
   info: Reservation | null;
 }> = ({ rsvId, info }) => {

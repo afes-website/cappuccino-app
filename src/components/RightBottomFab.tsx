@@ -31,7 +31,7 @@ export interface RightBottomFabProps {
   label?: string;
 }
 
-const RightBottomFab: React.FC<
+const RightBottomFab: React.VFC<
   RightBottomFabProps & Omit<FabProps, "children">
 > = (props) => {
   const classes = useStyles();

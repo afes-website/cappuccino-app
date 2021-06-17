@@ -10,7 +10,7 @@ import {
 } from "components/MaterialSvgIcons";
 import { SvgIconProps } from "@material-ui/core";
 
-const AccountIcon: React.FC<
+const AccountIcon: React.VFC<
   { account: StorageUserInfo | null } & SvgIconProps
 > = (props) => {
   const { account, ...iconProps } = props;

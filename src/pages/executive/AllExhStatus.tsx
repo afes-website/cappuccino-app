@@ -63,7 +63,7 @@ const useStyles = makeStyles((theme) =>
 const sortKeys = ["roomId", "count", "congestion"] as const;
 type SortKey = typeof sortKeys[number];
 
-const AllExhStatus: React.FC = () => {
+const AllExhStatus: React.VFC = () => {
   useTitleSet("全展示の滞在状況一覧");
   useVerifyPermission("executive");
 
@@ -245,7 +245,7 @@ const sortOptions: {
 
 export default AllExhStatus;
 
-const LinearChart: React.FC<{
+const LinearChart: React.VFC<{
   status: ExhibitionStatus;
   terms: Terms;
   maxLimit: number;

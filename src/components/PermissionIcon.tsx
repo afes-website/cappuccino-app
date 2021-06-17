@@ -2,7 +2,7 @@ import React from "react";
 import { Assignment, Room, Security, Settings } from "@material-ui/icons";
 import { SvgIconProps } from "@material-ui/core";
 
-const PermissionIcon: React.FC<{ permName: string } & SvgIconProps> = ({
+const PermissionIcon: React.VFC<{ permName: string } & SvgIconProps> = ({
   permName,
   ...iconProps
 }) => {

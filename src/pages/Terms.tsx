@@ -32,7 +32,7 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const Terms: React.FC = () => {
+const Terms: React.VFC = () => {
   const classes = useStyles();
   useTitleSet("利用規約");
 

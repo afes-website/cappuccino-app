@@ -77,7 +77,7 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const CheckInScan: React.FC = () => {
+const CheckInScan: React.VFC = () => {
   useTitleSet("文化祭 入場スキャン");
   useVerifyPermission("executive");
   const classes = useStyles();
@@ -491,7 +491,7 @@ const CheckInScan: React.FC = () => {
   );
 };
 
-const GuestInfoList: React.FC<{ guest: Guest }> = (props) => (
+const GuestInfoList: React.VFC<{ guest: Guest }> = (props) => (
   <List>
     <ListItem>
       <ListItemIcon>
@@ -530,7 +530,7 @@ const GuestInfoList: React.FC<{ guest: Guest }> = (props) => (
   </List>
 );
 
-const ReservationTermInfo: React.FC<{ term: Term }> = (props) => {
+const ReservationTermInfo: React.VFC<{ term: Term }> = (props) => {
   const wristBandColor = useWristBandPaletteColor();
   return (
     <span style={{ color: wristBandColor(props.term.guest_type).main }}>

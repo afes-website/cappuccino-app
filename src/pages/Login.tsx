@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const Login: React.FC = () => {
+const Login: React.VFC = () => {
   const classes = useStyles();
   const history = useHistory();
   const [id, setId] = useState("");

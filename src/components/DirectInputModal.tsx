@@ -9,7 +9,7 @@ import {
   TextField,
 } from "@material-ui/core";
 
-const DirectInputModal: React.FC<{
+const DirectInputModal: React.VFC<{
   open: boolean;
   setOpen: (val: boolean) => void;
   onIdChange: (val: string) => void;

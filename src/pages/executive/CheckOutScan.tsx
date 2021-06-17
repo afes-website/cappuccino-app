@@ -5,7 +5,7 @@ import api from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import GuestScan from "components/GuestScan";
 
-const CheckOutScan: React.FC = () => {
+const CheckOutScan: React.VFC = () => {
   useTitleSet("文化祭 退場スキャン");
   useVerifyPermission("executive");
   const auth = useContext(AuthContext).val;

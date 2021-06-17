@@ -11,10 +11,10 @@ import {
   DialogContent,
   Fade,
   Slide,
+  SlideProps,
 } from "@material-ui/core";
 import { CheckCircleOutline, ErrorOutline } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
-import { TransitionProps } from "@material-ui/core/transitions";
 import { StatusColor } from "types/statusColor";
 import clsx from "clsx";
 
@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) =>
 );
 
 const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & { children?: React.ReactElement },
+  props: SlideProps,
   ref: React.Ref<unknown>
 ) {
   return <Slide direction="down" ref={ref} {...props} />;
@@ -117,7 +117,7 @@ const ResultPopup = forwardRef<ResultPopupRefs, ResultPopupProps>(
   ResultPopupRenderFunction
 );
 
-const StatusIcon: React.FC<{ status: StatusColor }> = ({ status }) => {
+const StatusIcon: React.VFC<{ status: StatusColor }> = ({ status }) => {
   const classes = useStyles();
 
   switch (status) {

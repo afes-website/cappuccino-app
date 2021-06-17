@@ -16,7 +16,7 @@ export interface ToggleVisibilityListItemProps {
   dependency?: unknown;
 }
 
-const ToggleVisibilityListItem: React.FC<ToggleVisibilityListItemProps> = ({
+const ToggleVisibilityListItem: React.VFC<ToggleVisibilityListItemProps> = ({
   icon,
   primary,
   secondary,

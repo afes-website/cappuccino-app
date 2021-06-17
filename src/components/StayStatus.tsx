@@ -58,7 +58,7 @@ export interface StayStatusCardProps {
   terms: Terms | null;
 }
 
-const StayStatus: React.FC<StayStatusCardProps> = ({
+const StayStatus: React.VFC<StayStatusCardProps> = ({
   statusCount,
   limit,
   terms,
@@ -190,7 +190,7 @@ interface StayStatusPieChartProps {
   terms: Terms;
 }
 
-const StayStatusPieChart: React.FC<StayStatusPieChartProps> = ({
+const StayStatusPieChart: React.VFC<StayStatusPieChartProps> = ({
   statusCountArray,
   limit,
   terms,

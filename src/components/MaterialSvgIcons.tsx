@@ -43,7 +43,7 @@ type CustomSvgIconProps = SvgIconProps & {
   iconType: IconType;
 };
 
-const CustomSvgIcon: React.FC<CustomSvgIconProps> = (props) => (
+const CustomSvgIcon: React.VFC<CustomSvgIconProps> = (props) => (
   <SvgIcon {...props}>
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -57,45 +57,45 @@ const CustomSvgIcon: React.FC<CustomSvgIconProps> = (props) => (
   </SvgIcon>
 );
 
-export const QRScannerIcon: React.FC<SvgIconProps> = (props) => (
+export const QRScannerIcon: React.VFC<SvgIconProps> = (props) => (
   <CustomSvgIcon iconType="QRScannerIcon" {...props} />
 );
-export const WristBand: React.FC<SvgIconProps> = (props) => (
+export const WristBand: React.VFC<SvgIconProps> = (props) => (
   <CustomSvgIcon iconType="WristBand" {...props} />
 );
-export const CameraOff: React.FC<SvgIconProps> = (props) => (
+export const CameraOff: React.VFC<SvgIconProps> = (props) => (
   <CustomSvgIcon iconType="CameraOff" {...props} />
 );
-export const Login: React.FC<SvgIconProps> = (props) => (
+export const Login: React.VFC<SvgIconProps> = (props) => (
   <CustomSvgIcon iconType="Login" {...props} />
 );
-export const Logout: React.FC<SvgIconProps> = (props) => (
+export const Logout: React.VFC<SvgIconProps> = (props) => (
   <CustomSvgIcon iconType="Logout" {...props} />
 );
-export const PersonRoom: React.FC<SvgIconProps> = (props) => (
+export const PersonRoom: React.VFC<SvgIconProps> = (props) => (
   <CustomSvgIcon iconType="PersonRoom" {...props} />
 );
-export const PersonSetting: React.FC<SvgIconProps> = (props) => (
+export const PersonSetting: React.VFC<SvgIconProps> = (props) => (
   <CustomSvgIcon iconType="PersonSetting" {...props} />
 );
-export const PersonAssignment: React.FC<SvgIconProps> = (props) => (
+export const PersonAssignment: React.VFC<SvgIconProps> = (props) => (
   <CustomSvgIcon iconType="PersonAssignment" {...props} />
 );
-export const PersonSecurity: React.FC<SvgIconProps> = (props) => (
+export const PersonSecurity: React.VFC<SvgIconProps> = (props) => (
   <CustomSvgIcon iconType="PersonSecurity" {...props} />
 );
-export const PersonTeacher: React.FC<SvgIconProps> = (props) => (
+export const PersonTeacher: React.VFC<SvgIconProps> = (props) => (
   <CustomSvgIcon iconType="PersonTeacher" {...props} />
 );
-export const LightMode: React.FC<SvgIconProps> = (props) => (
+export const LightMode: React.VFC<SvgIconProps> = (props) => (
   <CustomSvgIcon iconType="LightMode" {...props} />
 );
-export const DarkMode: React.FC<SvgIconProps> = (props) => (
+export const DarkMode: React.VFC<SvgIconProps> = (props) => (
   <CustomSvgIcon iconType="DarkMode" {...props} />
 );
-export const Reload: React.FC<SvgIconProps> = (props) => (
+export const Reload: React.VFC<SvgIconProps> = (props) => (
   <CustomSvgIcon iconType="Reload" {...props} />
 );
-export const IosShare: React.FC<SvgIconProps> = (props) => (
+export const IosShare: React.VFC<SvgIconProps> = (props) => (
   <CustomSvgIcon iconType="IosShare" {...props} />
 );
