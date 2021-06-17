@@ -26,7 +26,9 @@ jobs:
       - name: install packages
         run: yarn install
       - name: build
-        run: yarn build
+        run: yarn build:raw
+        env:
+          REACT_APP_BUILD_NUMBER: ${{ format("{0}-{1}", github.sha, github.run_number) }}
       - name: push with scp
         run: scp -r -o StrictHostKeyChecking=no -P $SSH_PORT -i .ssh/id_ed25519 ./build/. $SSH_USER@$SSH_HOST:$DIR
         env:

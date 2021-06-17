@@ -153,15 +153,26 @@ const Login: React.VFC = () => {
           </CardActions>
         </form>
       </Card>
-      <Button
-        variant="text"
-        color="inherit"
-        component={Link}
-        to={routes.Terms.route.create({})}
-        className={classes.terms}
-      >
-        利用規約 & プライバシーポリシー
-      </Button>
+      <div>
+        <Button
+          variant="text"
+          color="inherit"
+          component={Link}
+          to={routes.Terms.route.create({})}
+          className={classes.terms}
+        >
+          利用規約 & プライバシーポリシー
+        </Button>
+        <Button
+          variant="text"
+          color="inherit"
+          component="span"
+          className={classes.terms}
+          disabled
+        >
+          {`Version ${process.env.REACT_APP_VERSION}-${process.env.REACT_APP_BUILD_NUMBER}`}
+        </Button>
+      </div>
     </CardList>
   );
 };

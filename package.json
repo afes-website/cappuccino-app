@@ -4,8 +4,10 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "REACT_APP_BUILD_NUMBER=local-dev react-scripts start",
+    "start:raw": "react-scripts start",
+    "build": "REACT_APP_BUILD_NUMBER=$(date +%y%m%d.%H%M%S) react-scripts build",
+    "build:raw": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "yarn prettier && yarn eslint",
