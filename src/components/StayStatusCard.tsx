@@ -1,5 +1,6 @@
 import React, {
   PropsWithChildren,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -37,10 +38,11 @@ const StatusCard: React.VFC<
   PropsWithChildren<{
     title: string;
     paragraph: string;
+    // useCallback を通すこと！
     getStatus: () => Promise<Status>;
     showCountLimit: boolean;
   }>
-> = ({ children, ...props }) => {
+> = ({ children, getStatus, ...props }) => {
   const auth = useContext(AuthContext).val;
   const classes = useStyles();
 
@@ -48,7 +50,7 @@ const StatusCard: React.VFC<
   const [terms, setTerms] = useState<Terms | null>(null);
 
   useEffect(() => {
-    props.getStatus().then((status) => {
+    getStatus().then((status) => {
       setStatus(status);
     });
     api(aspida())
@@ -60,7 +62,7 @@ const StatusCard: React.VFC<
       .then((terms) => {
         setTerms(terms);
       });
-  }, [auth, props]);
+  }, [auth, getStatus]);
 
   return (
     <Card>
@@ -112,21 +114,23 @@ export const GeneralStatusCard: React.VFC = () => {
   const classes = useHomeCardStyles();
   const auth = useContext(AuthContext).val;
 
+  const getStatus = useCallback(
+    () =>
+      api(aspida())
+        .exhibitions.$get({
+          headers: {
+            Authorization: "bearer " + auth.get_current_user()?.token,
+          },
+        })
+        .then((status) => status.all),
+    [auth]
+  );
+
   return (
     <StatusCard
       title="校内の滞在状況"
       paragraph="校内の来場者の滞在状況です。"
-      getStatus={() =>
-        api(aspida())
-          .exhibitions.$get({
-            headers: {
-              Authorization: "bearer " + auth.get_current_user()?.token,
-            },
-          })
-          .then((status) => {
-            return status.all;
-          })
-      }
+      getStatus={getStatus}
       showCountLimit={false}
     >
       <>
@@ -148,19 +152,23 @@ export const GeneralStatusCard: React.VFC = () => {
 export const ExhStatusCard: React.VFC = () => {
   const auth = useContext(AuthContext).val;
 
+  const getStatus = useCallback(
+    () =>
+      api(aspida())
+        .exhibitions._id(auth.get_current_user_id() || "")
+        .$get({
+          headers: {
+            Authorization: "bearer " + auth.get_current_user()?.token,
+          },
+        }),
+    [auth]
+  );
+
   return (
     <StatusCard
       title="展示内の滞在状況"
       paragraph="展示内の来場者の滞在状況です。"
-      getStatus={() =>
-        api(aspida())
-          .exhibitions._id(auth.get_current_user_id() || "")
-          .$get({
-            headers: {
-              Authorization: "bearer " + auth.get_current_user()?.token,
-            },
-          })
-      }
+      getStatus={getStatus}
       showCountLimit={true}
     />
   );
