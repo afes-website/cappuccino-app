@@ -33,6 +33,8 @@ jobs:
         run: yarn install
       - name: Shorten commit sha
         run: echo "short_sha=${GITHUB_SHA:0:7}" >> $GITHUB_ENV
+      - name: Copy icons
+        run: cp assets/icons_dev/* public/icons
       - name: build
         run: yarn build:raw
         env:
