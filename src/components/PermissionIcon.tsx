@@ -11,7 +11,7 @@ const PermissionIcon: React.VFC<{ permName: string } & SvgIconProps> = ({
       return <Security {...iconProps} />;
     case "reservation":
       return <Assignment {...iconProps} />;
-    case "general":
+    case "executive":
       return <Settings {...iconProps} />;
     case "exhibition":
       return <Room {...iconProps} />;

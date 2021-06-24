@@ -77,9 +77,9 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const EnterScan: React.VFC = () => {
+const CheckInScan: React.VFC = () => {
   useTitleSet("文化祭 入場スキャン");
-  useVerifyPermission("general");
+  useVerifyPermission("executive");
   const classes = useStyles();
   const auth = useContext(AuthContext).val;
   const resultPopupRef = useRef<ResultPopupRefs>(null);
@@ -95,10 +95,8 @@ const EnterScan: React.VFC = () => {
   const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
   // ステップ管理
   const [activeScanner, setActiveScanner] = useState<"rsv" | "guest">("rsv");
-  // 最新のAPI通信で発生したエラーステータスコード
-  const [errorStatusCode, setErrorStatusCode] = useState<StatusCode | null>(
-    null
-  );
+  // 最新のAPI通信で発生したエラーコード
+  const [errorCode, setErrorCode] = useState<ErrorCode | null>(null);
   // 最後にチェックした予約IDに紐付けられている Term
   const [termInfo, setTermInfo] = useState<Term | null>(null);
   // 前回入場したゲスト情報
@@ -138,7 +136,7 @@ const EnterScan: React.VFC = () => {
     setOpensRsvInputModal(false);
     setOpensGuestInputModal(false);
     setActiveScanner("rsv");
-    setErrorStatusCode(null);
+    setErrorCode(null);
     setTermInfo(null);
     setRsvCheckStatus(null);
     setGuestCheckStatus(null);
@@ -167,7 +165,7 @@ const EnterScan: React.VFC = () => {
       setRsvCheckStatus("loading");
 
       api(aspida())
-        .onsite.reservation._id(rsvId)
+        .reservations._id(rsvId)
         .check.$get({
           headers: {
             Authorization: "bearer " + auth.get_current_user()?.token,
@@ -180,18 +178,18 @@ const EnterScan: React.VFC = () => {
           if (res.valid) {
             setRsvCheckStatus("success");
           } else if (
-            res.status_code &&
-            (statusCodeList as ReadonlyArray<string>).includes(res.status_code)
+            res.error_code &&
+            (errorCodeList as ReadonlyArray<string>).includes(res.error_code)
           ) {
             setRsvCheckStatus("error");
-            setErrorStatusCode(res.status_code as StatusCode);
+            setErrorCode(res.error_code as ErrorCode);
           }
         })
         .catch((e) => {
           setRsvCheckStatus("error");
 
           if (isAxiosError(e) && e.response?.status === 404)
-            setErrorStatusCode("RESERVATION_NOT_FOUND");
+            setErrorCode("RESERVATION_NOT_FOUND");
           else networkErrorHandler(e);
         });
     }
@@ -200,7 +198,7 @@ const EnterScan: React.VFC = () => {
   useEffect(() => {
     switch (rsvCheckStatus) {
       case "loading":
-        setErrorStatusCode(null);
+        setErrorCode(null);
         setTermInfo(null);
         if (resultChipRef.current) resultChipRef.current.close();
         break;
@@ -236,7 +234,7 @@ const EnterScan: React.VFC = () => {
       setGuestCheckStatus("loading");
       // guest id 検証 (rsv id は有効性を確認済)
       api(aspida())
-        .onsite.general.enter.$post({
+        .guests.check_in.$post({
           body: {
             reservation_id: latestRsvId,
             guest_id: guestId,
@@ -255,9 +253,9 @@ const EnterScan: React.VFC = () => {
             const errorCode: unknown = e.response?.data.error_code;
             if (
               typeof errorCode === "string" &&
-              (statusCodeList as ReadonlyArray<string>).includes(errorCode)
+              (errorCodeList as ReadonlyArray<string>).includes(errorCode)
             ) {
-              setErrorStatusCode(errorCode as StatusCode);
+              setErrorCode(errorCode as ErrorCode);
               return;
             }
           }
@@ -269,7 +267,7 @@ const EnterScan: React.VFC = () => {
   useEffect(() => {
     switch (guestCheckStatus) {
       case "loading":
-        setErrorStatusCode(null);
+        setErrorCode(null);
         if (resultChipRef.current) resultChipRef.current.close();
         if (resultPopupRef.current) resultPopupRef.current.open();
         break;
@@ -297,7 +295,7 @@ const EnterScan: React.VFC = () => {
       // axios error
       if (e.response?.status) {
         // status code があるとき
-        setErrorStatusCode("SERVER_ERROR");
+        setErrorCode("SERVER_ERROR");
         setErrorDialogTitle("サーバーエラー");
         setErrorDialogMessage([
           "サーバーエラーが発生しました。",
@@ -308,7 +306,7 @@ const EnterScan: React.VFC = () => {
       }
       // ないとき
       else {
-        setErrorStatusCode("NETWORK_ERROR");
+        setErrorCode("NETWORK_ERROR");
         setErrorDialogTitle("通信エラー");
         setErrorDialogMessage([
           "通信エラーが発生しました。",
@@ -320,7 +318,7 @@ const EnterScan: React.VFC = () => {
     }
     // なにもわからないとき
     else {
-      setErrorStatusCode("NETWORK_ERROR");
+      setErrorCode("NETWORK_ERROR");
       setErrorDialogTitle("通信エラー");
       setErrorDialogMessage([
         "通信エラーが発生しました。",
@@ -353,10 +351,10 @@ const EnterScan: React.VFC = () => {
         </Card>
 
         {/* Error Alert */}
-        {errorStatusCode && (
+        {errorCode && (
           <Card>
             <CardContent className={classes.noPadding}>
-              <Alert severity="error">{getErrorMessage(errorStatusCode)}</Alert>
+              <Alert severity="error">{getErrorMessage(errorCode)}</Alert>
             </CardContent>
           </Card>
         )}
@@ -544,8 +542,8 @@ const ReservationTermInfo: React.VFC<{ term: Term }> = (props) => {
   );
 };
 
-const getErrorMessage = (status_code: StatusCode): string => {
-  switch (status_code) {
+const getErrorMessage = (error_code: ErrorCode): string => {
+  switch (error_code) {
     // reservation
     case "RESERVATION_NOT_FOUND":
       return "合致する予約情報がありません。マニュアルを参照し、権限の強い人を呼んでください。";
@@ -569,7 +567,7 @@ const getErrorMessage = (status_code: StatusCode): string => {
   }
 };
 
-const statusCodeList = [
+const errorCodeList = [
   "INVALID_WRISTBAND_CODE",
   "ALREADY_USED_WRISTBAND",
   "RESERVATION_NOT_FOUND",
@@ -581,6 +579,6 @@ const statusCodeList = [
   "SERVER_ERROR",
 ] as const;
 
-type StatusCode = typeof statusCodeList[number];
+type ErrorCode = typeof errorCodeList[number];
 
-export default EnterScan;
+export default CheckInScan;

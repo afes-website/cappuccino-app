@@ -14,7 +14,7 @@ const Home: React.VFC = () => {
   return (
     <CardList>
       <PwaAlertCard />
-      {verifyPermission("general", auth) && (
+      {verifyPermission("executive", auth) && (
         <>
           <GeneralStatusCard />
           <HomeCard
@@ -24,8 +24,8 @@ const Home: React.VFC = () => {
               "画面に案内が出た場合は、表示された内容を来場者に案内してください。",
             ]}
             buttons={[
-              ["入場スキャン", routes.GeneralEnterScan.route.create({})],
-              ["退場スキャン", routes.GeneralExitScan.route.create({})],
+              ["入場スキャン", routes.CheckInScan.route.create({})],
+              ["退場スキャン", routes.CheckOutScan.route.create({})],
             ]}
           />
         </>
@@ -39,15 +39,15 @@ const Home: React.VFC = () => {
               "画面に案内が出た場合は、表示された内容を来場者に案内してください。",
             ]}
             buttons={[
-              ["入室スキャン", routes.ExhEnterScan.route.create({})],
-              ["退室スキャン", routes.ExhExitScan.route.create({})],
+              ["入室スキャン", routes.EnterScan.route.create({})],
+              ["退室スキャン", routes.ExitScan.route.create({})],
             ]}
           />
           <ExhStatusCard />
           <HomeCard
             title="入退室スキャン履歴"
             paragraphs={["自展示の入退室履歴をすべて表示します。"]}
-            buttons={[["スキャン履歴", routes.ExhScanHistory.route.create({})]]}
+            buttons={[["スキャン履歴", routes.ScanHistory.route.create({})]]}
           />
         </>
       )}

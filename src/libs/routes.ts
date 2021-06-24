@@ -4,26 +4,26 @@ import Home from "pages/Home";
 import Login from "pages/Login";
 import Forbidden from "pages/Forbidden";
 import Terms from "pages/Terms";
-import ExhEnterScan from "pages/exh/EnterScan";
-import ExhExitScan from "pages/exh/ExitScan";
-import ExhScanHistory from "pages/exh/ScanHistory";
-import GeneralEnterScan from "pages/general/EnterScan";
-import GeneralExitScan from "pages/general/ExitScan";
-import AllExhStatus from "pages/general/AllExhStatus";
-import GuestInfo from "pages/general/GuestInfo";
+import CheckInScan from "pages/executive/CheckInScan";
+import CheckOutScan from "pages/executive/CheckOutScan";
+import AllExhStatus from "pages/executive/AllExhStatus";
+import GuestInfo from "pages/executive/GuestInfo";
+import EnterScan from "pages/exhibition/EnterScan";
+import ExitScan from "pages/exhibition/ExitScan";
+import ScanHistory from "pages/exhibition/ScanHistory";
 
 const routes = {
   Home: typedRoute(route(""), Home),
   Login: typedRoute(route("login"), Login),
   Forbidden: typedRoute(route("forbidden"), Forbidden),
   Terms: typedRoute(route("terms"), Terms),
-  ExhEnterScan: typedRoute(route("exh/enter"), ExhEnterScan),
-  ExhExitScan: typedRoute(route("exh/exit"), ExhExitScan),
-  ExhScanHistory: typedRoute(route("exh/history"), ExhScanHistory),
-  GeneralEnterScan: typedRoute(route("general/enter"), GeneralEnterScan),
-  GeneralExitScan: typedRoute(route("general/exit"), GeneralExitScan),
-  AllExhStatus: typedRoute(route("general/status"), AllExhStatus),
-  GuestInfo: typedRoute(route("general/info"), GuestInfo),
+  CheckInScan: typedRoute(route("executive/check-in"), CheckInScan),
+  CheckOutScan: typedRoute(route("executive/check-out"), CheckOutScan),
+  AllExhStatus: typedRoute(route("executive/status"), AllExhStatus),
+  GuestInfo: typedRoute(route("executive/info"), GuestInfo),
+  EnterScan: typedRoute(route("exhibition/enter"), EnterScan),
+  ExitScan: typedRoute(route("exhibition/exit"), ExitScan),
+  ScanHistory: typedRoute(route("exhibition/history"), ScanHistory),
 };
 
 export default routes;

@@ -5,7 +5,7 @@ import React, {
   useState,
 } from "react";
 import { AuthContext } from "libs/auth";
-import api, { ExhStatus, Terms } from "@afes-website/docs";
+import api, { ExhibitionStatus, Terms } from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import StayStatus from "components/StayStatus";
 import {
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-type Status = Pick<ExhStatus, "count" | "limit">;
+type Status = Pick<ExhibitionStatus, "count" | "capacity">;
 
 const StatusCard: React.VFC<
   PropsWithChildren<{
@@ -52,7 +52,7 @@ const StatusCard: React.VFC<
       setStatus(status);
     });
     api(aspida())
-      .onsite.general.term.$get({
+      .terms.$get({
         headers: {
           Authorization: "bearer " + auth.get_current_user()?.token,
         },
@@ -77,7 +77,7 @@ const StatusCard: React.VFC<
         </Typography>
         <StayStatus
           statusCount={status?.count || null}
-          limit={(props.showCountLimit && status?.limit) || null}
+          limit={(props.showCountLimit && status?.capacity) || null}
           terms={terms || null}
         />
       </CardContent>
@@ -118,7 +118,7 @@ export const GeneralStatusCard: React.VFC = () => {
       paragraph="校内の来場者の滞在状況です。"
       getStatus={() =>
         api(aspida())
-          .onsite.exhibition.status.$get({
+          .exhibitions.$get({
             headers: {
               Authorization: "bearer " + auth.get_current_user()?.token,
             },
@@ -154,7 +154,7 @@ export const ExhStatusCard: React.VFC = () => {
       paragraph="展示内の来場者の滞在状況です。"
       getStatus={() =>
         api(aspida())
-          .onsite.exhibition.status._id(auth.get_current_user_id() || "")
+          .exhibitions._id(auth.get_current_user_id() || "")
           .$get({
             headers: {
               Authorization: "bearer " + auth.get_current_user()?.token,

@@ -5,26 +5,25 @@ import api from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import GuestScan from "components/GuestScan";
 
-const ExitScan: React.VFC = () => {
+const CheckOutScan: React.VFC = () => {
   useTitleSet("文化祭 退場スキャン");
-  useVerifyPermission("general");
+  useVerifyPermission("executive");
   const auth = useContext(AuthContext).val;
 
   return (
     <GuestScan
       handleScan={(guestId) =>
-        api(aspida()).onsite.general.exit.$post({
-          body: {
-            guest_id: guestId,
-          },
-          headers: {
-            Authorization: "bearer " + auth.get_current_user()?.token,
-          },
-        })
+        api(aspida())
+          .guests._id(guestId)
+          .check_out.$post({
+            headers: {
+              Authorization: "bearer " + auth.get_current_user()?.token,
+            },
+          })
       }
-      page="general/exit"
+      page="executive/check-out"
     />
   );
 };
 
-export default ExitScan;
+export default CheckOutScan;

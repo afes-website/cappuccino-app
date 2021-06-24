@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@afes-website/docs@alpha":
-  version "2.3.0-alpha.7"
-  resolved "https://registry.yarnpkg.com/@afes-website/docs/-/docs-2.3.0-alpha.7.tgz#9c2d8a3498e6c254b73a1a78e4ac0a3f06713ae6"
-  integrity sha512-87LB40AMYIZqZJZ6QMmKHWyVzinjpUnsPPKpUpgGoRa9C/wLuqUsxQWx16Hp47ftrW/MhZaGnZO9URnqbN6jXA==
+"@afes-website/docs@>3.0.0-alpha.0":
+  version "3.0.0-alpha.15"
+  resolved "https://registry.yarnpkg.com/@afes-website/docs/-/docs-3.0.0-alpha.15.tgz#29a70a2b88fa352cc3ce076e420782cef0c76d72"
+  integrity sha512-TstjMl2OXFxVVa58HM8xgd95c9NRRyxiWRJiBSeDb6DsYU43TiTED4kZ/Ex+6HS0H1mB/OBbqjsLv3GKf2KAYg==
 
 "@aspida/axios@^1.6.3":
   version "1.6.3"

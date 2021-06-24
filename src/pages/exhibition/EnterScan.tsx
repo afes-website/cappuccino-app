@@ -13,16 +13,18 @@ const EnterScan: React.VFC = () => {
   return (
     <GuestScan
       handleScan={(guestId) =>
-        api(aspida()).onsite.exhibition.enter.$post({
-          body: {
-            guest_id: guestId,
-          },
-          headers: {
-            Authorization: "bearer " + auth.get_current_user()?.token,
-          },
-        })
+        api(aspida())
+          .guests._id(guestId)
+          .enter.$post({
+            headers: {
+              Authorization: "bearer " + auth.get_current_user()?.token,
+            },
+            body: {
+              exhibition_id: auth.get_current_user_id() || "",
+            },
+          })
       }
-      page="exh/enter"
+      page="exhibition/enter"
     />
   );
 };

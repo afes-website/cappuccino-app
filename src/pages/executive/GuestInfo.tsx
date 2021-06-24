@@ -13,14 +13,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import {
-  AccessTime,
-  Assignment,
-  Email,
-  Face,
-  Group,
-  Phone,
-} from "@material-ui/icons";
+import { AccessTime, Assignment } from "@material-ui/icons";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Login, Logout, WristBand } from "components/MaterialSvgIcons";
 import CardList from "components/CardList";
@@ -28,7 +21,6 @@ import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import DirectInputFab from "components/DirectInputFab";
 import DirectInputModal from "components/DirectInputModal";
-import ToggleVisibilityListItem from "components/ToggleVisibilityListItem";
 import { AuthContext, useVerifyPermission } from "libs/auth";
 import { useTitleSet } from "libs/title";
 import isAxiosError from "libs/isAxiosError";
@@ -39,7 +31,7 @@ import api, {
   ActivityLog,
   AllStatus,
   Guest,
-  ReservationWithPrivateInfo,
+  Reservation,
 } from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import moment from "moment";
@@ -74,14 +66,14 @@ const useStyles = makeStyles((theme) =>
 
 const GuestInfo: React.VFC = () => {
   useTitleSet("来場者・予約情報照会");
-  useVerifyPermission(["general", "reservation"]);
+  useVerifyPermission(["executive", "reservation"]);
 
   const classes = useStyles();
   const auth = useContext(AuthContext).val;
   const resultChipRef = useRef<ResultChipRefs>(null);
 
   const [mode, setMode] = useState<"guest" | "rsv">(
-    auth.get_current_user()?.permissions.general ? "guest" : "rsv"
+    auth.get_current_user()?.permissions.executive ? "guest" : "rsv"
   );
 
   // guest
@@ -92,9 +84,7 @@ const GuestInfo: React.VFC = () => {
 
   // reservation
   const [rsvId, setRsvId] = useState<string>("");
-  const [rsvInfo, setRsvInfo] = useState<ReservationWithPrivateInfo | null>(
-    null
-  );
+  const [rsvInfo, setRsvInfo] = useState<Reservation | null>(null);
 
   // 直接入力モーダルの開閉状態
   const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
@@ -144,7 +134,7 @@ const GuestInfo: React.VFC = () => {
       setStatus("loading");
       try {
         const getGuestInfo = api(aspida())
-          .onsite.general.guest._id(_guestId)
+          .guests._id(_guestId)
           .$get({
             headers: {
               Authorization: "bearer " + auth.get_current_user()?.token,
@@ -154,7 +144,7 @@ const GuestInfo: React.VFC = () => {
             setGuestInfo(_info);
           });
         const getActivityLog = api(aspida())
-          .onsite.general.log.$get({
+          .log.$get({
             headers: {
               Authorization: "bearer " + auth.get_current_user()?.token,
             },
@@ -164,7 +154,7 @@ const GuestInfo: React.VFC = () => {
             setActivityLogs(_logs);
           });
         const getExhStatus = api(aspida())
-          .onsite.exhibition.status.$get({
+          .exhibitions.$get({
             headers: {
               Authorization: "bearer " + auth.get_current_user()?.token,
             },
@@ -190,7 +180,7 @@ const GuestInfo: React.VFC = () => {
       setRsvId(_rsvId);
       setStatus("loading");
       api(aspida())
-        .onsite.reservation._id(_rsvId)
+        .reservations._id(_rsvId)
         .$get({
           headers: {
             Authorization: "bearer " + auth.get_current_user()?.token,
@@ -283,7 +273,7 @@ const GuestInfo: React.VFC = () => {
           <Tab
             label="来場者 行動履歴一覧"
             value="guest"
-            disabled={!auth.get_current_user()?.permissions.general}
+            disabled={!auth.get_current_user()?.permissions.executive}
           />
 
           <Tab
@@ -565,9 +555,9 @@ const LogList: React.VFC<{ logs: ActivityLog[]; status: AllStatus }> = ({
             {log.log_type === "enter" ? <Login /> : <Logout />}
           </ListItemIcon>
           <ListItemText
-            primary={`${status.exh[log.exh_id]?.info.name || "-"} ${
-              log.log_type === "enter" ? "入室" : "退室"
-            }`}
+            primary={`${
+              status.exhibition[log.exhibition_id]?.info.name || "-"
+            } ${log.log_type === "enter" ? "入室" : "退室"}`}
             secondary={getStringDateTime(log.timestamp)}
           />
         </ListItem>
@@ -577,7 +567,7 @@ const LogList: React.VFC<{ logs: ActivityLog[]; status: AllStatus }> = ({
 
 const PrivateInfoList: React.VFC<{
   rsvId: string;
-  info: ReservationWithPrivateInfo | null;
+  info: Reservation | null;
 }> = ({ rsvId, info }) => {
   const classes = useComponentsStyles();
   const wristBandPaletteColor = useWristBandPaletteColor();
@@ -591,59 +581,28 @@ const PrivateInfoList: React.VFC<{
         <ListItemText primary={rsvId} secondary="予約 ID" />
       </ListItem>
       {info && (
-        <>
-          <ListItem>
-            <ListItemIcon>
-              <Group />
-            </ListItemIcon>
-            <ListItemText
-              primary={`${info.people_count} 人`}
-              secondary="予約人数"
-            />
-          </ListItem>
-          <ListItem>
-            <ListItemIcon>
-              <AccessTime />
-            </ListItemIcon>
-            <ListItemText
-              primary={
-                <>
-                  <span
-                    className={classes.termColorBadge}
-                    style={{
-                      background: wristBandPaletteColor(info.term.guest_type)
-                        .main,
-                    }}
-                  />
-                  {`${getStringDateTimeBrief(
-                    info.term.enter_scheduled_time
-                  )} - ${getStringDateTimeBrief(
-                    info.term.exit_scheduled_time
-                  )}`}
-                </>
-              }
-              secondary="予約時間帯"
-            />
-          </ListItem>
-          <ToggleVisibilityListItem
-            icon={<Face />}
-            primary={info.name}
-            secondary="代表者氏名"
-            dependency={rsvId}
+        <ListItem>
+          <ListItemIcon>
+            <AccessTime />
+          </ListItemIcon>
+          <ListItemText
+            primary={
+              <>
+                <span
+                  className={classes.termColorBadge}
+                  style={{
+                    background: wristBandPaletteColor(info.term.guest_type)
+                      .main,
+                  }}
+                />
+                {`${getStringDateTimeBrief(
+                  info.term.enter_scheduled_time
+                )} - ${getStringDateTimeBrief(info.term.exit_scheduled_time)}`}
+              </>
+            }
+            secondary="予約時間帯"
           />
-          <ToggleVisibilityListItem
-            icon={<Email />}
-            primary={info.email}
-            secondary="メールアドレス"
-            dependency={rsvId}
-          />
-          <ToggleVisibilityListItem
-            icon={<Phone />}
-            primary={info.cellphone}
-            secondary="携帯電話番号"
-            dependency={rsvId}
-          />
-        </>
+        </ListItem>
       )}
     </List>
   );
