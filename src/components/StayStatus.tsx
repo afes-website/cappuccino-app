@@ -13,7 +13,7 @@ const useStyles = makeStyles(() =>
     main: {
       display: "flex",
       position: "relative",
-      justifyContent: "space-between",
+      justifyContent: "space-around",
       alignItems: "center",
     },
     termList: {
