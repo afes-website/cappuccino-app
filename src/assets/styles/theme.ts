@@ -21,8 +21,8 @@ const darkPalette: PaletteOptions = {
   afesDark,
   afesLight,
   background: {
-    default: "#202125",
-    paper: "#2d2e32",
+    default: "#000000",
+    paper: "#1c1c1d",
   },
 };
 
