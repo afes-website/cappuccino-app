@@ -70,7 +70,7 @@ const TopBar: React.VFC<Props> = ({ title, className }) => {
 
   return (
     <div className={clsx(classes.root, className)}>
-      <AppBar position="static" className={classes.appBar}>
+      <AppBar position="static" elevation={3} className={classes.appBar}>
         <Toolbar>
           {(auth.get_current_user_id() ||
             routes.Terms.route.create({}) === history.location.pathname) &&
