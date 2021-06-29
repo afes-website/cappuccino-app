@@ -173,7 +173,7 @@ const CheckInScan: React.VFC = () => {
         })
         .then((res) => {
           // res.valid に関わらず無条件で Term 情報を取得
-          setTermInfo(res.term);
+          setTermInfo(res.reservation.term);
 
           if (res.valid) {
             setRsvCheckStatus("success");
@@ -551,8 +551,8 @@ const getErrorMessage = (error_code: ErrorCode): string => {
       return "予約情報に不備があります。権限の強い人を呼んでください。";
     case "OUT_OF_RESERVATION_TIME":
       return "入場可能時間外です。マニュアルを参照してください。";
-    case "ALREADY_ENTERED_RESERVATION":
-      return "すでに入場処理が完了しています。権限の強い人を呼んでください。";
+    case "ALL_MEMBER_CHECKED_IN":
+      return "すでに予約人数全員の入場処理が完了しています。権限の強い人を呼んでください。";
     // guest (wristband)
     case "INVALID_WRISTBAND_CODE":
       return "リストバンド ID の形式が間違っています。予約 QR を読んでいませんか？";
@@ -572,7 +572,7 @@ const errorCodeList = [
   "ALREADY_USED_WRISTBAND",
   "RESERVATION_NOT_FOUND",
   "INVALID_RESERVATION_INFO",
-  "ALREADY_ENTERED_RESERVATION",
+  "ALL_MEMBER_CHECKED_IN",
   "OUT_OF_RESERVATION_TIME",
   "WRONG_WRISTBAND_COLOR",
   "NETWORK_ERROR",
