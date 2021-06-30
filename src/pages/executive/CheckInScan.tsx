@@ -8,6 +8,7 @@ import {
   List,
   ListItem,
   ListItemIcon,
+  ListItemSecondaryAction,
   ListItemText,
   Typography,
 } from "@material-ui/core";
@@ -33,7 +34,7 @@ import isAxiosError from "libs/isAxiosError";
 import { getStringDateTimeBrief, getStringTime } from "libs/stringDate";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
 import { StatusColor } from "types/statusColor";
-import api, { Guest, Term } from "@afes-website/docs";
+import api, { Guest, Reservation, Term } from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import clsx from "clsx";
 
@@ -74,6 +75,9 @@ const useStyles = makeStyles((theme) =>
     previousGuestInfoTitle: {
       paddingBottom: 0,
     },
+    countLimit: {
+      marginLeft: 4,
+    },
   })
 );
 
@@ -89,6 +93,7 @@ const CheckInScan: React.VFC = () => {
 
   // 最後に読み込んだ予約ID・ゲストID
   const [latestRsvId, setLatestRsvId] = useState("");
+  const [latestRsv, setLatestRsv] = useState<Reservation | null>(null);
   const [latestGuestId, setLatestGuestId] = useState("");
   // 直接入力モーダルの開閉状態
   const [opensRsvInputModal, setOpensRsvInputModal] = useState(false);
@@ -97,8 +102,6 @@ const CheckInScan: React.VFC = () => {
   const [activeScanner, setActiveScanner] = useState<"rsv" | "guest">("rsv");
   // 最新のAPI通信で発生したエラーコード
   const [errorCode, setErrorCode] = useState<ErrorCode | null>(null);
-  // 最後にチェックした予約IDに紐付けられている Term
-  const [termInfo, setTermInfo] = useState<Term | null>(null);
   // 前回入場したゲスト情報
   const [prevGuestInfo, setPrevGuestInfo] = useState<Guest | null>(null);
   // 予約ID・ゲストIDそれぞれのチェック結果
@@ -132,12 +135,12 @@ const CheckInScan: React.VFC = () => {
   // 全リセット
   const clearAll = () => {
     setLatestRsvId("");
+    setLatestRsv(null);
     setLatestGuestId("");
     setOpensRsvInputModal(false);
     setOpensGuestInputModal(false);
     setActiveScanner("rsv");
     setErrorCode(null);
-    setTermInfo(null);
     setRsvCheckStatus(null);
     setGuestCheckStatus(null);
     if (resultChipRef.current) resultChipRef.current.close();
@@ -147,59 +150,60 @@ const CheckInScan: React.VFC = () => {
     if (data)
       switch (activeScanner) {
         case "rsv":
-          handleRsvIdScan(data);
+          if (
+            data !== latestRsvId &&
+            (rsvCheckStatus === null || rsvCheckStatus === "error")
+          )
+            handleRsvIdScan(data);
           break;
         case "guest":
-          handleGuestIdScan(data);
+          if (
+            data !== latestRsvId &&
+            data !== latestGuestId &&
+            (guestCheckStatus === null || guestCheckStatus === "error")
+          )
+            handleGuestIdScan(data);
           break;
       }
   };
 
   const handleRsvIdScan = (rsvId: string) => {
-    // 二重スキャン防止
-    if (
-      rsvId !== latestRsvId &&
-      (rsvCheckStatus === null || rsvCheckStatus === "error")
-    ) {
-      setLatestRsvId(rsvId);
-      setRsvCheckStatus("loading");
+    setLatestRsvId(rsvId);
+    setRsvCheckStatus("loading");
+    api(aspida())
+      .reservations._id(rsvId)
+      .check.$get({
+        headers: {
+          Authorization: "bearer " + auth.get_current_user()?.token,
+        },
+      })
+      .then((res) => {
+        setLatestRsv(res.reservation);
 
-      api(aspida())
-        .reservations._id(rsvId)
-        .check.$get({
-          headers: {
-            Authorization: "bearer " + auth.get_current_user()?.token,
-          },
-        })
-        .then((res) => {
-          // res.valid に関わらず無条件で Term 情報を取得
-          setTermInfo(res.reservation.term);
-
-          if (res.valid) {
-            setRsvCheckStatus("success");
-          } else if (
-            res.error_code &&
-            (errorCodeList as ReadonlyArray<string>).includes(res.error_code)
-          ) {
-            setRsvCheckStatus("error");
-            setErrorCode(res.error_code as ErrorCode);
-          }
-        })
-        .catch((e) => {
+        if (res.valid) {
+          setRsvCheckStatus("success");
+        } else if (
+          res.error_code &&
+          (errorCodeList as ReadonlyArray<string>).includes(res.error_code)
+        ) {
           setRsvCheckStatus("error");
+          setErrorCode(res.error_code as ErrorCode);
+        }
+      })
+      .catch((e) => {
+        setRsvCheckStatus("error");
 
-          if (isAxiosError(e) && e.response?.status === 404)
-            setErrorCode("RESERVATION_NOT_FOUND");
-          else networkErrorHandler(e);
-        });
-    }
+        if (isAxiosError(e) && e.response?.status === 404)
+          setErrorCode("RESERVATION_NOT_FOUND");
+        else networkErrorHandler(e);
+      });
   };
 
   useEffect(() => {
     switch (rsvCheckStatus) {
       case "loading":
         setErrorCode(null);
-        setTermInfo(null);
+        setLatestRsv(null);
         if (resultChipRef.current) resultChipRef.current.close();
         break;
       case "success":
@@ -224,44 +228,47 @@ const CheckInScan: React.VFC = () => {
   }, [rsvCheckStatus, latestRsvId]);
 
   const handleGuestIdScan = (guestId: string) => {
-    // 二重スキャン防止
-    if (
-      guestId !== latestGuestId &&
-      guestId !== latestRsvId &&
-      (guestCheckStatus === null || guestCheckStatus === "error")
-    ) {
-      setLatestGuestId(guestId);
-      setGuestCheckStatus("loading");
-      // guest id 検証 (rsv id は有効性を確認済)
-      api(aspida())
-        .guests.check_in.$post({
-          body: {
-            reservation_id: latestRsvId,
-            guest_id: guestId,
-          },
-          headers: {
-            Authorization: "bearer " + auth.get_current_user()?.token,
-          },
-        })
-        .then((guest) => {
-          setGuestCheckStatus("success");
-          setPrevGuestInfo(guest);
-        })
-        .catch((e) => {
-          setGuestCheckStatus("error");
-          if (isAxiosError(e)) {
-            const errorCode: unknown = e.response?.data.error_code;
-            if (
-              typeof errorCode === "string" &&
-              (errorCodeList as ReadonlyArray<string>).includes(errorCode)
-            ) {
-              setErrorCode(errorCode as ErrorCode);
-              return;
-            }
+    setLatestGuestId(guestId);
+    setGuestCheckStatus("loading");
+    // guest id 検証 (rsv id は有効性を確認済)
+    api(aspida())
+      .guests.check_in.$post({
+        body: {
+          reservation_id: latestRsvId,
+          guest_id: guestId,
+        },
+        headers: {
+          Authorization: "bearer " + auth.get_current_user()?.token,
+        },
+      })
+      .then((guest) => {
+        setGuestCheckStatus("success");
+        setPrevGuestInfo(guest);
+      })
+      .catch((e) => {
+        setGuestCheckStatus("error");
+        if (isAxiosError(e)) {
+          const errorCode: unknown = e.response?.data.error_code;
+          if (
+            typeof errorCode === "string" &&
+            (errorCodeList as ReadonlyArray<string>).includes(errorCode)
+          ) {
+            setErrorCode(errorCode as ErrorCode);
+            return;
           }
-          networkErrorHandler(e);
-        });
+        }
+        networkErrorHandler(e);
+      });
+  };
+
+  const handleSuccess = () => {
+    if (latestRsv && latestRsv.member_checked_in + 1 < latestRsv.member_all) {
+      handleRsvIdScan(latestRsvId);
+      setGuestCheckStatus(null);
+      setLatestGuestId("");
+      return;
     }
+    clearAll();
   };
 
   useEffect(() => {
@@ -379,10 +386,10 @@ const CheckInScan: React.VFC = () => {
                   secondary={
                     <>
                       予約 ID
-                      {termInfo && (
+                      {latestRsv && (
                         <>
                           {" • "}
-                          <ReservationTermInfo term={termInfo} />
+                          <ReservationTermInfo term={latestRsv.term} />
                         </>
                       )}
                     </>
@@ -397,6 +404,20 @@ const CheckInScan: React.VFC = () => {
                   primary={latestGuestId ? latestGuestId : "-"}
                   secondary="ゲスト ID (リストバンド)"
                 />
+                {latestRsv && (
+                  <ListItemSecondaryAction>
+                    <Typography display="inline">
+                      {`${latestRsv.member_checked_in + 1}人目`}
+                    </Typography>
+                    <Typography
+                      display="inline"
+                      variant="caption"
+                      className={classes.countLimit}
+                    >
+                      {`/${latestRsv.member_all}人`}
+                    </Typography>
+                  </ListItemSecondaryAction>
+                )}
               </ListItem>
             </List>
           </CardContent>
@@ -445,7 +466,7 @@ const CheckInScan: React.VFC = () => {
       <ResultPopup
         status={totalCheckStatus}
         duration={2000}
-        handleCloseOnSuccess={clearAll}
+        handleCloseOnSuccess={handleSuccess}
         ref={resultPopupRef}
       />
 
