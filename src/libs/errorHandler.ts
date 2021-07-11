@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import isAxiosError from "libs/isAxiosError";
 
 const useErrorHandler = (): [
@@ -65,13 +65,13 @@ const useErrorHandler = (): [
     );
   }, [code]);
 
-  const setErrorCode = (code: string) => {
+  const setErrorCode = useCallback((code: string) => {
     if ((errorCodeList as ReadonlyArray<string>).includes(code))
       setCode(code as ErrorCode);
     else setCode("INTERNAL_ERROR");
-  };
+  }, []);
 
-  const setError = (e: unknown): void => {
+  const setError = useCallback((e: unknown): void => {
     if (e === null) {
       setCode(null);
       setOpen(false);
@@ -127,7 +127,7 @@ const useErrorHandler = (): [
         ]);
       }
     }
-  };
+  }, []);
 
   return [
     errorMessage,
