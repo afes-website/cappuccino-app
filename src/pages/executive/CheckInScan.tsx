@@ -30,7 +30,7 @@ import ResultPopup, { ResultPopupRefs } from "components/ResultPopup";
 import ErrorDialog from "components/ErrorDialog";
 import { useTitleSet } from "libs/title";
 import { AuthContext, useVerifyPermission } from "libs/auth";
-import isAxiosError from "libs/isAxiosError";
+import useErrorHandler from "libs/errorHandler";
 import { getStringDateTimeBrief, getStringTime } from "libs/stringDate";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
 import { StatusColor } from "types/statusColor";
@@ -100,8 +100,6 @@ const CheckInScan: React.VFC = () => {
   const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
   // ステップ管理
   const [activeScanner, setActiveScanner] = useState<"rsv" | "guest">("rsv");
-  // 最新のAPI通信で発生したエラーコード
-  const [errorCode, setErrorCode] = useState<ErrorCode | null>(null);
   // 前回入場したゲスト情報
   const [prevGuestInfo, setPrevGuestInfo] = useState<Guest | null>(null);
   // 予約ID・ゲストIDそれぞれのチェック結果
@@ -116,10 +114,8 @@ const CheckInScan: React.VFC = () => {
   const [totalCheckStatus, setTotalCheckStatus] = useState<StatusColor | null>(
     null
   );
-  // エラーダイアログ
-  const [errorDialogTitle, setErrorDialogTitle] = useState("");
-  const [errorDialogMessage, setErrorDialogMessage] = useState<string[]>([]);
-  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  // エラー処理
+  const [errorMessage, errorDialog, setErrorCode, setError] = useErrorHandler();
 
   // 全体のチェック結果の更新処理
   useEffect(() => {
@@ -140,7 +136,7 @@ const CheckInScan: React.VFC = () => {
     setOpensRsvInputModal(false);
     setOpensGuestInputModal(false);
     setActiveScanner("rsv");
-    setErrorCode(null);
+    setError(null);
     setRsvCheckStatus(null);
     setGuestCheckStatus(null);
     if (resultChipRef.current) resultChipRef.current.close();
@@ -182,27 +178,21 @@ const CheckInScan: React.VFC = () => {
 
         if (res.valid) {
           setRsvCheckStatus("success");
-        } else if (
-          res.error_code &&
-          (errorCodeList as ReadonlyArray<string>).includes(res.error_code)
-        ) {
+        } else if (res.error_code) {
           setRsvCheckStatus("error");
-          setErrorCode(res.error_code as ErrorCode);
+          setErrorCode(res.error_code);
         }
       })
       .catch((e) => {
         setRsvCheckStatus("error");
-
-        if (isAxiosError(e) && e.response?.status === 404)
-          setErrorCode("RESERVATION_NOT_FOUND");
-        else networkErrorHandler(e);
+        setError(e);
       });
   };
 
   useEffect(() => {
     switch (rsvCheckStatus) {
       case "loading":
-        setErrorCode(null);
+        setError(null);
         setLatestRsv(null);
         if (resultChipRef.current) resultChipRef.current.close();
         break;
@@ -225,7 +215,7 @@ const CheckInScan: React.VFC = () => {
           );
         break;
     }
-  }, [rsvCheckStatus, latestRsvId]);
+  }, [rsvCheckStatus, latestRsvId, setError]);
 
   const handleGuestIdScan = (guestId: string) => {
     setLatestGuestId(guestId);
@@ -247,17 +237,7 @@ const CheckInScan: React.VFC = () => {
       })
       .catch((e) => {
         setGuestCheckStatus("error");
-        if (isAxiosError(e)) {
-          const errorCode: unknown = e.response?.data.error_code;
-          if (
-            typeof errorCode === "string" &&
-            (errorCodeList as ReadonlyArray<string>).includes(errorCode)
-          ) {
-            setErrorCode(errorCode as ErrorCode);
-            return;
-          }
-        }
-        networkErrorHandler(e);
+        setError(e);
       });
   };
 
@@ -274,7 +254,7 @@ const CheckInScan: React.VFC = () => {
   useEffect(() => {
     switch (guestCheckStatus) {
       case "loading":
-        setErrorCode(null);
+        setError(null);
         if (resultChipRef.current) resultChipRef.current.close();
         if (resultPopupRef.current) resultPopupRef.current.open();
         break;
@@ -293,47 +273,7 @@ const CheckInScan: React.VFC = () => {
           );
         break;
     }
-  }, [guestCheckStatus, latestGuestId]);
-
-  const networkErrorHandler = (e: unknown): void => {
-    console.error(e);
-    setErrorDialogOpen(true);
-    if (isAxiosError(e)) {
-      // axios error
-      if (e.response?.status) {
-        // status code があるとき
-        setErrorCode("SERVER_ERROR");
-        setErrorDialogTitle("サーバーエラー");
-        setErrorDialogMessage([
-          "サーバーエラーが発生しました。",
-          "総務局にお問い合わせください。",
-          `status code: ${e.response?.status || "undefined"}`,
-          e.message,
-        ]);
-      }
-      // ないとき
-      else {
-        setErrorCode("NETWORK_ERROR");
-        setErrorDialogTitle("通信エラー");
-        setErrorDialogMessage([
-          "通信エラーが発生しました。",
-          "通信環境を確認し、はじめからやり直してください。",
-          "状況が改善しない場合は、総務局にお問い合わせください。",
-          e.message,
-        ]);
-      }
-    }
-    // なにもわからないとき
-    else {
-      setErrorCode("NETWORK_ERROR");
-      setErrorDialogTitle("通信エラー");
-      setErrorDialogMessage([
-        "通信エラーが発生しました。",
-        "通信環境を確認し、はじめからやり直してください。",
-        "状況が改善しない場合は、総務局にお問い合わせください。",
-      ]);
-    }
-  };
+  }, [guestCheckStatus, latestGuestId, setError]);
 
   return (
     <div>
@@ -358,10 +298,10 @@ const CheckInScan: React.VFC = () => {
         </Card>
 
         {/* Error Alert */}
-        {errorCode && (
+        {errorMessage && (
           <Card>
             <CardContent className={classes.noPadding}>
-              <Alert severity="error">{getErrorMessage(errorCode)}</Alert>
+              <Alert severity="error">{errorMessage}</Alert>
             </CardContent>
           </Card>
         )}
@@ -501,11 +441,11 @@ const CheckInScan: React.VFC = () => {
 
       {/* エラーダイアログ */}
       <ErrorDialog
-        open={errorDialogOpen}
-        title={errorDialogTitle}
-        message={errorDialogMessage}
+        open={errorDialog.open}
+        title={errorDialog.title}
+        message={errorDialog.message}
         onClose={() => {
-          setErrorDialogOpen(false);
+          errorDialog.setOpen(false);
         }}
       />
     </div>
@@ -562,44 +502,5 @@ const ReservationTermInfo: React.VFC<{ term: Term }> = (props) => {
     </span>
   );
 };
-
-const getErrorMessage = (error_code: ErrorCode): string => {
-  switch (error_code) {
-    // reservation
-    case "RESERVATION_NOT_FOUND":
-      return "合致する予約情報がありません。マニュアルを参照し、権限の強い人を呼んでください。";
-    case "INVALID_RESERVATION_INFO":
-      return "予約情報に不備があります。権限の強い人を呼んでください。";
-    case "OUT_OF_RESERVATION_TIME":
-      return "入場可能時間外です。マニュアルを参照してください。";
-    case "ALL_MEMBER_CHECKED_IN":
-      return "すでに予約人数全員の入場処理が完了しています。権限の強い人を呼んでください。";
-    // guest (wristband)
-    case "INVALID_WRISTBAND_CODE":
-      return "リストバンド ID の形式が間違っています。予約 QR を読んでいませんか？";
-    case "ALREADY_USED_WRISTBAND":
-      return "使用済みのリストバンドです。権限の強い人を呼んでください。";
-    case "WRONG_WRISTBAND_COLOR":
-      return "リストバンドの種類が間違っています。";
-    case "NETWORK_ERROR":
-      return "通信エラーが発生しました。通信環境を確認し、はじめからやり直してください。状況が改善しない場合は、総務局にお問い合わせください。";
-    case "SERVER_ERROR":
-      return "サーバーエラーが発生しました。至急、総務局にお問い合わせください。";
-  }
-};
-
-const errorCodeList = [
-  "INVALID_WRISTBAND_CODE",
-  "ALREADY_USED_WRISTBAND",
-  "RESERVATION_NOT_FOUND",
-  "INVALID_RESERVATION_INFO",
-  "ALL_MEMBER_CHECKED_IN",
-  "OUT_OF_RESERVATION_TIME",
-  "WRONG_WRISTBAND_COLOR",
-  "NETWORK_ERROR",
-  "SERVER_ERROR",
-] as const;
-
-type ErrorCode = typeof errorCodeList[number];
 
 export default CheckInScan;

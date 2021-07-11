@@ -36,6 +36,7 @@ import api, {
 import aspida from "@aspida/axios";
 import moment from "moment";
 import clsx from "clsx";
+import useErrorHandler from "libs/errorHandler";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -91,7 +92,9 @@ const GuestInfo: React.VFC = () => {
   const [opensRsvInputModal, setOpensRsvInputModal] = useState(false);
 
   const [status, setStatus] = useState<StatusColor | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string[] | null>(null);
+
+  // エラー処理
+  const [errorMessage, errorDialog, setErrorCode, setError] = useErrorHandler();
 
   const clearInfo = () => {
     // guest
@@ -111,9 +114,9 @@ const GuestInfo: React.VFC = () => {
 
     // error
     setStatus(null);
-    setErrorMessage(null);
+    setError(null);
     if (resultChipRef.current) resultChipRef.current.close();
-  }, [mode]);
+  }, [mode, setError]);
 
   const handleScan = (value: string | null) => {
     if (value) {
@@ -169,8 +172,8 @@ const GuestInfo: React.VFC = () => {
       } catch (e) {
         setStatus("error");
         if (isAxiosError(e) && e.response?.status === 404)
-          setErrorMessage(["合致する来場者情報がありません。"]);
-        else networkErrorHandler(e);
+          setErrorCode("GUEST_NOT_FOUND");
+        else setError(e);
       }
     }
   };
@@ -193,11 +196,8 @@ const GuestInfo: React.VFC = () => {
         .catch((e) => {
           setStatus("error");
           if (isAxiosError(e) && e.response?.status === 404)
-            setErrorMessage([
-              "合致する予約情報がありません。",
-              "マニュアルを参照し、権限の強い人を呼んでください。",
-            ]);
-          else networkErrorHandler(e);
+            setErrorCode("RESERVATION_NOT_FOUND");
+          else setError(e);
         });
     }
   };
@@ -208,7 +208,7 @@ const GuestInfo: React.VFC = () => {
     switch (status) {
       case "loading":
         clearInfo();
-        setErrorMessage(null);
+        setError(null);
         if (resultChipRef.current) resultChipRef.current.close();
         break;
       case "success":
@@ -227,37 +227,7 @@ const GuestInfo: React.VFC = () => {
           );
         break;
     }
-  }, [mode, status, guestId, rsvId]);
-
-  const networkErrorHandler = (e: unknown): void => {
-    console.error(e);
-    if (isAxiosError(e)) {
-      // axios error
-      if (e.response?.status) {
-        // status code があるとき
-        setErrorMessage([
-          `サーバーエラーが発生しました。総務局にお問い合わせください。`,
-          `status code: ${e.response?.status || "undefined"}`,
-          e.message,
-        ]);
-      }
-      // ないとき
-      else {
-        setErrorMessage([
-          `通信エラーが発生しました。通信環境を確認し、はじめからやり直してください。`,
-          `状況が改善しない場合は、総務局にお問い合わせください。`,
-          e.message,
-        ]);
-      }
-    }
-    // なにもわからないとき
-    else {
-      setErrorMessage([
-        "通信エラーが発生しました。通信環境を確認し、はじめからやり直してください。",
-        "状況が改善しない場合は、総務局にお問い合わせください。",
-      ]);
-    }
-  };
+  }, [mode, status, guestId, rsvId, setError]);
 
   return (
     <>
@@ -297,13 +267,15 @@ const GuestInfo: React.VFC = () => {
         {status == "error" && (
           <Card>
             <Alert severity="error">
-              {errorMessage
-                ? errorMessage.map((msg) => (
-                    <span key={msg} className={classes.alertMessage}>
-                      {msg}
-                    </span>
-                  ))
-                : "原因不明のエラーです。総務局にお問い合わせください。"}
+              {errorDialog.open ? (
+                errorDialog.message.map((msg) => (
+                  <span key={msg} className={classes.alertMessage}>
+                    {msg}
+                  </span>
+                ))
+              ) : (
+                <span className={classes.alertMessage}>{errorMessage}</span>
+              )}
             </Alert>
           </Card>
         )}
