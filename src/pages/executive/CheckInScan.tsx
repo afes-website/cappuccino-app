@@ -78,6 +78,9 @@ const useStyles = makeStyles((theme) =>
     countLimit: {
       marginLeft: 4,
     },
+    limitOver: {
+      color: theme.palette.error.main,
+    },
   })
 );
 
@@ -351,7 +354,13 @@ const CheckInScan: React.VFC = () => {
                 />
                 {latestRsv && (
                   <ListItemSecondaryAction>
-                    <Typography display="inline">
+                    <Typography
+                      display="inline"
+                      className={clsx({
+                        [classes.limitOver]:
+                          latestRsv.member_checked_in >= latestRsv.member_all,
+                      })}
+                    >
                       {`${latestRsv.member_checked_in + 1}人目`}
                     </Typography>
                     <Typography
