@@ -146,25 +146,25 @@ const CheckInScan: React.VFC = () => {
     if (data)
       switch (activeScanner) {
         case "rsv":
-          if (
-            data !== latestRsvId &&
-            (rsvCheckStatus === null || rsvCheckStatus === "error")
-          )
-            handleRsvIdScan(data);
+          handleRsvIdScan(data);
           break;
         case "guest":
-          if (
-            data !== latestRsvId &&
-            data !== latestGuestId &&
-            (guestCheckStatus === null || guestCheckStatus === "error")
-          )
-            handleGuestIdScan(data);
+          handleGuestIdScan(data);
           break;
       }
   };
 
   const handleRsvIdScan = (rsvId: string) => {
-    setLatestRsvId(rsvId);
+    if (
+      rsvId !== latestRsvId &&
+      (rsvCheckStatus === null || rsvCheckStatus === "error")
+    ) {
+      setLatestRsvId(rsvId);
+      checkRsv(rsvId);
+    }
+  };
+
+  const checkRsv = (rsvId: string) => {
     setRsvCheckStatus("loading");
     api(aspida())
       .reservations._id(rsvId)
@@ -175,7 +175,6 @@ const CheckInScan: React.VFC = () => {
       })
       .then((res) => {
         setLatestRsv(res.reservation);
-
         if (res.valid) {
           setRsvCheckStatus("success");
         } else if (res.error_code) {
@@ -218,32 +217,38 @@ const CheckInScan: React.VFC = () => {
   }, [rsvCheckStatus, latestRsvId, setError]);
 
   const handleGuestIdScan = (guestId: string) => {
-    setLatestGuestId(guestId);
-    setGuestCheckStatus("loading");
-    // guest id 検証 (rsv id は有効性を確認済)
-    api(aspida())
-      .guests.check_in.$post({
-        body: {
-          reservation_id: latestRsvId,
-          guest_id: guestId,
-        },
-        headers: {
-          Authorization: "bearer " + auth.get_current_user()?.token,
-        },
-      })
-      .then((guest) => {
-        setGuestCheckStatus("success");
-        setPrevGuestInfo(guest);
-      })
-      .catch((e) => {
-        setGuestCheckStatus("error");
-        setError(e);
-      });
+    if (
+      guestId !== latestRsvId &&
+      guestId !== latestGuestId &&
+      (guestCheckStatus === null || guestCheckStatus === "error")
+    ) {
+      setLatestGuestId(guestId);
+      setGuestCheckStatus("loading");
+      // guest id 検証 (rsv id は有効性を確認済)
+      api(aspida())
+        .guests.check_in.$post({
+          body: {
+            reservation_id: latestRsvId,
+            guest_id: guestId,
+          },
+          headers: {
+            Authorization: "bearer " + auth.get_current_user()?.token,
+          },
+        })
+        .then((guest) => {
+          setGuestCheckStatus("success");
+          setPrevGuestInfo(guest);
+        })
+        .catch((e) => {
+          setGuestCheckStatus("error");
+          setError(e);
+        });
+    }
   };
 
   const handleSuccess = () => {
     if (latestRsv && latestRsv.member_checked_in + 1 < latestRsv.member_all) {
-      handleRsvIdScan(latestRsvId);
+      checkRsv(latestRsvId);
       setGuestCheckStatus(null);
       setLatestGuestId("");
       return;
