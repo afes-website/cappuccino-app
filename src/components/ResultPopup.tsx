@@ -95,14 +95,17 @@ const ResultPopupRenderFunction: React.ForwardRefRenderFunction<
         setDialogStatus("opened");
 
         // すでに結果が出ていたら、duration ms 後に閉じる
-        if (props.status === "success" || props.status === "error")
+        if (
+          (props.status === "success" || props.status === "error") &&
+          timeoutId === null
+        )
           setTimeoutId(window.setTimeout(handleClose, props.duration));
       } else {
         // status が無効
         setDialogStatus("closed");
       }
     }
-  }, [dialogStatus, props.status, props.duration, handleClose]);
+  }, [dialogStatus, props.status, props.duration, handleClose, timeoutId]);
 
   return (
     <Dialog open={dialogStatus === "opened"} TransitionComponent={Transition}>
