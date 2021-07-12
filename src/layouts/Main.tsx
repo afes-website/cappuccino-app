@@ -1,4 +1,10 @@
-import React, { PropsWithChildren, useContext } from "react";
+import React, {
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { createStyles, makeStyles, Paper } from "@material-ui/core";
 import TopBar from "components/TopBar";
 import BottomNav from "components/BottomNav";
@@ -45,9 +51,29 @@ const MainLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
   const titleCtx = useTitleContext();
   const auth = useContext(AuthContext).val;
 
+  const [scrollTop, setScrollTop] = useState(0);
+  const root = useRef<HTMLDivElement>(null);
+
+  const onScroll = () => {
+    setScrollTop(root.current ? root.current.scrollTop : 0);
+  };
+
+  useEffect(() => {
+    const ref = root.current;
+    if (!ref) return;
+    ref.addEventListener("scroll", onScroll);
+    return () => {
+      ref.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
   return (
-    <Paper className={classes.root} square={true}>
-      <TopBar title={titleCtx.title} className={classes.topBar} />
+    <Paper className={classes.root} square={true} ref={root}>
+      <TopBar
+        title={titleCtx.title}
+        scrollTop={scrollTop}
+        className={classes.topBar}
+      />
       <main className={classes.main}>{children}</main>
       {auth.get_current_user_id() && (
         <BottomNav className={classes.bottomNav} />

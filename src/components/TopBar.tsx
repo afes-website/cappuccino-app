@@ -6,6 +6,8 @@ import {
   IconButton,
   createStyles,
   makeStyles,
+  useTheme,
+  Theme,
 } from "@material-ui/core";
 import { ArrowBack, ArrowBackIos } from "@material-ui/icons";
 import { useHistory } from "react-router-dom";
@@ -14,15 +16,18 @@ import AccountDrawer from "components/AccountDrawer";
 import { AuthContext } from "libs/auth";
 import routes from "libs/routes";
 import clsx from "clsx";
+import chroma from "chroma-js";
 import UAParser from "ua-parser-js";
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
       flexGrow: 1,
     },
     appBar: {
       paddingTop: "env(safe-area-inset-top)",
+      color: theme.palette.text.primary,
+      borderBottom: "1px solid",
     },
     menuIcon: {
       position: "absolute",
@@ -42,10 +47,11 @@ const useStyles = makeStyles(() =>
 
 interface Props {
   title: string;
+  scrollTop: number;
   className?: string;
 }
 
-const TopBar: React.VFC<Props> = ({ title, className }) => {
+const TopBar: React.VFC<Props> = ({ title, scrollTop, className }) => {
   const classes = useStyles();
   const history = useHistory();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -53,6 +59,7 @@ const TopBar: React.VFC<Props> = ({ title, className }) => {
     history.location.pathname !== "/"
   );
   const auth = useContext(AuthContext).val;
+  const theme = useTheme<Theme>();
 
   const isApple = useMemo(() => {
     const parser = new UAParser(navigator.userAgent);
@@ -70,7 +77,23 @@ const TopBar: React.VFC<Props> = ({ title, className }) => {
 
   return (
     <div className={clsx(classes.root, className)}>
-      <AppBar position="static" elevation={3} className={classes.appBar}>
+      <AppBar
+        position="static"
+        elevation={0}
+        className={classes.appBar}
+        style={{
+          background: chroma
+            .mix(
+              theme.palette.background.default,
+              theme.palette.background.paper,
+              scrollTop < 100 ? scrollTop / 100 : 1.0
+            )
+            .hex(),
+          borderColor: chroma(theme.palette.divider)
+            .alpha(scrollTop < 100 ? (scrollTop / 100) * 0.12 : 0.12)
+            .hex(),
+        }}
+      >
         <Toolbar>
           {(auth.get_current_user_id() ||
             routes.Terms.route.create({}) === history.location.pathname) &&
