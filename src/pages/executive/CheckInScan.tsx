@@ -81,6 +81,14 @@ const useStyles = makeStyles((theme) =>
     limitOver: {
       color: theme.palette.error.main,
     },
+    termColorBadge: {
+      display: "inline-block",
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      marginBottom: -1,
+      marginRight: theme.spacing(0.75),
+    },
   })
 );
 
@@ -89,6 +97,7 @@ const CheckInScan: React.VFC = () => {
   useVerifyPermission("executive");
   const classes = useStyles();
   const auth = useContext(AuthContext).val;
+  const wristBandPaletteColor = useWristBandPaletteColor();
   const resultPopupRef = useRef<ResultPopupRefs>(null);
   const resultChipRef = useRef<ResultChipRefs>(null);
 
@@ -98,6 +107,8 @@ const CheckInScan: React.VFC = () => {
   const [latestRsvId, setLatestRsvId] = useState("");
   const [latestRsv, setLatestRsv] = useState<Reservation | null>(null);
   const [latestGuestId, setLatestGuestId] = useState("");
+  // 入場済みゲストID
+  const [checkedInGuestIds, setCheckedInGuestIds] = useState<string[]>([]);
   // 直接入力モーダルの開閉状態
   const [opensRsvInputModal, setOpensRsvInputModal] = useState(false);
   const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
@@ -253,6 +264,7 @@ const CheckInScan: React.VFC = () => {
     if (latestRsv && latestRsv.member_checked_in + 1 < latestRsv.member_all) {
       checkRsv(latestRsvId);
       setGuestCheckStatus(null);
+      setCheckedInGuestIds((prev) => [latestGuestId, ...prev]);
       setLatestGuestId("");
       return;
     }
@@ -350,7 +362,7 @@ const CheckInScan: React.VFC = () => {
                 </ListItemIcon>
                 <ListItemText
                   primary={latestGuestId ? latestGuestId : "-"}
-                  secondary="ゲスト ID (リストバンド)"
+                  secondary="ゲスト ID (リストバンド ID)"
                 />
                 {latestRsv && (
                   <ListItemSecondaryAction>
@@ -373,6 +385,30 @@ const CheckInScan: React.VFC = () => {
                   </ListItemSecondaryAction>
                 )}
               </ListItem>
+              {checkedInGuestIds.map((guestId) => (
+                <ListItem disabled key={guestId}>
+                  <ListItemIcon>
+                    <CheckCircle className={classes.successIcon} />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <>
+                        {latestRsv && (
+                          <span
+                            className={classes.termColorBadge}
+                            style={{
+                              background: wristBandPaletteColor(
+                                latestRsv.term.guest_type
+                              ).main,
+                            }}
+                          />
+                        )}
+                        {guestId}
+                      </>
+                    }
+                  />
+                </ListItem>
+              ))}
             </List>
           </CardContent>
         </Card>
