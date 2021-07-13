@@ -27,7 +27,6 @@ const useStyles = makeStyles((theme) =>
     appBar: {
       paddingTop: "env(safe-area-inset-top)",
       color: theme.palette.text.primary,
-      borderBottom: "1px solid",
     },
     menuIcon: {
       position: "absolute",
@@ -79,7 +78,7 @@ const TopBar: React.VFC<Props> = ({ title, scrollTop, className }) => {
     <div className={clsx(classes.root, className)}>
       <AppBar
         position="static"
-        elevation={0}
+        elevation={scrollTop < 100 ? Math.ceil((scrollTop / 100) * 3) : 3}
         className={classes.appBar}
         style={{
           background: chroma
@@ -88,9 +87,6 @@ const TopBar: React.VFC<Props> = ({ title, scrollTop, className }) => {
               theme.palette.background.paper,
               scrollTop < 100 ? scrollTop / 100 : 1.0
             )
-            .hex(),
-          borderColor: chroma(theme.palette.divider)
-            .alpha(scrollTop < 100 ? (scrollTop / 100) * 0.12 : 0.12)
             .hex(),
         }}
       >
