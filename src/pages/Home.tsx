@@ -32,6 +32,7 @@ const Home: React.VFC = () => {
       )}
       {verifyPermission("exhibition", auth) && (
         <>
+          <ExhStatusCard />
           <HomeCard
             title="展示教室 入退室 QRスキャン"
             paragraphs={[
@@ -43,7 +44,6 @@ const Home: React.VFC = () => {
               ["退室スキャン", routes.ExitScan.route.create({})],
             ]}
           />
-          <ExhStatusCard />
           <HomeCard
             title="入退室スキャン履歴"
             paragraphs={["自展示の入退室履歴をすべて表示します。"]}
