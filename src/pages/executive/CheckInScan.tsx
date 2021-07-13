@@ -139,6 +139,7 @@ const CheckInScan: React.VFC = () => {
     setLatestRsvId("");
     setLatestRsv(null);
     setLatestGuestId("");
+    setCheckedInGuestIds([]);
     setOpensRsvInputModal(false);
     setOpensGuestInputModal(false);
     setActiveScanner("rsv");
