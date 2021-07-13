@@ -4,7 +4,6 @@ import {
   Card,
   CardContent,
   CircularProgress,
-  Grid,
   List,
   ListItem,
   ListItemIcon,
@@ -13,12 +12,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import {
-  AccessTime,
-  Assignment,
-  CheckCircle,
-  Replay,
-} from "@material-ui/icons";
+import { Assignment, CheckCircle, Replay } from "@material-ui/icons";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { WristBand } from "components/MaterialSvgIcons";
 import CardList from "components/CardList";
@@ -34,7 +28,7 @@ import useErrorHandler from "libs/errorHandler";
 import { getStringDateTimeBrief, getStringTime } from "libs/stringDate";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
 import { StatusColor } from "types/statusColor";
-import api, { Guest, Reservation, Term } from "@afes-website/docs";
+import api, { Reservation, Term } from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import clsx from "clsx";
 
@@ -114,8 +108,6 @@ const CheckInScan: React.VFC = () => {
   const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
   // ステップ管理
   const [activeScanner, setActiveScanner] = useState<"rsv" | "guest">("rsv");
-  // 前回入場したゲスト情報
-  const [prevGuestInfo, setPrevGuestInfo] = useState<Guest | null>(null);
   // 予約ID・ゲストIDそれぞれのチェック結果
   const [rsvCheckStatus, setRsvCheckStatus] = useState<StatusColor | null>(
     null
@@ -249,9 +241,8 @@ const CheckInScan: React.VFC = () => {
             Authorization: "bearer " + auth.get_current_user()?.token,
           },
         })
-        .then((guest) => {
+        .then(() => {
           setGuestCheckStatus("success");
-          setPrevGuestInfo(guest);
         })
         .catch((e) => {
           setGuestCheckStatus("error");
@@ -425,31 +416,6 @@ const CheckInScan: React.VFC = () => {
             はじめからやり直す
           </Button>
         )}
-
-        {/* 前回入場したゲスト情報 */}
-        {activeScanner === "rsv" && ["loading", null].includes(rsvCheckStatus) && (
-          <Card>
-            <CardContent
-              className={clsx({
-                [classes.previousGuestInfoTitle]: prevGuestInfo,
-              })}
-            >
-              <Typography
-                style={{ fontSize: 14 }}
-                color="textSecondary"
-                gutterBottom={true}
-              >
-                前回入場したゲスト情報
-              </Typography>
-              {!prevGuestInfo && (
-                <Typography variant="caption" align="center">
-                  まだゲストの文化祭入場処理をしていません。
-                </Typography>
-              )}
-            </CardContent>
-            {prevGuestInfo && <GuestInfoList guest={prevGuestInfo} />}
-          </Card>
-        )}
       </CardList>
 
       {/* 結果表示ポップアップ */}
@@ -501,45 +467,6 @@ const CheckInScan: React.VFC = () => {
     </div>
   );
 };
-
-const GuestInfoList: React.VFC<{ guest: Guest }> = (props) => (
-  <List>
-    <ListItem>
-      <ListItemIcon>
-        <WristBand />
-      </ListItemIcon>
-      <ListItemText primary={props.guest.id} secondary="ゲスト ID" />
-    </ListItem>
-    <Grid container spacing={0}>
-      <Grid item xs={6}>
-        <ListItem>
-          <ListItemIcon>
-            <AccessTime />
-          </ListItemIcon>
-          <ListItemText
-            primary={getStringDateTimeBrief(props.guest.entered_at)}
-            secondary="入場時刻"
-          />
-        </ListItem>
-      </Grid>
-      <Grid item xs={6}>
-        <ListItem>
-          <ListItemIcon>
-            <AccessTime />
-          </ListItemIcon>
-          <ListItemText
-            primary={
-              props.guest.term.exit_scheduled_time
-                ? getStringDateTimeBrief(props.guest.term.exit_scheduled_time)
-                : "-"
-            }
-            secondary="退場予定時刻"
-          />
-        </ListItem>
-      </Grid>
-    </Grid>
-  </List>
-);
 
 const ReservationTermInfo: React.VFC<{ term: Term }> = (props) => {
   const wristBandColor = useWristBandPaletteColor();
