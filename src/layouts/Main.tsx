@@ -84,12 +84,4 @@ const MainLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
   );
 };
 
-const MainLayoutWithProviders: React.VFC<PropsWithChildren<unknown>> = ({
-  children,
-}) => (
-  <ProvidersProvider>
-    <MainLayout>{children}</MainLayout>
-  </ProvidersProvider>
-);
-
-export default MainLayoutWithProviders;
+export default MainLayout;

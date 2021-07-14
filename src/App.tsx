@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import TypesafeRouter from "components/TypesafeRouter";
 import routes from "libs/routes";
 import { createBrowserHistory } from "history";
 import NotFound from "pages/NotFound";
 import MainLayout from "layouts/Main";
+import TabletLayout from "layouts/Tablet";
 import Auth, { AuthContext } from "libs/auth";
+import UAParser from "ua-parser-js";
+import ProvidersProvider from "components/ProvidersProvider";
 
 const App: React.VFC = () => {
   const [history] = useState(createBrowserHistory());
@@ -45,10 +48,25 @@ const App: React.VFC = () => {
       <TypesafeRouter
         routes={routes}
         history={history}
-        layout={MainLayout}
+        layout={LayoutWithProviders}
         fallback={NotFound}
       />
     </AuthContext.Provider>
+  );
+};
+
+const LayoutWithProviders: React.VFC<PropsWithChildren<unknown>> = ({
+  children,
+}) => {
+  const Layout = useMemo(() => {
+    const parser = new UAParser(navigator.userAgent);
+    return parser.getDevice().type === "tablet" ? TabletLayout : MainLayout;
+  }, []);
+
+  return (
+    <ProvidersProvider>
+      <Layout>{children}</Layout>
+    </ProvidersProvider>
   );
 };
 
