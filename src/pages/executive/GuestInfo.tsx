@@ -41,6 +41,7 @@ import useErrorHandler from "libs/errorHandler";
 const useStyles = makeStyles((theme) =>
   createStyles({
     tabs: {
+      background: theme.palette.background.default,
       paddingTop: theme.spacing(1),
     },
     list: {

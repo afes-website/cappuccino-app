@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Card,
   CardContent,
@@ -18,7 +18,7 @@ import DirectInputModal from "components/DirectInputModal";
 import DirectInputFab from "components/DirectInputFab";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import ErrorDialog from "components/ErrorDialog";
-import { AuthContext } from "libs/auth";
+import ExhInfoCard from "components/ExhInfoCard";
 import useErrorHandler from "libs/errorHandler";
 import { StatusColor } from "types/statusColor";
 import clsx from "clsx";
@@ -67,18 +67,16 @@ interface Props {
 
 const GuestScan: React.VFC<Props> = (props) => {
   const classes = useStyles();
-  const auth = useContext(AuthContext).val;
   const resultChipRef = useRef<ResultChipRefs>(null);
 
   const [latestGuestId, setLatestGuestId] = useState("");
   const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
   const [checkStatus, setCheckStatus] = useState<StatusColor | null>(null);
-  const [exhibitionName, setExhibitionName] = useState<string | null>(null);
 
   // エラー処理
   const [errorMessage, errorDialog, , setError] = useErrorHandler();
 
-  const isExh = props.page.split("/")[0] === "exh";
+  const isExh = props.page.split("/")[0] === "exhibition";
 
   const actionName = ((): string => {
     switch (props.page) {
@@ -90,10 +88,6 @@ const GuestScan: React.VFC<Props> = (props) => {
         return "退場";
     }
   })();
-
-  useEffect(() => {
-    if (isExh) setExhibitionName(auth.get_current_user()?.name || "-");
-  }, [setExhibitionName, auth, isExh]);
 
   const handleGuestIdScan = (guestId: string | null) => {
     if (guestId && guestId !== latestGuestId && checkStatus !== "loading") {
@@ -140,13 +134,6 @@ const GuestScan: React.VFC<Props> = (props) => {
   return (
     <div>
       <CardList className={classes.list}>
-        {/* 展示名 */}
-        {isExh && (
-          <Card>
-            <Alert severity="info">{`展示名: ${exhibitionName}`}</Alert>
-          </Card>
-        )}
-
         {/* QR Scanner */}
         <Card>
           <CardContent
@@ -194,6 +181,8 @@ const GuestScan: React.VFC<Props> = (props) => {
             </List>
           </CardContent>
         </Card>
+
+        {isExh && <ExhInfoCard />}
       </CardList>
 
       {/* 直接入力ボタン */}

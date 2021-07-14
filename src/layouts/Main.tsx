@@ -1,5 +1,17 @@
-import React, { PropsWithChildren, useContext } from "react";
-import { createStyles, makeStyles, Paper } from "@material-ui/core";
+import React, {
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import {
+  createStyles,
+  makeStyles,
+  Paper,
+  Theme,
+  useTheme,
+} from "@material-ui/core";
 import TopBar from "components/TopBar";
 import BottomNav from "components/BottomNav";
 import { useTitleContext } from "libs/title";
@@ -10,9 +22,6 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
       height: "var(--100vh, 0px)",
-      "@media screen and (display-mode: standalone)": {
-        height: "100vh",
-      },
       width: "100vw",
       overflowY: "scroll",
       overscrollBehavior: "none",
@@ -44,10 +53,35 @@ const MainLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
   const classes = useStyles();
   const titleCtx = useTitleContext();
   const auth = useContext(AuthContext).val;
+  const theme = useTheme<Theme>();
+
+  const [scrollTop, setScrollTop] = useState(0);
+  const root = useRef<HTMLDivElement>(null);
+
+  const onScroll = () => {
+    setScrollTop(root.current ? root.current.scrollTop : 0);
+  };
+
+  useEffect(() => {
+    const ref = root.current;
+    if (!ref) return;
+    ref.addEventListener("scroll", onScroll);
+    return () => {
+      ref.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    document.body.style.background = theme.palette.background.default;
+  }, [theme.palette.background.default, theme.palette.type]);
 
   return (
-    <Paper className={classes.root} square={true}>
-      <TopBar title={titleCtx.title} className={classes.topBar} />
+    <Paper className={classes.root} square={true} ref={root}>
+      <TopBar
+        title={titleCtx.title}
+        scrollTop={scrollTop}
+        className={classes.topBar}
+      />
       <main className={classes.main}>{children}</main>
       {auth.get_current_user_id() && (
         <BottomNav className={classes.bottomNav} />

@@ -4,6 +4,7 @@ import HomeCard from "components/HomeCard";
 import CardList from "components/CardList";
 import PwaAlertCard from "components/PwaAlertCard";
 import { GeneralStatusCard, ExhStatusCard } from "components/StayStatusCard";
+import ExhInfoCard from "components/ExhInfoCard";
 import { useTitleSet } from "libs/title";
 import { AuthContext, verifyPermission } from "libs/auth";
 
@@ -32,6 +33,8 @@ const Home: React.VFC = () => {
       )}
       {verifyPermission("exhibition", auth) && (
         <>
+          <ExhInfoCard />
+          <ExhStatusCard />
           <HomeCard
             title="展示教室 入退室 QRスキャン"
             paragraphs={[
@@ -43,7 +46,6 @@ const Home: React.VFC = () => {
               ["退室スキャン", routes.ExitScan.route.create({})],
             ]}
           />
-          <ExhStatusCard />
           <HomeCard
             title="入退室スキャン履歴"
             paragraphs={["自展示の入退室履歴をすべて表示します。"]}

@@ -34,7 +34,10 @@ export const ThemeCtx = {
 
 export const useTheme = (): [Theme, () => void] => {
   const [mode, setMode] = useState<ThemeMode>(
-    getThemeModeFromLocalStorage() || "light"
+    getThemeModeFromLocalStorage() ||
+      (window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light")
   );
 
   const theme: Theme = useMemo(() => createMuiTheme(themeOptions[mode]), [

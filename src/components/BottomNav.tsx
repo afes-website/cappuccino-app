@@ -54,7 +54,7 @@ const BottomNav: React.VFC<{ className?: string }> = ({ className }) => {
   }, [history.location.pathname]);
 
   return (
-    <Paper elevation={6} className={clsx(classes.root, className)}>
+    <Paper elevation={3} className={clsx(classes.root, className)}>
       <BottomNavigation
         value={value}
         onChange={(event, newValue) => {

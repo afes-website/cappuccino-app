@@ -6,6 +6,8 @@ import {
   ListItemText,
   ListItemIcon,
   Typography,
+  useTheme,
+  Theme,
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Login, Logout } from "components/MaterialSvgIcons";
@@ -48,6 +50,7 @@ const ScanHistory: React.VFC = () => {
   const classes = useStyles();
   const auth = useContext(AuthContext).val;
   const wristBandPaletteColor = useWristBandPaletteColor();
+  const theme = useTheme<Theme>();
 
   const [logs, setLogs] = useState<ActivityLog[] | null>(null);
 
@@ -103,7 +106,7 @@ const ScanHistory: React.VFC = () => {
                         style={{
                           background: wristBandPaletteColor(
                             log.guest.term.guest_type
-                          ).main,
+                          )[theme.palette.type === "light" ? "main" : "dark"],
                         }}
                       />
                       {log.guest.id}

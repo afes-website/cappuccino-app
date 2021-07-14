@@ -405,16 +405,16 @@ const CheckInScan: React.VFC = () => {
           </CardContent>
         </Card>
 
-        {/* はじめからやり直すボタン */}
+        {/* 中断して最初からやり直すボタン */}
         {(activeScanner !== "rsv" || totalCheckStatus === "error") && (
           <Button
-            variant="contained"
-            color="primary"
+            variant="text"
+            color="secondary"
             className={classes.bottomButton}
             startIcon={<Replay />}
             onClick={clearAll}
           >
-            はじめからやり直す
+            中断して最初からやり直す
           </Button>
         )}
       </CardList>
