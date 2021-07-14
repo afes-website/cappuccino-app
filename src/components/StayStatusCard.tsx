@@ -1,14 +1,9 @@
 import React, {
   PropsWithChildren,
   useCallback,
-  useContext,
   useEffect,
   useState,
 } from "react";
-import { AuthContext } from "libs/auth";
-import api, { ExhibitionStatus, Terms } from "@afes-website/docs";
-import aspida from "@aspida/axios";
-import StayStatus from "components/StayStatus";
 import {
   Button,
   Card,
@@ -19,7 +14,11 @@ import {
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
+import StayStatus from "components/StayStatus";
+import { useAuth } from "libs/auth";
 import routes from "libs/routes";
+import api, { ExhibitionStatus, Terms } from "@afes-website/docs";
+import aspida from "@aspida/axios";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -43,7 +42,7 @@ const StatusCard: React.VFC<
     showCountLimit: boolean;
   }>
 > = ({ children, getStatus, ...props }) => {
-  const auth = useContext(AuthContext).val;
+  const auth = useAuth();
   const classes = useStyles();
 
   const [status, setStatus] = useState<Status | null>(null);
@@ -112,7 +111,7 @@ const useHomeCardStyles = makeStyles((theme) =>
 
 export const GeneralStatusCard: React.VFC = () => {
   const classes = useHomeCardStyles();
-  const auth = useContext(AuthContext).val;
+  const auth = useAuth();
 
   const getStatus = useCallback(
     () =>
@@ -150,7 +149,7 @@ export const GeneralStatusCard: React.VFC = () => {
 };
 
 export const ExhStatusCard: React.VFC = () => {
-  const auth = useContext(AuthContext).val;
+  const auth = useAuth();
 
   const getStatus = useCallback(
     () =>

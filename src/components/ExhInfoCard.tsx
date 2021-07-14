@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Typography } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { AuthContext } from "libs/auth";
+import { useAuth } from "libs/auth";
 import api, { ExhibitionStatus } from "@afes-website/docs";
 import aspida from "@aspida/axios";
 
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) =>
 );
 
 const ExhInfoCard: React.VFC = () => {
-  const auth = useContext(AuthContext).val;
+  const auth = useAuth();
   const classes = useStyles();
 
   const [exhInfo, setExhInfo] = useState<ExhibitionStatus | null>(null);

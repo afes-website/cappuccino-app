@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import {
   Button,
@@ -17,7 +17,7 @@ import api from "@afes-website/docs";
 import axios from "@aspida/axios";
 import CardList from "components/CardList";
 import PwaAlertCard from "components/PwaAlertCard";
-import { AuthContext } from "libs/auth";
+import { useAuth } from "libs/auth";
 import routes from "libs/routes";
 import isAxiosError from "libs/isAxiosError";
 import { useTitleSet } from "libs/title";
@@ -47,7 +47,7 @@ const Login: React.VFC = () => {
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState<string[]>([]);
-  const auth = useContext(AuthContext).val;
+  const auth = useAuth();
   useTitleSet("ログイン");
 
   const login = (e?: React.FormEvent<HTMLFormElement>) => {

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Card,
   CardContent,
@@ -21,7 +21,7 @@ import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import DirectInputFab from "components/DirectInputFab";
 import DirectInputModal from "components/DirectInputModal";
-import { AuthContext, useVerifyPermission } from "libs/auth";
+import { useAuth, useVerifyPermission } from "libs/auth";
 import { useTitleSet } from "libs/title";
 import isAxiosError from "libs/isAxiosError";
 import { getStringDateTime, getStringDateTimeBrief } from "libs/stringDate";
@@ -71,7 +71,7 @@ const GuestInfo: React.VFC = () => {
   useVerifyPermission(["executive", "reservation"]);
 
   const classes = useStyles();
-  const auth = useContext(AuthContext).val;
+  const auth = useAuth();
   const resultChipRef = useRef<ResultChipRefs>(null);
 
   const [mode, setMode] = useState<"guest" | "rsv">(

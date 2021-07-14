@@ -156,6 +156,8 @@ export const AuthContext = createContext<{ val: Auth }>({
   val: new Auth(),
 });
 
+export const useAuth = (): Auth => useContext(AuthContext).val;
+
 /**
  * 指定された権限（の少なくとも1つ）があるか確認する
  * @param _permission 権限の種類文字列もしくはその配列
@@ -189,7 +191,7 @@ export const useVerifyPermission = (
     | (keyof StorageUserInfo["permissions"])[]
 ): void => {
   const history = useHistory();
-  const auth = useContext(AuthContext).val;
+  const auth = useAuth();
   useEffect(() => {
     if (!verifyPermission(_permission, auth)) {
       history.replace(routes.Forbidden.route.create({}));

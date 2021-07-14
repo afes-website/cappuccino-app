@@ -1,10 +1,4 @@
-import React, {
-  PropsWithChildren,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
 import {
   createStyles,
   makeStyles,
@@ -16,7 +10,7 @@ import TopBar from "components/TopBar";
 import BottomNav from "components/BottomNav";
 import { useTitleContext } from "libs/title";
 import ProvidersProvider from "components/ProvidersProvider";
-import { AuthContext } from "libs/auth";
+import { useAuth } from "libs/auth";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -52,7 +46,7 @@ const useStyles = makeStyles((theme) =>
 const MainLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
   const classes = useStyles();
   const titleCtx = useTitleContext();
-  const auth = useContext(AuthContext).val;
+  const auth = useAuth();
   const theme = useTheme<Theme>();
 
   const [scrollTop, setScrollTop] = useState(0);
