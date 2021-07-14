@@ -22,9 +22,6 @@ const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
       height: "var(--100vh, 0px)",
-      "@media screen and (display-mode: standalone)": {
-        height: "100vh",
-      },
       width: "100vw",
       overflowY: "scroll",
       overscrollBehavior: "none",
