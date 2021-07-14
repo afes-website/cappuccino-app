@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import routes from "libs/routes";
 import {
@@ -25,7 +25,7 @@ import {
   Snackbar,
 } from "@material-ui/core";
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
-import { AuthContext } from "libs/auth";
+import { useAuth } from "libs/auth";
 import AccountIcon from "components/AccountIcon";
 import { useSetThemeMode } from "libs/themeMode";
 import { DarkMode, LightMode, Reload } from "components/MaterialSvgIcons";
@@ -95,7 +95,7 @@ interface Props {
 
 const AccountDrawer: React.VFC<Props> = (props) => {
   const classes = useStyles();
-  const auth = useContext(AuthContext).val;
+  const auth = useAuth();
   const theme = useTheme<Theme>();
   const toggleThemeMode = useSetThemeMode();
 
@@ -292,7 +292,7 @@ const AccountDrawer: React.VFC<Props> = (props) => {
 
 const PermissionsList: React.VFC = () => {
   const classes = useStyles();
-  const auth = useContext(AuthContext).val;
+  const auth = useAuth();
 
   const currentUser = auth.get_current_user();
   if (!currentUser) return null;

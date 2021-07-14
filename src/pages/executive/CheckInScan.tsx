@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Button,
   Card,
@@ -23,7 +23,7 @@ import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import ResultPopup, { ResultPopupRefs } from "components/ResultPopup";
 import ErrorDialog from "components/ErrorDialog";
 import { useTitleSet } from "libs/title";
-import { AuthContext, useVerifyPermission } from "libs/auth";
+import { useAuth, useVerifyPermission } from "libs/auth";
 import useErrorHandler from "libs/errorHandler";
 import { getStringDateTimeBrief, getStringTime } from "libs/stringDate";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
@@ -90,7 +90,7 @@ const CheckInScan: React.VFC = () => {
   useTitleSet("文化祭 入場スキャン");
   useVerifyPermission("executive");
   const classes = useStyles();
-  const auth = useContext(AuthContext).val;
+  const auth = useAuth();
   const wristBandPaletteColor = useWristBandPaletteColor();
   const resultPopupRef = useRef<ResultPopupRefs>(null);
   const resultChipRef = useRef<ResultChipRefs>(null);

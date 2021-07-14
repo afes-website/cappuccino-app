@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import routes from "libs/routes";
 import HomeCard from "components/HomeCard";
 import CardList from "components/CardList";
@@ -6,11 +6,11 @@ import PwaAlertCard from "components/PwaAlertCard";
 import { GeneralStatusCard, ExhStatusCard } from "components/StayStatusCard";
 import ExhInfoCard from "components/ExhInfoCard";
 import { useTitleSet } from "libs/title";
-import { AuthContext, verifyPermission } from "libs/auth";
+import { useAuth, verifyPermission } from "libs/auth";
 
 const Home: React.VFC = () => {
   useTitleSet("CAPPUCCINO");
-  const auth = useContext(AuthContext).val;
+  const auth = useAuth();
 
   return (
     <CardList>
