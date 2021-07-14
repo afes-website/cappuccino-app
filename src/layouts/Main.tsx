@@ -5,7 +5,13 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { createStyles, makeStyles, Paper } from "@material-ui/core";
+import {
+  createStyles,
+  makeStyles,
+  Paper,
+  Theme,
+  useTheme,
+} from "@material-ui/core";
 import TopBar from "components/TopBar";
 import BottomNav from "components/BottomNav";
 import { useTitleContext } from "libs/title";
@@ -50,6 +56,7 @@ const MainLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
   const classes = useStyles();
   const titleCtx = useTitleContext();
   const auth = useContext(AuthContext).val;
+  const theme = useTheme<Theme>();
 
   const [scrollTop, setScrollTop] = useState(0);
   const root = useRef<HTMLDivElement>(null);
@@ -66,6 +73,10 @@ const MainLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
       ref.removeEventListener("scroll", onScroll);
     };
   }, []);
+
+  useEffect(() => {
+    document.body.style.background = theme.palette.background.default;
+  }, [theme.palette.background.default, theme.palette.type]);
 
   return (
     <Paper className={classes.root} square={true} ref={root}>
