@@ -19,7 +19,7 @@ import DirectInputFab from "components/DirectInputFab";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import ErrorDialog from "components/ErrorDialog";
 import { AuthContext } from "libs/auth";
-import isAxiosError from "libs/isAxiosError";
+import useErrorHandler from "libs/errorHandler";
 import { StatusColor } from "types/statusColor";
 import clsx from "clsx";
 import { Guest } from "@afes-website/docs";
@@ -73,11 +73,10 @@ const GuestScan: React.VFC<Props> = (props) => {
   const [latestGuestId, setLatestGuestId] = useState("");
   const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
   const [checkStatus, setCheckStatus] = useState<StatusColor | null>(null);
-  const [errorCode, setErrorCode] = useState<ErrorCode | null>(null);
-  const [errorDialogTitle, setErrorDialogTitle] = useState("");
-  const [errorDialogMessage, setErrorDialogMessage] = useState<string[]>([]);
-  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [exhibitionName, setExhibitionName] = useState<string | null>(null);
+
+  // エラー処理
+  const [errorMessage, errorDialog, , setError] = useErrorHandler();
 
   const isExh = props.page.split("/")[0] === "exh";
 
@@ -106,18 +105,7 @@ const GuestScan: React.VFC<Props> = (props) => {
           setCheckStatus("success");
         })
         .catch((e) => {
-          setCheckStatus("error");
-          if (isAxiosError(e)) {
-            const errorCode: unknown = e.response?.data.error_code;
-            if (
-              typeof errorCode === "string" &&
-              (errorCodeList as ReadonlyArray<string>).includes(errorCode)
-            ) {
-              setErrorCode(errorCode as ErrorCode);
-              return;
-            }
-          }
-          networkErrorHandler(e);
+          setError(e);
         });
     }
   };
@@ -149,46 +137,6 @@ const GuestScan: React.VFC<Props> = (props) => {
     }
   }, [checkStatus, latestGuestId, actionName]);
 
-  const networkErrorHandler = (e: unknown): void => {
-    console.error(e);
-    setErrorDialogOpen(true);
-    if (isAxiosError(e)) {
-      // axios error
-      if (e.response?.status) {
-        // status code があるとき
-        setErrorCode("SERVER_ERROR");
-        setErrorDialogTitle("サーバーエラー");
-        setErrorDialogMessage([
-          "サーバーエラーが発生しました。",
-          "総務局にお問い合わせください。",
-          `status code: ${e.response?.status || "undefined"}`,
-          e.message,
-        ]);
-      }
-      // ないとき
-      else {
-        setErrorCode("NETWORK_ERROR");
-        setErrorDialogTitle("通信エラー");
-        setErrorDialogMessage([
-          "通信エラーが発生しました。",
-          "通信環境を確認し、はじめからやり直してください。",
-          "状況が改善しない場合は、総務局にお問い合わせください。",
-          e.message,
-        ]);
-      }
-    }
-    // なにもわからないとき
-    else {
-      setErrorCode("NETWORK_ERROR");
-      setErrorDialogTitle("通信エラー");
-      setErrorDialogMessage([
-        "通信エラーが発生しました。",
-        "通信環境を確認し、はじめからやり直してください。",
-        "状況が改善しない場合は、総務局にお問い合わせください。",
-      ]);
-    }
-  };
-
   return (
     <div>
       <CardList className={classes.list}>
@@ -215,10 +163,10 @@ const GuestScan: React.VFC<Props> = (props) => {
         </Card>
 
         {/* Error Alert */}
-        {errorCode && (
+        {errorMessage && (
           <Card>
             <CardContent className={classes.noPadding}>
-              <Alert severity="error">{getErrorMessage(errorCode)}</Alert>
+              <Alert severity="error">{errorMessage}</Alert>
             </CardContent>
           </Card>
         )}
@@ -267,49 +215,15 @@ const GuestScan: React.VFC<Props> = (props) => {
 
       {/* エラーダイアログ */}
       <ErrorDialog
-        open={errorDialogOpen}
-        title={errorDialogTitle}
-        message={errorDialogMessage}
+        open={errorDialog.open}
+        title={errorDialog.title}
+        message={errorDialog.message}
         onClose={() => {
-          setErrorDialogOpen(false);
+          errorDialog.setOpen(false);
         }}
       />
     </div>
   );
 };
-
-const getErrorMessage = (status_code: ErrorCode) => {
-  switch (status_code) {
-    case "GUEST_NOT_FOUND":
-      return "合致する来場者情報がありません。";
-    case "GUEST_ALREADY_ENTERED":
-      return "すでに入室処理が完了しています。";
-    case "PEOPLE_LIMIT_EXCEEDED":
-      return "すでに展示の滞在人数の上限に達しています。";
-    case "GUEST_ALREADY_EXITED":
-      return "来場者は一度麻布から退場しています。必要に応じて近くの統制局員・総務局員にお問い合わせください。";
-    case "EXIT_TIME_EXCEEDED":
-      return "来場者は既に退場予定時刻を過ぎています。";
-    case "EXHIBITION_NOT_FOUND":
-      return "内部エラーです。至急、総務局にお問い合わせください。（EXHIBITION_NOT_FOUND）";
-    case "NETWORK_ERROR":
-      return "通信エラーが発生しました。通信環境を確認し、はじめからやり直してください。状況が改善しない場合は、総務局にお問い合わせください。";
-    case "SERVER_ERROR":
-      return "サーバーエラーが発生しました。至急、総務局にお問い合わせください。";
-  }
-};
-
-const errorCodeList = [
-  "GUEST_NOT_FOUND",
-  "GUEST_ALREADY_ENTERED",
-  "PEOPLE_LIMIT_EXCEEDED",
-  "GUEST_ALREADY_EXITED",
-  "EXIT_TIME_EXCEEDED",
-  "EXHIBITION_NOT_FOUND",
-  "NETWORK_ERROR",
-  "SERVER_ERROR",
-] as const;
-
-type ErrorCode = typeof errorCodeList[number];
 
 export default GuestScan;
