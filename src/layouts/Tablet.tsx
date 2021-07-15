@@ -5,11 +5,11 @@ import {
   makeStyles,
   Paper,
   Theme,
-  Typography,
   useTheme,
 } from "@material-ui/core";
 import TopBar from "components/TopBar";
 import { useTitleContext } from "libs/title";
+import SideNav from "components/SideNav";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme) =>
     },
     content: {
       height: "calc(var(--100vh, 0px) - env(safe-area-inset-top))",
+      boxSizing: "border-box",
       width: "100%",
       overflowY: "scroll",
       overscrollBehavior: "none",
@@ -70,9 +71,7 @@ const TabletLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
   return (
     <Grid container className={classes.root}>
       <Grid item xs={3}>
-        <Typography align="center" color="textSecondary">
-          side nav
-        </Typography>
+        <SideNav className={classes.content} />
       </Grid>
       <Grid item xs={9}>
         <Paper

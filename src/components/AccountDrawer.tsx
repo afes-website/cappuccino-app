@@ -290,7 +290,7 @@ const AccountDrawer: React.VFC<Props> = (props) => {
   );
 };
 
-const PermissionsList: React.VFC = () => {
+export const PermissionsList: React.VFC = () => {
   const classes = useStyles();
   const auth = useAuth();
 
