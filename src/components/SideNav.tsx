@@ -1,17 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
+  Button,
   Card,
+  CardActionArea,
   CardContent,
   createStyles,
+  Divider,
+  IconButton,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
   makeStyles,
   Paper,
+  Snackbar,
   Theme,
+  Toolbar,
   Typography,
+  useTheme,
 } from "@material-ui/core";
 import AccountIcon from "components/AccountIcon";
 import { PermissionsList } from "components/AccountDrawer";
@@ -19,17 +26,26 @@ import { useAuth } from "libs/auth";
 import clsx from "clsx";
 import { UserInfo } from "@afes-website/docs";
 import routes from "libs/routes";
-import { Login, Logout, QRScannerIcon } from "components/MaterialSvgIcons";
+import {
+  DarkMode,
+  LightMode,
+  Login,
+  Logout,
+  QRScannerIcon,
+  Reload,
+} from "components/MaterialSvgIcons";
 import { History, Home, Room } from "@material-ui/icons";
 import { Link, useHistory } from "react-router-dom";
+import { useSetThemeMode } from "libs/themeMode";
+import { Alert } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      paddingBottom: "env(safe-area-inset-bottom)",
       display: "flex",
       flexDirection: "column",
       padding: theme.spacing(2),
+      paddingBottom: 0,
       "& > * + *": {
         marginTop: theme.spacing(2),
       },
@@ -69,6 +85,21 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: `${theme.palette.primary.main} !important`,
       color: theme.palette.primary.contrastText,
     },
+    bottomWrapper: {
+      marginTop: "auto",
+      marginBottom: 0,
+      "& hr": {
+        marginTop: theme.spacing(0.5),
+      },
+    },
+    actionButton: {
+      paddingLeft: theme.spacing(2),
+      justifyContent: "left",
+      width: "100%",
+    },
+    snackBar: {
+      bottom: theme.spacing(8),
+    },
   })
 );
 
@@ -76,6 +107,10 @@ const SideNav: React.VFC<{ className?: string }> = ({ className }) => {
   const classes = useStyles();
   const history = useHistory();
   const auth = useAuth();
+  const theme = useTheme<Theme>();
+  const toggleThemeMode = useSetThemeMode();
+
+  const [snackBarOpen, setSnackBarOpen] = useState(false);
 
   const user = auth.get_current_user();
   if (!user) return null;
@@ -94,18 +129,28 @@ const SideNav: React.VFC<{ className?: string }> = ({ className }) => {
     <Paper elevation={0} className={clsx(classes.root, className)}>
       {/* ==== current user ==== */}
       <Card className={classes.card}>
-        <CardContent>
-          <div className={classes.currentUserIconWrapper}>
-            <AccountIcon
-              account={auth.get_current_user()}
-              className={classes.menuIcon}
-              color="inherit"
-            />
-            <PermissionsList />
-          </div>
-          <Typography variant="h6">{user.name || ""}</Typography>
-          <Typography variant="body2">@{user.id || ""}</Typography>
-        </CardContent>
+        <CardActionArea
+          onClick={() => {
+            history.push(routes.Account.route.create({}));
+          }}
+          className={clsx({
+            [classes.menuCurrent]:
+              history.location.pathname === routes.Account.route.create({}),
+          })}
+        >
+          <CardContent>
+            <div className={classes.currentUserIconWrapper}>
+              <AccountIcon
+                account={auth.get_current_user()}
+                className={classes.menuIcon}
+                color="inherit"
+              />
+              <PermissionsList />
+            </div>
+            <Typography variant="h6">{user.name || ""}</Typography>
+            <Typography variant="body2">@{user.id || ""}</Typography>
+          </CardContent>
+        </CardActionArea>
       </Card>
 
       {/* ==== menus ==== */}
@@ -136,6 +181,76 @@ const SideNav: React.VFC<{ className?: string }> = ({ className }) => {
           </Card>
         </Box>
       ))}
+      {/* ==== bottom buttons ==== */}
+      <div className={classes.bottomWrapper}>
+        <Button
+          variant="text"
+          color={
+            history.location.pathname === routes.Terms.route.create({})
+              ? "secondary"
+              : "inherit"
+          }
+          component={Link}
+          to={routes.Terms.route.create({})}
+          className={classes.actionButton}
+        >
+          利用規約 & プライバシーポリシー
+        </Button>
+        <Button
+          variant="text"
+          color="inherit"
+          component="span"
+          className={classes.actionButton}
+          disabled
+        >
+          {`Version ${process.env.REACT_APP_VERSION}-${process.env.REACT_APP_BUILD_NUMBER}`}
+        </Button>
+        <Divider />
+        <Toolbar>
+          <IconButton onClick={toggleThemeMode}>
+            {theme.palette.type === "light" ? <DarkMode /> : <LightMode />}
+          </IconButton>
+          <IconButton
+            onClick={() => {
+              navigator.serviceWorker.getRegistration().then((reg) => {
+                if (reg)
+                  reg.update().then(() => {
+                    setTimeout(() => {
+                      setSnackBarOpen(true);
+                    }, 500);
+                  });
+              });
+            }}
+          >
+            <Reload />
+          </IconButton>
+        </Toolbar>
+      </div>
+
+      {/* ==== already up to date snack bar ==== */}
+      <Snackbar
+        open={snackBarOpen}
+        onClose={() => {
+          setSnackBarOpen(false);
+        }}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        autoHideDuration={3000}
+        className={classes.snackBar}
+      >
+        <Alert
+          severity="success"
+          variant="filled"
+          elevation={6}
+          onClose={() => {
+            setSnackBarOpen(false);
+          }}
+        >
+          すでに最新版です！
+        </Alert>
+      </Snackbar>
     </Paper>
   );
 };
