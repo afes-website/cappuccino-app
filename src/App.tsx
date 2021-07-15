@@ -6,8 +6,8 @@ import NotFound from "pages/NotFound";
 import MainLayout from "layouts/Main";
 import TabletLayout from "layouts/Tablet";
 import Auth, { AuthContext } from "libs/auth";
-import UAParser from "ua-parser-js";
 import ProvidersProvider from "components/ProvidersProvider";
+import { Theme, useMediaQuery, useTheme } from "@material-ui/core";
 
 const App: React.VFC = () => {
   const [history] = useState(createBrowserHistory());
@@ -58,10 +58,12 @@ const App: React.VFC = () => {
 const LayoutWithProviders: React.VFC<PropsWithChildren<unknown>> = ({
   children,
 }) => {
-  const Layout = useMemo(() => {
-    const parser = new UAParser(navigator.userAgent);
-    return parser.getDevice().type === "tablet" ? TabletLayout : MainLayout;
-  }, []);
+  const theme = useTheme<Theme>();
+  const isTablet = useMediaQuery(theme.breakpoints.up("sm"));
+
+  const Layout = useMemo(() => (isTablet ? TabletLayout : MainLayout), [
+    isTablet,
+  ]);
 
   return (
     <ProvidersProvider>

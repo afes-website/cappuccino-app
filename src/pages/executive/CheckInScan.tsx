@@ -291,7 +291,7 @@ const CheckInScan: React.VFC = () => {
   return (
     <div>
       <Grid container className={classes.list}>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} md={6}>
           <CardList>
             {/* QR Scanner */}
             <Card>
@@ -326,7 +326,7 @@ const CheckInScan: React.VFC = () => {
           </CardList>
         </Grid>
 
-        <Grid item xs={12} sm={6} spacing={2}>
+        <Grid item xs={12} md={6} spacing={2}>
           <CardList>
             {/* ID List */}
             <Card>

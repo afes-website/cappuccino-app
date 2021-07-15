@@ -255,7 +255,7 @@ const GuestInfo: React.VFC = () => {
         </Tabs>
       </Paper>
       <Grid container className={classes.list}>
-        <Grid xs={12} sm={6}>
+        <Grid xs={12} md={6}>
           <CardList>
             <Card className={classes.resultChipBase}>
               <QRScanner
@@ -287,7 +287,7 @@ const GuestInfo: React.VFC = () => {
             )}
           </CardList>
         </Grid>
-        <Grid xs={12} sm={6}>
+        <Grid xs={12} md={6}>
           <CardList>
             {mode === "guest" && (
               <>

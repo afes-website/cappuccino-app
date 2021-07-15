@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) =>
       position: "absolute",
       top: 0,
       right: 0,
-      width: "75%",
+      width: "100%",
       zIndex: 600,
     },
     main: {
@@ -70,21 +70,22 @@ const TabletLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
 
   return (
     <Grid container className={classes.root}>
-      <Grid item xs={3}>
+      <Grid item sm={4} md={3}>
         <SideNav className={classes.content} />
       </Grid>
-      <Grid item xs={9}>
+      <Grid item sm={8} md={9}>
         <Paper
           square={true}
           ref={content}
           className={classes.content}
           elevation={0}
         >
-          <TopBar
-            title={titleCtx.title}
-            scrollTop={scrollTop}
-            className={classes.topBar}
-          />
+          <Grid container className={classes.topBar}>
+            <Grid item sm={4} md={3} />
+            <Grid item sm={8} md={9}>
+              <TopBar title={titleCtx.title} scrollTop={scrollTop} />
+            </Grid>
+          </Grid>
           <main className={classes.main}>{children}</main>
         </Paper>
       </Grid>

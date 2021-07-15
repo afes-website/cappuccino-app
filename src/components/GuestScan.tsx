@@ -135,7 +135,7 @@ const GuestScan: React.VFC<Props> = (props) => {
   return (
     <div>
       <Grid container className={classes.list}>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} md={6}>
           <CardList>
             {/* QR Scanner */}
             <Card>
@@ -166,7 +166,7 @@ const GuestScan: React.VFC<Props> = (props) => {
           </CardList>
         </Grid>
 
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} md={6}>
           <CardList>
             {/* ID List */}
             <Card>
