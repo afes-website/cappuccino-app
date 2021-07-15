@@ -8,8 +8,8 @@ import {
   useTheme,
 } from "@material-ui/core";
 import TopBar from "components/TopBar";
-import { useTitleContext } from "libs/title";
 import SideNav from "components/SideNav";
+import { useTitleContext } from "libs/title";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { useTitleSet } from "libs/title";
-import { useAuth } from "libs/auth";
 import {
   Button,
   Card,
@@ -20,11 +18,13 @@ import {
   Theme,
   Typography,
 } from "@material-ui/core";
-import AccountIcon from "components/AccountIcon";
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
-import { Link } from "react-router-dom";
-import routes from "libs/routes";
+import AccountIcon from "components/AccountIcon";
 import { PermissionsList } from "components/AccountDrawer";
+import { useAuth } from "libs/auth";
+import { useTitleSet } from "libs/title";
+import routes from "libs/routes";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

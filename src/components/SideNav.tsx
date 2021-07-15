@@ -20,12 +20,8 @@ import {
   Typography,
   useTheme,
 } from "@material-ui/core";
-import AccountIcon from "components/AccountIcon";
-import { PermissionsList } from "components/AccountDrawer";
-import { useAuth } from "libs/auth";
-import clsx from "clsx";
-import { UserInfo } from "@afes-website/docs";
-import routes from "libs/routes";
+import { Alert } from "@material-ui/lab";
+import { History, Home, Room } from "@material-ui/icons";
 import {
   DarkMode,
   LightMode,
@@ -34,10 +30,14 @@ import {
   QRScannerIcon,
   Reload,
 } from "components/MaterialSvgIcons";
-import { History, Home, Room } from "@material-ui/icons";
-import { Link, useHistory } from "react-router-dom";
+import AccountIcon from "components/AccountIcon";
+import { PermissionsList } from "components/AccountDrawer";
+import { useAuth } from "libs/auth";
+import routes from "libs/routes";
 import { useSetThemeMode } from "libs/themeMode";
-import { Alert } from "@material-ui/lab";
+import { UserInfo } from "@afes-website/docs";
+import clsx from "clsx";
+import { Link, useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

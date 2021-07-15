@@ -1,13 +1,13 @@
 import React, { PropsWithChildren, useEffect, useMemo, useState } from "react";
+import { Theme, useMediaQuery, useTheme } from "@material-ui/core";
 import TypesafeRouter from "components/TypesafeRouter";
-import routes from "libs/routes";
-import { createBrowserHistory } from "history";
-import NotFound from "pages/NotFound";
+import ProvidersProvider from "components/ProvidersProvider";
 import MainLayout from "layouts/Main";
 import TabletLayout from "layouts/Tablet";
+import NotFound from "pages/NotFound";
+import { createBrowserHistory } from "history";
 import Auth, { AuthContext } from "libs/auth";
-import ProvidersProvider from "components/ProvidersProvider";
-import { Theme, useMediaQuery, useTheme } from "@material-ui/core";
+import routes from "libs/routes";
 
 const App: React.VFC = () => {
   const [history] = useState(createBrowserHistory());
