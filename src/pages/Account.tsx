@@ -67,14 +67,6 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: "left",
       width: "100%",
     },
-    permissionsList: {
-      display: "flex",
-      height: "min-content",
-      marginTop: theme.spacing(0.5),
-      "& > * + *": {
-        marginLeft: theme.spacing(0.5),
-      },
-    },
   })
 );
 

@@ -48,13 +48,8 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(2),
       paddingTop: `calc(${theme.spacing(2)}px + env(safe-area-inset-top))`,
     },
-    permissionsList: {
-      display: "flex",
-      height: "min-content",
+    currentUserPerm: {
       marginTop: theme.spacing(0.5),
-      "& > * + *": {
-        marginLeft: theme.spacing(0.5),
-      },
     },
     disabledIcon: {
       opacity: theme.palette.action.disabledOpacity,
@@ -83,6 +78,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     snackBar: {
       bottom: "calc(64px + env(safe-area-inset-bottom))",
+    },
+    permissionsList: {
+      display: "flex",
+      height: "min-content",
+      "& > * + *": {
+        marginLeft: theme.spacing(0.5),
+      },
     },
   })
 );
