@@ -48,13 +48,8 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(2),
       paddingTop: `calc(${theme.spacing(2)}px + env(safe-area-inset-top))`,
     },
-    permissionsList: {
-      display: "flex",
-      height: "min-content",
+    currentUserPerm: {
       marginTop: theme.spacing(0.5),
-      "& > * + *": {
-        marginLeft: theme.spacing(0.5),
-      },
     },
     disabledIcon: {
       opacity: theme.palette.action.disabledOpacity,
@@ -83,6 +78,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     snackBar: {
       bottom: "calc(64px + env(safe-area-inset-bottom))",
+    },
+    permissionsList: {
+      display: "flex",
+      height: "min-content",
+      "& > * + *": {
+        marginLeft: theme.spacing(0.5),
+      },
     },
   })
 );
@@ -290,14 +292,16 @@ const AccountDrawer: React.VFC<Props> = (props) => {
   );
 };
 
-const PermissionsList: React.VFC = () => {
+export const PermissionsList: React.VFC<{ className?: string }> = ({
+  className,
+}) => {
   const classes = useStyles();
   const auth = useAuth();
 
   const currentUser = auth.get_current_user();
   if (!currentUser) return null;
   return (
-    <div className={classes.permissionsList}>
+    <div className={clsx(classes.permissionsList, className)}>
       {Object.entries(currentUser.permissions).map(([name, val]) => (
         <PermissionIcon
           permName={name}
