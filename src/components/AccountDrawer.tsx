@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import routes from "libs/routes";
 import {
@@ -95,7 +95,11 @@ interface Props {
   onDrawerClose: () => undefined;
 }
 
-const AccountDrawer: React.VFC<Props> = (props) => {
+const AccountDrawer: React.VFC<Props> = ({
+  isOpen,
+  onDrawerClose,
+  setIsOpen,
+}) => {
   const classes = useStyles();
   const { allUsers, currentUser, currentUserId } = useAuthState();
   const { removeUser, switchCurrentUser } = useAuthDispatch();
@@ -105,10 +109,14 @@ const AccountDrawer: React.VFC<Props> = (props) => {
   const [isLogoutAlertVisible, setIsLogoutAlertVisible] = useState(false);
   const [snackBarOpen, setSnackBarOpen] = useState(false);
 
+  useEffect(() => {
+    if (!currentUserId) setIsOpen(false);
+  }, [currentUserId, setIsOpen]);
+
   return (
     <Drawer
-      open={props.isOpen}
-      onClose={props.onDrawerClose}
+      open={isOpen}
+      onClose={onDrawerClose}
       classes={{
         paper: classes.paper,
       }}
@@ -170,7 +178,7 @@ const AccountDrawer: React.VFC<Props> = (props) => {
         component={Link}
         to={routes.Login.route.create({})}
         onClick={() => {
-          props.setIsOpen(false);
+          setIsOpen(false);
         }}
       >
         アカウントを追加（ログイン）
@@ -193,7 +201,7 @@ const AccountDrawer: React.VFC<Props> = (props) => {
           component={Link}
           to={routes.Terms.route.create({})}
           onClick={() => {
-            props.setIsOpen(false);
+            setIsOpen(false);
           }}
           className={classes.actionButton}
         >
@@ -253,11 +261,7 @@ const AccountDrawer: React.VFC<Props> = (props) => {
           <Button
             onClick={() => {
               setIsLogoutAlertVisible(false);
-              if (!currentUserId) {
-                props.setIsOpen(false);
-                return;
-              }
-              removeUser(currentUserId);
+              if (currentUserId) removeUser(currentUserId);
             }}
             color="secondary"
           >
