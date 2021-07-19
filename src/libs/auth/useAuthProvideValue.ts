@@ -36,6 +36,8 @@ const useAuthProvideValue = (): [AuthState, AuthDispatch] => {
     [allUsers]
   );
 
+  useEffect(_saveAllUsers, [_saveAllUsers, allUsers]);
+
   const _loadCurrentUserId = () =>
     setCurrentUserId(localStorage.getItem(ls_key_current_user) || null);
 
@@ -83,9 +85,8 @@ const useAuthProvideValue = (): [AuthState, AuthDispatch] => {
       setAllUsers((prev) => ({ ...prev, [user.id]: { ...user, token } }));
       setCurrentUserId(user.id);
       _saveCurrentUserId();
-      _saveAllUsers();
     },
-    [_saveAllUsers, _saveCurrentUserId]
+    [_saveCurrentUserId]
   );
 
   /**
@@ -119,8 +120,7 @@ const useAuthProvideValue = (): [AuthState, AuthDispatch] => {
       })
     );
     _reloadCurrentUser();
-    _saveAllUsers();
-  }, [_reloadCurrentUser, _saveAllUsers, allUsers, removeUser]);
+  }, [_reloadCurrentUser, allUsers, removeUser]);
 
   /**
    * 現在の user を指定された id の user に切り替える
