@@ -12,9 +12,10 @@ import isAxiosError from "libs/isAxiosError";
 const ls_key_users = "users";
 const ls_key_current_user = "current_user";
 
-const useAuthProvideValue = (): [AuthState, AuthDispatch] => {
+const useAuthProvideValue = (): [AuthState, AuthDispatch, boolean] => {
   const [allUsers, setAllUsers] = useState<StorageUsers>({});
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -22,6 +23,7 @@ const useAuthProvideValue = (): [AuthState, AuthDispatch] => {
       _loadCurrentUserId();
       await updateAllUsers();
       _reloadCurrentUser();
+      setReady(true);
     })();
     // eslint-disable-next-line
   }, []);
@@ -146,6 +148,7 @@ const useAuthProvideValue = (): [AuthState, AuthDispatch] => {
           : null,
     },
     { registerUser, removeUser, updateAllUsers, switchCurrentUser },
+    ready,
   ];
 };
 

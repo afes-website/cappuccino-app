@@ -15,10 +15,11 @@ import routes from "libs/routes";
 
 const App: React.VFC = () => {
   const [history] = useState(createBrowserHistory());
-  const [authState, authDispatch] = useAuthProvideValue();
+  const [authState, authDispatch, ready] = useAuthProvideValue();
 
   const redirect_to_login = () => {
     if (
+      ready &&
       !authState.currentUserId &&
       ![routes.Login.route.create({}), routes.Terms.route.create({})].includes(
         history.location.pathname
@@ -27,7 +28,7 @@ const App: React.VFC = () => {
       history.push(routes.Login.route.create({}));
     }
   };
-  React.useEffect(redirect_to_login, [authState.currentUserId, history]);
+  React.useEffect(redirect_to_login, [authState.currentUserId, history, ready]);
   React.useEffect(() => {
     return history.listen(redirect_to_login);
   });
