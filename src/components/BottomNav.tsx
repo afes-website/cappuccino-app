@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BottomNavigation,
   BottomNavigationAction,
@@ -11,7 +11,7 @@ import routes from "libs/routes";
 import { Link, useHistory } from "react-router-dom";
 import { Home } from "@material-ui/icons";
 import { Login, Logout, QRScannerIcon } from "components/MaterialSvgIcons";
-import { AuthContext } from "libs/auth";
+import { useAuthState } from "libs/auth/useAuth";
 import { UserInfo } from "@afes-website/docs";
 import clsx from "clsx";
 
@@ -34,14 +34,13 @@ const BottomNav: React.VFC<{ className?: string }> = ({ className }) => {
   const history = useHistory();
   const classes = useStyles();
   const [value, setValue] = useState(history.location.pathname);
-  const auth = useContext(AuthContext).val;
+  const { currentUser } = useAuthState();
 
   const get_menus = () => {
     const menus: MenuItem[] = [];
     menus.push(...commonMenus);
-    const _perm:
-      | { [name: string]: boolean }
-      | undefined = auth.get_current_user()?.permissions;
+    const _perm: { [name: string]: boolean } | undefined =
+      currentUser?.permissions;
     if (!_perm) return menus;
     Object.entries(menuItems).forEach(([key, items]) => {
       if (items && _perm[key]) menus.push(...items);

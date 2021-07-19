@@ -1,5 +1,5 @@
 import React from "react";
-import { StorageUserInfo } from "libs/auth";
+import { SvgIconProps } from "@material-ui/core";
 import { Person } from "@material-ui/icons";
 import {
   PersonSetting,
@@ -8,7 +8,7 @@ import {
   PersonRoom,
   PersonTeacher,
 } from "components/MaterialSvgIcons";
-import { SvgIconProps } from "@material-ui/core";
+import { StorageUserInfo } from "libs/auth/@types";
 
 const AccountIcon: React.VFC<
   { account: StorageUserInfo | null } & SvgIconProps

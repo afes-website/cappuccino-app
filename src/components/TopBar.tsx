@@ -1,20 +1,20 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   AppBar,
+  createStyles,
+  IconButton,
+  makeStyles,
+  Theme,
   Toolbar,
   Typography,
-  IconButton,
-  createStyles,
-  makeStyles,
-  useTheme,
-  Theme,
   useMediaQuery,
+  useTheme,
 } from "@material-ui/core";
 import { ArrowBack, ArrowBackIos } from "@material-ui/icons";
 import { useHistory } from "react-router-dom";
 import AccountIcon from "components/AccountIcon";
 import AccountDrawer from "components/AccountDrawer";
-import { AuthContext } from "libs/auth";
+import { useAuthState } from "libs/auth/useAuth";
 import routes from "libs/routes";
 import clsx from "clsx";
 import chroma from "chroma-js";
@@ -58,7 +58,7 @@ const TopBar: React.VFC<Props> = ({ title, scrollTop, className }) => {
   const [isNeedBackButton, setIsNeedBackButton] = useState(
     history.location.pathname !== "/"
   );
-  const auth = useContext(AuthContext).val;
+  const { currentUser } = useAuthState();
   const theme = useTheme<Theme>();
 
   const isApple = useMemo(() => {
@@ -94,7 +94,7 @@ const TopBar: React.VFC<Props> = ({ title, scrollTop, className }) => {
         }}
       >
         <Toolbar>
-          {(auth.get_current_user_id() ||
+          {(currentUser ||
             routes.Terms.route.create({}) === history.location.pathname) &&
             (isNeedBackButton ? (
               <IconButton
@@ -115,10 +115,7 @@ const TopBar: React.VFC<Props> = ({ title, scrollTop, className }) => {
                     setIsDrawerOpen(true);
                   }}
                 >
-                  <AccountIcon
-                    account={auth.get_current_user()}
-                    fontSize="large"
-                  />
+                  <AccountIcon account={currentUser} fontSize="large" />
                 </IconButton>
               )
             ))}

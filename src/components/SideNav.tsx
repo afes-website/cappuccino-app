@@ -32,7 +32,7 @@ import {
 } from "components/MaterialSvgIcons";
 import AccountIcon from "components/AccountIcon";
 import { PermissionsList } from "components/AccountDrawer";
-import { useAuth } from "libs/auth";
+import { useAuthState } from "libs/auth/useAuth";
 import routes from "libs/routes";
 import { useSetThemeMode } from "libs/themeMode";
 import { UserInfo } from "@afes-website/docs";
@@ -106,19 +106,18 @@ const useStyles = makeStyles((theme: Theme) =>
 const SideNav: React.VFC<{ className?: string }> = ({ className }) => {
   const classes = useStyles();
   const history = useHistory();
-  const auth = useAuth();
+  const { currentUser } = useAuthState();
   const theme = useTheme<Theme>();
   const toggleThemeMode = useSetThemeMode();
 
   const [snackBarOpen, setSnackBarOpen] = useState(false);
 
-  const user = auth.get_current_user();
-  if (!user) return null;
+  if (!currentUser) return null;
 
   const get_menus = () => {
     const menus: MenuItem[] = [];
     menus.push(...commonMenus);
-    const _perm: { [name: string]: boolean } = user.permissions;
+    const _perm: { [name: string]: boolean } = currentUser.permissions;
     Object.entries(menuItems).forEach(([key, items]) => {
       if (items && _perm[key]) menus.push(...items);
     });
@@ -141,14 +140,14 @@ const SideNav: React.VFC<{ className?: string }> = ({ className }) => {
           <CardContent>
             <div className={classes.currentUserIconWrapper}>
               <AccountIcon
-                account={auth.get_current_user()}
+                account={currentUser}
                 className={classes.menuIcon}
                 color="inherit"
               />
               <PermissionsList />
             </div>
-            <Typography variant="h6">{user.name || ""}</Typography>
-            <Typography variant="body2">@{user.id || ""}</Typography>
+            <Typography variant="h6">{currentUser.name || ""}</Typography>
+            <Typography variant="body2">@{currentUser.id || ""}</Typography>
           </CardContent>
         </CardActionArea>
       </Card>

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Avatar,
   CircularProgress,
@@ -16,7 +16,8 @@ import {
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import PullToRefresh from "components/PullToRefresh";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
-import { AuthContext, useVerifyPermission } from "libs/auth";
+import { useAuthState } from "libs/auth/useAuth";
+import { useVerifyPermission } from "libs/auth/useVerifyPermission";
 import { useTitleSet } from "libs/title";
 import { compareTerm } from "libs/compare";
 import api, { AllStatus, ExhibitionStatus, Terms } from "@afes-website/docs";
@@ -68,7 +69,7 @@ const AllExhStatus: React.VFC = () => {
   useVerifyPermission("executive");
 
   const classes = useStyles();
-  const auth = useContext(AuthContext).val;
+  const { currentUser } = useAuthState();
 
   const [status, setStatus] = useState<AllStatus | null>(null);
   const [terms, setTerms] = useState<Terms | null>(null);
@@ -81,7 +82,7 @@ const AllExhStatus: React.VFC = () => {
         api(aspida())
           .exhibitions.$get({
             headers: {
-              Authorization: "bearer " + auth.get_current_user()?.token,
+              Authorization: "bearer " + currentUser?.token,
             },
           })
           .then((res) => {
@@ -90,19 +91,19 @@ const AllExhStatus: React.VFC = () => {
         api(aspida())
           .terms.$get({
             headers: {
-              Authorization: "bearer " + auth.get_current_user()?.token,
+              Authorization: "bearer " + currentUser?.token,
             },
           })
           .then((terms) => {
             setTerms(terms);
           }),
       ]),
-    [auth]
+    [currentUser?.token]
   );
 
   useEffect(() => {
     load();
-  }, [auth, load]);
+  }, [load]);
 
   if (status === null || terms === null)
     return (

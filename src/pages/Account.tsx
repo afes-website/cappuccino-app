@@ -21,10 +21,10 @@ import {
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
 import AccountIcon from "components/AccountIcon";
 import { PermissionsList } from "components/AccountDrawer";
-import { useAuth } from "libs/auth";
 import { useTitleSet } from "libs/title";
 import routes from "libs/routes";
 import { Link } from "react-router-dom";
+import { useAuthDispatch, useAuthState } from "libs/auth/useAuth";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -73,7 +73,8 @@ const useStyles = makeStyles((theme: Theme) =>
 const Account: React.VFC = () => {
   useTitleSet("アカウント");
   const classes = useStyles();
-  const auth = useAuth();
+  const { allUsers, currentUser, currentUserId } = useAuthState();
+  const { switchCurrentUser, removeUser } = useAuthDispatch();
 
   const [isLogoutAlertVisible, setIsLogoutAlertVisible] = useState(false);
 
@@ -82,34 +83,30 @@ const Account: React.VFC = () => {
       {/* ==== current user ==== */}
       <Grid item xs={12} className={classes.currentUser}>
         <AccountIcon
-          account={auth.get_current_user()}
+          account={currentUser}
           className={classes.currentUserIcon}
           color="inherit"
         />
-        <Typography variant="h6">
-          {auth.get_current_user()?.name || ""}
-        </Typography>
-        <Typography variant="body2">
-          @{auth.get_current_user()?.id || ""}
-        </Typography>
+        <Typography variant="h6">{currentUser?.name ?? ""}</Typography>
+        <Typography variant="body2">@{currentUser?.id ?? ""}</Typography>
         <PermissionsList className={classes.currentUserPerm} />
       </Grid>
 
       {/* ==== account list ==== */}
-      {Object.values(auth.get_all_users()).length > 1 && (
+      {Object.values(allUsers).length > 1 && (
         <Grid item xs={12} sm={10} md={8} className={classes.grid}>
           <Typography variant="overline">アカウント切り替え</Typography>
           <Card>
             <List disablePadding>
-              {Object.values(auth.get_all_users())
-                .filter((account) => account.id !== auth.get_current_user()?.id)
+              {Object.values(allUsers)
+                .filter((account) => account.id !== currentUser?.id)
                 .map((account, index, array) => {
                   return (
                     <React.Fragment key={account.id}>
                       <ListItem
                         button
                         onClick={() => {
-                          auth.switch_user(account.id);
+                          switchCurrentUser(account.id);
                         }}
                       >
                         <ListItemAvatar>
@@ -153,7 +150,7 @@ const Account: React.VFC = () => {
             setIsLogoutAlertVisible(true);
           }}
         >
-          @{auth.get_current_user_id()} からログアウト
+          @{currentUserId} からログアウト
         </Button>
       </Grid>
 
@@ -162,10 +159,10 @@ const Account: React.VFC = () => {
         <DialogTitle>ログアウトしますか？</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            @{auth.get_current_user_id()} からログアウトしますか？
+            @{currentUserId} からログアウトしますか？
           </DialogContentText>
           <DialogContentText>
-            {`ログアウト後、再び @${auth.get_current_user_id()} を使用するにはパスワードが必要です。`}
+            {`ログアウト後、再び @${currentUserId} を使用するにはパスワードが必要です。`}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -179,7 +176,7 @@ const Account: React.VFC = () => {
           </Button>
           <Button
             onClick={() => {
-              auth.remove_user(auth.get_current_user_id() || "");
+              removeUser(currentUserId || "");
               setIsLogoutAlertVisible(false);
             }}
             color="secondary"

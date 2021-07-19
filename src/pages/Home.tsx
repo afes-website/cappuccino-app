@@ -5,17 +5,18 @@ import CardList from "components/CardList";
 import PwaAlertCard from "components/PwaAlertCard";
 import { GeneralStatusCard, ExhStatusCard } from "components/StayStatusCard";
 import ExhInfoCard from "components/ExhInfoCard";
+import { useAuthState } from "libs/auth/useAuth";
+import { verifyPermission } from "libs/auth/useVerifyPermission";
 import { useTitleSet } from "libs/title";
-import { useAuth, verifyPermission } from "libs/auth";
 
 const Home: React.VFC = () => {
   useTitleSet("CAPPUCCINO");
-  const auth = useAuth();
+  const { currentUser } = useAuthState();
 
   return (
     <CardList>
       <PwaAlertCard />
-      {verifyPermission("executive", auth) && (
+      {verifyPermission("executive", currentUser) && (
         <>
           <GeneralStatusCard />
           <HomeCard
@@ -31,7 +32,7 @@ const Home: React.VFC = () => {
           />
         </>
       )}
-      {verifyPermission("exhibition", auth) && (
+      {verifyPermission("exhibition", currentUser) && (
         <>
           <ExhInfoCard />
           <ExhStatusCard />

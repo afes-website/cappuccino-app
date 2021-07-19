@@ -15,7 +15,7 @@ import {
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import StayStatus from "components/StayStatus";
-import { useAuth } from "libs/auth";
+import { useAuthState } from "libs/auth/useAuth";
 import routes from "libs/routes";
 import api, { ExhibitionStatus, Terms } from "@afes-website/docs";
 import aspida from "@aspida/axios";
@@ -42,7 +42,7 @@ const StatusCard: React.VFC<
     showCountLimit: boolean;
   }>
 > = ({ children, getStatus, ...props }) => {
-  const auth = useAuth();
+  const { currentUser } = useAuthState();
   const classes = useStyles();
 
   const [status, setStatus] = useState<Status | null>(null);
@@ -55,13 +55,13 @@ const StatusCard: React.VFC<
     api(aspida())
       .terms.$get({
         headers: {
-          Authorization: "bearer " + auth.get_current_user()?.token,
+          Authorization: "bearer " + currentUser?.token,
         },
       })
       .then((terms) => {
         setTerms(terms);
       });
-  }, [auth, getStatus]);
+  }, [currentUser?.token, getStatus]);
 
   return (
     <Card>
@@ -111,18 +111,18 @@ const useHomeCardStyles = makeStyles((theme) =>
 
 export const GeneralStatusCard: React.VFC = () => {
   const classes = useHomeCardStyles();
-  const auth = useAuth();
+  const { currentUser } = useAuthState();
 
   const getStatus = useCallback(
     () =>
       api(aspida())
         .exhibitions.$get({
           headers: {
-            Authorization: "bearer " + auth.get_current_user()?.token,
+            Authorization: "bearer " + currentUser?.token,
           },
         })
         .then((status) => status.all),
-    [auth]
+    [currentUser?.token]
   );
 
   return (
@@ -149,18 +149,18 @@ export const GeneralStatusCard: React.VFC = () => {
 };
 
 export const ExhStatusCard: React.VFC = () => {
-  const auth = useAuth();
+  const { currentUser } = useAuthState();
 
   const getStatus = useCallback(
     () =>
       api(aspida())
-        .exhibitions._id(auth.get_current_user_id() || "")
+        .exhibitions._id(currentUser?.id || "")
         .$get({
           headers: {
-            Authorization: "bearer " + auth.get_current_user()?.token,
+            Authorization: "bearer " + currentUser?.token,
           },
         }),
-    [auth]
+    [currentUser]
   );
 
   return (

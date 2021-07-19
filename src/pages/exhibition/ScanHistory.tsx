@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   CircularProgress,
   List,
@@ -11,7 +11,8 @@ import {
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Login, Logout } from "components/MaterialSvgIcons";
-import { AuthContext, useVerifyPermission } from "libs/auth";
+import { useAuthState } from "libs/auth/useAuth";
+import { useVerifyPermission } from "libs/auth/useVerifyPermission";
 import { useTitleSet } from "libs/title";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
 import { getStringDateTime } from "libs/stringDate";
@@ -48,7 +49,7 @@ const ScanHistory: React.VFC = () => {
   useVerifyPermission("exhibition");
 
   const classes = useStyles();
-  const auth = useContext(AuthContext).val;
+  const { currentUser } = useAuthState();
   const wristBandPaletteColor = useWristBandPaletteColor();
   const theme = useTheme<Theme>();
 
@@ -59,21 +60,21 @@ const ScanHistory: React.VFC = () => {
       api(aspida())
         .log.$get({
           headers: {
-            Authorization: "bearer " + auth.get_current_user()?.token,
+            Authorization: "bearer " + currentUser?.token,
           },
           query: {
-            exhibition_id: auth.get_current_user_id() || undefined,
+            exhibition_id: currentUser?.id || undefined,
           },
         })
         .then((res) => {
           setLogs(res);
         }),
-    [auth]
+    [currentUser]
   );
 
   useEffect(() => {
     load();
-  }, [auth, load]);
+  }, [load]);
 
   if (logs === null)
     return (

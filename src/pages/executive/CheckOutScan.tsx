@@ -1,6 +1,7 @@
 import React from "react";
 import { useTitleSet } from "libs/title";
-import { useAuth, useVerifyPermission } from "libs/auth";
+import { useAuthState } from "libs/auth/useAuth";
+import { useVerifyPermission } from "libs/auth/useVerifyPermission";
 import api from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import GuestScan from "components/GuestScan";
@@ -8,7 +9,7 @@ import GuestScan from "components/GuestScan";
 const CheckOutScan: React.VFC = () => {
   useTitleSet("文化祭 退場スキャン");
   useVerifyPermission("executive");
-  const auth = useAuth();
+  const { currentUser } = useAuthState();
 
   return (
     <GuestScan
@@ -17,7 +18,7 @@ const CheckOutScan: React.VFC = () => {
           .guests._id(guestId)
           .check_out.$post({
             headers: {
-              Authorization: "bearer " + auth.get_current_user()?.token,
+              Authorization: "bearer " + currentUser?.token,
             },
           })
       }
