@@ -100,6 +100,7 @@ const GuestScan: React.VFC<Props> = (props) => {
           setCheckStatus("success");
         })
         .catch((e) => {
+          setCheckStatus("error");
           setError(e);
         });
     }
