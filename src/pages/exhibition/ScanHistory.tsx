@@ -18,14 +18,18 @@ import { useWristBandPaletteColor } from "libs/wristBandColor";
 import { getStringDateTime } from "libs/stringDate";
 import api, { ActivityLog } from "@afes-website/docs";
 import aspida from "@aspida/axios";
-import PullToRefresh from "components/PullToRefresh";
-import moment from "moment";
+import moment, { Moment } from "moment";
+import ReloadButton from "components/ReloadButton";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
-      paddingTop: theme.spacing(2),
+      paddingTop: theme.spacing(1),
       paddingBottom: theme.spacing(1),
+    },
+    reloadButton: {
+      margin: `0 ${theme.spacing(1.5)}px`,
+      marginTop: theme.spacing(1.5),
     },
     termColorBadge: {
       display: "inline-block",
@@ -54,6 +58,7 @@ const ScanHistory: React.VFC = () => {
   const theme = useTheme<Theme>();
 
   const [logs, setLogs] = useState<ActivityLog[] | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Moment | null>(null);
 
   const load = useCallback(
     () =>
@@ -68,6 +73,7 @@ const ScanHistory: React.VFC = () => {
         })
         .then((res) => {
           setLogs(res);
+          setLastUpdated(moment());
         }),
     [currentUser]
   );
@@ -84,51 +90,54 @@ const ScanHistory: React.VFC = () => {
     );
 
   return (
-    <PullToRefresh onRefresh={load}>
-      <div className={classes.root}>
-        {logs.length > 0 && (
-          <Typography align="center" variant="body2" color="textSecondary">
-            履歴は新しい順に並んでいます。
-          </Typography>
-        )}
-        <List>
-          {logs
-            .sort((a, b) => moment(b.timestamp).diff(a.timestamp)) // 新しいのが上
-            .map((log) => (
-              <ListItem key={log.id} divider>
-                <ListItemIcon>
-                  {log.log_type === "enter" ? <Login /> : <Logout />}
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    <Typography>
-                      <span
-                        className={classes.termColorBadge}
-                        style={{
-                          background: wristBandPaletteColor(
-                            log.guest.term.guest_type
-                          )[theme.palette.type === "light" ? "main" : "dark"],
-                        }}
-                      />
-                      {log.guest.id}
-                    </Typography>
-                  }
-                  secondary={getStringDateTime(log.timestamp)}
-                />
-              </ListItem>
-            ))}
-        </List>
-        {logs.length > 0 ? (
-          <Typography align="center" variant="body2" color="textSecondary">
-            履歴は以上です。お疲れさまでした！
-          </Typography>
-        ) : (
-          <Typography align="center" variant="body2" color="textSecondary">
-            まだスキャン履歴はありません。
-          </Typography>
-        )}
-      </div>
-    </PullToRefresh>
+    <div className={classes.root}>
+      {logs.length > 0 && (
+        <Typography align="center" variant="body2" color="textSecondary">
+          履歴は新しい順に並んでいます。
+        </Typography>
+      )}
+      <ReloadButton
+        onClick={load}
+        lastUpdated={lastUpdated}
+        className={classes.reloadButton}
+      />
+      <List>
+        {logs
+          .sort((a, b) => moment(b.timestamp).diff(a.timestamp)) // 新しいのが上
+          .map((log) => (
+            <ListItem key={log.id} divider>
+              <ListItemIcon>
+                {log.log_type === "enter" ? <Login /> : <Logout />}
+              </ListItemIcon>
+              <ListItemText
+                primary={
+                  <Typography>
+                    <span
+                      className={classes.termColorBadge}
+                      style={{
+                        background: wristBandPaletteColor(
+                          log.guest.term.guest_type
+                        )[theme.palette.type === "light" ? "main" : "dark"],
+                      }}
+                    />
+                    {log.guest.id}
+                  </Typography>
+                }
+                secondary={getStringDateTime(log.timestamp)}
+              />
+            </ListItem>
+          ))}
+      </List>
+      {logs.length > 0 ? (
+        <Typography align="center" variant="body2" color="textSecondary">
+          履歴は以上です。お疲れさまでした！
+        </Typography>
+      ) : (
+        <Typography align="center" variant="body2" color="textSecondary">
+          まだスキャン履歴はありません。
+        </Typography>
+      )}
+    </div>
   );
 };
 export default ScanHistory;

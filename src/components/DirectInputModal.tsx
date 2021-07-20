@@ -1,13 +1,26 @@
 import React, { useState } from "react";
 import {
   Button,
+  createStyles,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  makeStyles,
   TextField,
 } from "@material-ui/core";
+
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    dialogContainer: {
+      alignItems: "flex-start",
+    },
+    dialogPaper: {
+      marginTop: theme.spacing(11),
+    },
+  })
+);
 
 const DirectInputModal: React.VFC<{
   open: boolean;
@@ -16,6 +29,8 @@ const DirectInputModal: React.VFC<{
   currentId: string;
   type: "guest" | "rsv";
 }> = (props) => {
+  const classes = useStyles();
+
   const [id, setId] = useState("");
   const handleClose = () => {
     props.setOpen(false);
@@ -26,6 +41,10 @@ const DirectInputModal: React.VFC<{
       open={props.open}
       onClose={handleClose}
       aria-labelledby="form-dialog-title"
+      classes={{
+        paper: classes.dialogPaper,
+        container: classes.dialogContainer,
+      }}
     >
       <DialogTitle id="form-dialog-title">
         {props.type === "rsv" ? "予約" : "ゲスト"} ID 直接入力

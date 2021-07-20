@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { Theme, useMediaQuery, useTheme } from "@material-ui/core";
 import TypesafeRouter from "components/TypesafeRouter";
-import ProvidersProvider from "components/ProvidersProvider";
+import LayoutWrapper from "components/LayoutWrapper";
 import MainLayout from "layouts/Main";
 import TabletLayout from "layouts/Tablet";
 import NotFound from "pages/NotFound";
@@ -62,9 +62,9 @@ const LayoutWithProviders: React.VFC<PropsWithChildren<unknown>> = ({
   ]);
 
   return (
-    <ProvidersProvider>
+    <LayoutWrapper>
       <Layout>{children}</Layout>
-    </ProvidersProvider>
+    </LayoutWrapper>
   );
 };
 
