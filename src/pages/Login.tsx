@@ -135,7 +135,7 @@ const Login: React.VFC = () => {
               variant="contained"
               color="primary"
               fullWidth={true}
-              disabled={!(id && password)}
+              disabled={!(id && password) || isLoading}
               type="submit"
             >
               {isLoading ? (
