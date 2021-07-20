@@ -1,13 +1,13 @@
 import React, { PropsWithChildren } from "react";
 import { ThemeProvider } from "@material-ui/core";
-import { ThemeContextProvider, useTheme } from "libs/themeMode";
+import { ThemeContextProvider, useThemeMode } from "libs/themeMode";
 import { TitleContextProvider } from "libs/title";
 import { useHistory } from "react-router-dom";
 
 const CustomThemeProvider: React.VFC<PropsWithChildren<unknown>> = ({
   children,
 }) => {
-  const [theme, toggleThemeMode] = useTheme();
+  const [theme, toggleThemeMode] = useThemeMode();
 
   return (
     <ThemeContextProvider value={{ toggleThemeMode }}>
