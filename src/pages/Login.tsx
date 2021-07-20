@@ -141,7 +141,7 @@ const Login: React.VFC = () => {
               {isLoading ? (
                 <Fade
                   in={isLoading}
-                  style={{ transitionDelay: "500ms" }}
+                  style={{ transitionDelay: "300ms" }}
                   unmountOnExit
                 >
                   <CircularProgress color="inherit" size={24} thickness={5} />
