@@ -32,7 +32,7 @@ export const ThemeCtx = {
 
 /* ======== Hooks ======== */
 
-export const useTheme = (): [Theme, () => void] => {
+export const useThemeMode = (): [Theme, () => void] => {
   const [mode, setMode] = useState<ThemeMode>(
     getThemeModeFromLocalStorage() ||
       (window.matchMedia("(prefers-color-scheme: dark)").matches

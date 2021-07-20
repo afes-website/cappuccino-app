@@ -1,12 +1,5 @@
 import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
-import {
-  createStyles,
-  Grid,
-  makeStyles,
-  Paper,
-  Theme,
-  useTheme,
-} from "@material-ui/core";
+import { createStyles, Grid, makeStyles, Paper } from "@material-ui/core";
 import TopBar from "components/TopBar";
 import SideNav from "components/SideNav";
 import { useTitleContext } from "libs/title";
@@ -46,7 +39,6 @@ const useStyles = makeStyles((theme) =>
 const TabletLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
   const classes = useStyles();
   const titleCtx = useTitleContext();
-  const theme = useTheme<Theme>();
 
   const [scrollTop, setScrollTop] = useState(0);
   const content = useRef<HTMLDivElement>(null);
@@ -63,10 +55,6 @@ const TabletLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
       ref.removeEventListener("scroll", onScroll);
     };
   }, []);
-
-  useEffect(() => {
-    document.body.style.background = theme.palette.background.default;
-  }, [theme.palette.background.default, theme.palette.type]);
 
   return (
     <Grid container className={classes.root}>
