@@ -66,6 +66,9 @@ const MainLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
 
   useEffect(() => {
     document.body.style.background = theme.palette.background.default;
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content", theme.palette.background.default);
   }, [theme.palette.background.default, theme.palette.type]);
 
   return (
