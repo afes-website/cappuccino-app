@@ -52,6 +52,8 @@ const Login: React.VFC = () => {
 
   const login = (e?: React.FormEvent<HTMLFormElement>) => {
     setIsLoading(true);
+    setIsError(false);
+    setErrorText([]);
     api(axios())
       .auth.login.$post({
         body: {
@@ -70,6 +72,11 @@ const Login: React.VFC = () => {
         setIsError(true);
         if (e.response?.status === 401)
           setErrorText(["ID またはパスワードが間違っています。"]);
+        else if (e.response?.status === 429)
+          setErrorText([
+            "ログイン失敗が多すぎます。",
+            "ID・パスワードを確認し、1分後にもう一度お試しください。",
+          ]);
         else
           setErrorText([
             "不明なエラーです。もう一度お試しください。",
@@ -135,13 +142,13 @@ const Login: React.VFC = () => {
               variant="contained"
               color="primary"
               fullWidth={true}
-              disabled={!(id && password)}
+              disabled={!(id && password) || isLoading}
               type="submit"
             >
               {isLoading ? (
                 <Fade
                   in={isLoading}
-                  style={{ transitionDelay: "500ms" }}
+                  style={{ transitionDelay: "300ms" }}
                   unmountOnExit
                 >
                   <CircularProgress color="inherit" size={24} thickness={5} />
