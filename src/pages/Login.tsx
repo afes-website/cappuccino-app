@@ -52,6 +52,7 @@ const Login: React.VFC = () => {
 
   const login = (e?: React.FormEvent<HTMLFormElement>) => {
     setIsLoading(true);
+    setIsError(false);
     setErrorText([]);
     api(axios())
       .auth.login.$post({
