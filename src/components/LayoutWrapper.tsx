@@ -4,7 +4,7 @@ import { ThemeContextProvider, useTheme } from "libs/themeMode";
 import { TitleContextProvider } from "libs/title";
 import { useHistory } from "react-router-dom";
 
-export const CustomThemeProvider: React.VFC<PropsWithChildren<unknown>> = ({
+const CustomThemeProvider: React.VFC<PropsWithChildren<unknown>> = ({
   children,
 }) => {
   const [theme, toggleThemeMode] = useTheme();
@@ -19,7 +19,7 @@ export const CustomThemeProvider: React.VFC<PropsWithChildren<unknown>> = ({
 const TITLE_SUFFIX = "CAPPUCCINO";
 const TOP_TITLE = "CAPPUCCINO";
 
-export const CustomTitleProvider: React.VFC<PropsWithChildren<unknown>> = ({
+const CustomTitleProvider: React.VFC<PropsWithChildren<unknown>> = ({
   children,
 }) => {
   const history = useHistory();
@@ -40,12 +40,10 @@ export const CustomTitleProvider: React.VFC<PropsWithChildren<unknown>> = ({
   );
 };
 
-const ProvidersProvider: React.VFC<PropsWithChildren<unknown>> = ({
-  children,
-}) => (
+const LayoutWrapper: React.VFC<PropsWithChildren<unknown>> = ({ children }) => (
   <CustomThemeProvider>
     <CustomTitleProvider>{children}</CustomTitleProvider>
   </CustomThemeProvider>
 );
 
-export default ProvidersProvider;
+export default LayoutWrapper;
