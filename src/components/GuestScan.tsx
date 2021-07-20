@@ -110,6 +110,7 @@ const GuestScan: React.VFC<Props> = (props) => {
     switch (checkStatus) {
       case "loading":
         if (resultChipRef.current) resultChipRef.current.close();
+        setError(null);
         break;
       case "success":
         setTimeout(() => {
@@ -131,7 +132,7 @@ const GuestScan: React.VFC<Props> = (props) => {
           );
         break;
     }
-  }, [checkStatus, latestGuestId, actionName]);
+  }, [checkStatus, latestGuestId, actionName, setError]);
 
   return (
     <div>
