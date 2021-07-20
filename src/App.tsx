@@ -1,10 +1,4 @@
-import React, {
-  PropsWithChildren,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { Theme, useMediaQuery, useTheme } from "@material-ui/core";
 import TypesafeRouter from "components/TypesafeRouter";
 import ProvidersProvider from "components/ProvidersProvider";
@@ -21,11 +15,9 @@ import routes from "libs/routes";
 
 const App: React.VFC = () => {
   const [history] = useState(createBrowserHistory());
-  const [authState, authDispatch, ready] = useAuthProvideValue();
 
-  const redirect_to_login = useCallback(() => {
+  const [authState, authDispatch] = useAuthProvideValue(() => {
     if (
-      ready &&
       !authState.currentUserId &&
       ![routes.Login.route.create({}), routes.Terms.route.create({})].includes(
         history.location.pathname
@@ -33,8 +25,7 @@ const App: React.VFC = () => {
     ) {
       history.push(routes.Login.route.create({}));
     }
-  }, [authState.currentUserId, history, ready]);
-  useEffect(redirect_to_login, [redirect_to_login]);
+  });
 
   useEffect(() => {
     handleResize();

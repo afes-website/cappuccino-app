@@ -12,52 +12,56 @@ import isAxiosError from "libs/isAxiosError";
 const ls_key_users = "users";
 const ls_key_current_user = "current_user";
 
-const useAuthProvideValue = (): [AuthState, AuthDispatch, boolean] => {
-  const [allUsers, setAllUsers] = useState<StorageUsers>({});
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  const [ready, setReady] = useState(false);
+/**
+ * 認証管理カスタムフック
+ * @param callbackFn 認証情報の変更コールバック関数
+ * @return [authState, authDispatch]
+ */
+const useAuthProvideValue = (
+  callbackFn?: () => void
+): [AuthState, AuthDispatch] => {
+  const [allUsers, setAllUsers] = useState<StorageUsers>(
+    JSON.parse(localStorage.getItem(ls_key_users) ?? "{}")
+  );
+  const [currentUserId, setCurrentUserId] = useState<string | null>(
+    localStorage.getItem(ls_key_current_user) || null
+  );
 
   useEffect(() => {
-    (async () => {
-      _loadAllUsers();
-      _loadCurrentUserId();
-      await updateAllUsers();
-      _reloadCurrentUser();
-      setReady(true);
-    })();
-    // eslint-disable-next-line
+    updateAllUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ======== inner functions ========
-
-  const _loadAllUsers = () =>
-    setAllUsers(JSON.parse(localStorage.getItem(ls_key_users) ?? "{}"));
 
   const _saveAllUsers = useCallback(
     () => localStorage.setItem(ls_key_users, JSON.stringify(allUsers)),
     [allUsers]
   );
 
-  useEffect(_saveAllUsers, [_saveAllUsers, allUsers]);
-
-  const _loadCurrentUserId = () =>
-    setCurrentUserId(localStorage.getItem(ls_key_current_user) || null);
-
   const _saveCurrentUserId = useCallback(
     () => localStorage.setItem(ls_key_current_user, currentUserId ?? ""),
     [currentUserId]
   );
 
-  useEffect(_saveCurrentUserId, [_saveCurrentUserId, currentUserId]);
-
   const _reloadCurrentUser = useCallback(() => {
     if (currentUserId === null || !(currentUserId in allUsers)) {
       setCurrentUserId(Object.keys(allUsers)[0] ?? null);
-      _saveCurrentUserId();
     }
-  }, [_saveCurrentUserId, allUsers, currentUserId]);
+  }, [allUsers, currentUserId]);
 
-  useEffect(_reloadCurrentUser, [_reloadCurrentUser, allUsers]);
+  // allUsers 監視
+  useEffect(() => {
+    _saveAllUsers();
+    _reloadCurrentUser();
+    if (callbackFn) callbackFn();
+  }, [_saveAllUsers, _reloadCurrentUser, callbackFn, allUsers]);
+
+  // currentUserId 監視
+  useEffect(() => {
+    _saveCurrentUserId();
+    if (callbackFn) callbackFn();
+  }, [_saveCurrentUserId, callbackFn, currentUserId]);
 
   const _updateUserInfo = async (
     data: StorageUserInfo
@@ -79,32 +83,24 @@ const useAuthProvideValue = (): [AuthState, AuthDispatch, boolean] => {
    * 指定された token に紐づいている user を登録する
    * @param token 登録したい user の JWT
    */
-  const registerUser = useCallback(
-    async (token: string) => {
-      const user = await api(aspida()).auth.user.$get({
-        headers: { Authorization: `bearer ${token}` },
-      });
-      setAllUsers((prev) => ({ ...prev, [user.id]: { ...user, token } }));
-      setCurrentUserId(user.id);
-      _saveCurrentUserId();
-    },
-    [_saveCurrentUserId]
-  );
+  const registerUser = useCallback(async (token: string) => {
+    const user = await api(aspida()).auth.user.$get({
+      headers: { Authorization: `bearer ${token}` },
+    });
+    setAllUsers((prev) => ({ ...prev, [user.id]: { ...user, token } }));
+    setCurrentUserId(user.id);
+  }, []);
 
   /**
    * 指定された id の user を削除する
    * @param userId 削除したい user の id
    */
-  const removeUser = useCallback(
-    (userId: string): void => {
-      setAllUsers((prev) => {
-        const { [userId]: _, ...next } = prev;
-        return next;
-      });
-      _saveAllUsers();
-    },
-    [_saveAllUsers]
-  );
+  const removeUser = useCallback((userId: string): void => {
+    setAllUsers((prev) => {
+      const { [userId]: _, ...next } = prev;
+      return next;
+    });
+  }, []);
 
   /**
    * 全ての user 情報を更新する
@@ -121,8 +117,7 @@ const useAuthProvideValue = (): [AuthState, AuthDispatch, boolean] => {
         }
       })
     );
-    _reloadCurrentUser();
-  }, [_reloadCurrentUser, allUsers, removeUser]);
+  }, [allUsers, removeUser]);
 
   /**
    * 現在の user を指定された id の user に切り替える
@@ -132,10 +127,9 @@ const useAuthProvideValue = (): [AuthState, AuthDispatch, boolean] => {
     (userId: string): void => {
       if (userId in allUsers) {
         setCurrentUserId(userId);
-        _saveCurrentUserId();
       }
     },
-    [_saveCurrentUserId, allUsers]
+    [allUsers]
   );
 
   return [
@@ -148,7 +142,6 @@ const useAuthProvideValue = (): [AuthState, AuthDispatch, boolean] => {
           : null,
     },
     { registerUser, removeUser, updateAllUsers, switchCurrentUser },
-    ready,
   ];
 };
 
