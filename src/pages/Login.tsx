@@ -72,6 +72,11 @@ const Login: React.VFC = () => {
         setIsError(true);
         if (e.response?.status === 401)
           setErrorText(["ID またはパスワードが間違っています。"]);
+        else if (e.response?.status === 429)
+          setErrorText([
+            "ログイン失敗が多すぎます。",
+            "ID・パスワードを確認し、1分後にもう一度お試しください。",
+          ]);
         else
           setErrorText([
             "不明なエラーです。もう一度お試しください。",
