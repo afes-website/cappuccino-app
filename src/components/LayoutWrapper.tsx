@@ -1,5 +1,5 @@
-import React, { PropsWithChildren } from "react";
-import { ThemeProvider } from "@material-ui/core";
+import React, { PropsWithChildren, useEffect } from "react";
+import { Theme, ThemeProvider, useTheme } from "@material-ui/core";
 import { ThemeContextProvider, useThemeMode } from "libs/themeMode";
 import { TitleContextProvider } from "libs/title";
 import { useHistory } from "react-router-dom";
@@ -40,9 +40,27 @@ const CustomTitleProvider: React.VFC<PropsWithChildren<unknown>> = ({
   );
 };
 
+const SyncBackgroundColor: React.VFC<PropsWithChildren<unknown>> = ({
+  children,
+}) => {
+  const theme = useTheme<Theme>();
+
+  useEffect(() => {
+    document.body.style.background = theme.palette.background.default;
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute("content", theme.palette.background.default);
+  }, [theme.palette.background.default, theme.palette.type]);
+
+  // eslint-disable-next-line react/jsx-no-useless-fragment
+  return <>{children}</>;
+};
+
 const LayoutWrapper: React.VFC<PropsWithChildren<unknown>> = ({ children }) => (
   <CustomThemeProvider>
-    <CustomTitleProvider>{children}</CustomTitleProvider>
+    <CustomTitleProvider>
+      <SyncBackgroundColor>{children}</SyncBackgroundColor>
+    </CustomTitleProvider>
   </CustomThemeProvider>
 );
 
