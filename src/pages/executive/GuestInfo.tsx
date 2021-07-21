@@ -16,6 +16,7 @@ import { Alert } from "@material-ui/lab";
 import { AccessTime, Assignment } from "@material-ui/icons";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Login, Logout, WristBand } from "components/MaterialSvgIcons";
+import ActivityLogTimeline from "components/ActivityLogTimeline";
 import CardList from "components/CardList";
 import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
@@ -344,9 +345,16 @@ const GuestInfo: React.VFC = () => {
                       </Typography>
                     )}
                   </CardContent>
-                  {activityLogs && exhStatus && activityLogs.length > 0 && (
-                    <LogList logs={activityLogs} status={exhStatus} />
-                  )}
+                  {guestInfo &&
+                    activityLogs &&
+                    exhStatus &&
+                    activityLogs.length > 0 && (
+                      <ActivityLogTimeline
+                        guestInfo={guestInfo}
+                        logs={activityLogs}
+                        exhStatus={exhStatus}
+                      />
+                    )}
                 </Card>
               </>
             )}
@@ -527,29 +535,6 @@ const GuestInfoList: React.VFC<{ guestId: string; guest: Guest | null }> = ({
     </List>
   );
 };
-
-const LogList: React.VFC<{ logs: ActivityLog[]; status: AllStatus }> = ({
-  logs,
-  status,
-}) => (
-  <List>
-    {logs
-      .sort((a, b) => moment(b.timestamp).diff(a.timestamp)) // 新しいのが上
-      .map((log) => (
-        <ListItem key={log.id}>
-          <ListItemIcon>
-            {log.log_type === "enter" ? <Login /> : <Logout />}
-          </ListItemIcon>
-          <ListItemText
-            primary={`${
-              status.exhibition[log.exhibition_id]?.info.name || "-"
-            } ${log.log_type === "enter" ? "入室" : "退室"}`}
-            secondary={getStringDateTime(log.timestamp)}
-          />
-        </ListItem>
-      ))}
-  </List>
-);
 
 const PrivateInfoList: React.VFC<{
   rsvId: string;
