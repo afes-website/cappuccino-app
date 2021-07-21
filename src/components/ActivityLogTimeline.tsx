@@ -31,7 +31,7 @@ const useStyles = makeStyles(() =>
       background: "transparent",
     },
     time: {
-      height: 40,
+      height: 44,
       flexBasis: 40,
       flexGrow: "unset",
       flexShrink: "unset",
