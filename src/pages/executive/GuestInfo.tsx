@@ -15,7 +15,7 @@ import {
 import { Alert } from "@material-ui/lab";
 import { AccessTime, Assignment } from "@material-ui/icons";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { Login, Logout, WristBand } from "components/MaterialSvgIcons";
+import { WristBand } from "components/MaterialSvgIcons";
 import ActivityLogTimeline from "components/ActivityLogTimeline";
 import CardList from "components/CardList";
 import QRScanner from "components/QRScanner";
@@ -25,8 +25,9 @@ import DirectInputModal from "components/DirectInputModal";
 import { useAuth, useVerifyPermission } from "libs/auth";
 import { useTitleSet } from "libs/title";
 import isAxiosError from "libs/isAxiosError";
-import { getStringDateTime, getStringDateTimeBrief } from "libs/stringDate";
+import { getStringDateTimeBrief } from "libs/stringDate";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
+import useErrorHandler from "libs/errorHandler";
 import { StatusColor } from "types/statusColor";
 import api, {
   ActivityLog,
@@ -35,9 +36,7 @@ import api, {
   Reservation,
 } from "@afes-website/docs";
 import aspida from "@aspida/axios";
-import moment from "moment";
 import clsx from "clsx";
-import useErrorHandler from "libs/errorHandler";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -64,6 +63,14 @@ const useStyles = makeStyles((theme) =>
     alertMessage: {
       display: "block",
     },
+    termColorBadge: {
+      display: "inline-block",
+      width: 12,
+      height: 12,
+      borderRadius: 6,
+      marginBottom: -1,
+      marginRight: theme.spacing(0.75),
+    },
   })
 );
 
@@ -74,6 +81,8 @@ const GuestInfo: React.VFC = () => {
   const classes = useStyles();
   const auth = useAuth();
   const resultChipRef = useRef<ResultChipRefs>(null);
+
+  const wristBandPaletteColor = useWristBandPaletteColor();
 
   const [mode, setMode] = useState<"guest" | "rsv">(
     auth.get_current_user()?.permissions.executive ? "guest" : "rsv"
@@ -312,7 +321,31 @@ const GuestInfo: React.VFC = () => {
                     )}
                   </CardContent>
                   {guestId && (
-                    <GuestInfoList guestId={guestId} guest={guestInfo} />
+                    <List>
+                      <ListItem>
+                        <ListItemIcon>
+                          <WristBand />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary={
+                            <>
+                              {guestInfo && (
+                                <span
+                                  className={classes.termColorBadge}
+                                  style={{
+                                    background: wristBandPaletteColor(
+                                      guestInfo.term.guest_type
+                                    ).main,
+                                  }}
+                                />
+                              )}
+                              {guestId}
+                            </>
+                          }
+                          secondary="ゲスト ID"
+                        />
+                      </ListItem>
+                    </List>
                   )}
                 </Card>
                 <Card>
@@ -436,105 +469,6 @@ const useComponentsStyles = makeStyles((theme) =>
     },
   })
 );
-
-const GuestInfoList: React.VFC<{ guestId: string; guest: Guest | null }> = ({
-  guestId,
-  guest,
-}) => {
-  const classes = useComponentsStyles();
-  const wristBandPaletteColor = useWristBandPaletteColor();
-
-  return (
-    <List>
-      <ListItem>
-        <ListItemIcon>
-          <WristBand />
-        </ListItemIcon>
-        <ListItemText
-          primary={
-            <>
-              {guest && (
-                <span
-                  className={classes.termColorBadge}
-                  style={{
-                    background: wristBandPaletteColor(guest.term.guest_type)
-                      .main,
-                  }}
-                />
-              )}
-              {guestId}
-            </>
-          }
-          secondary="ゲスト ID"
-        />
-      </ListItem>
-      {guest && (
-        <>
-          <Grid container spacing={0}>
-            <Grid item xs={6}>
-              <ListItem>
-                <ListItemIcon>
-                  <Login />
-                </ListItemIcon>
-                <ListItemText
-                  primary={getStringDateTimeBrief(guest.entered_at)}
-                  secondary="入場時刻"
-                />
-              </ListItem>
-            </Grid>
-            <Grid item xs={6}>
-              <ListItem>
-                <ListItemIcon>
-                  <Logout />
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    guest.exited_at
-                      ? getStringDateTimeBrief(guest.exited_at)
-                      : "-"
-                  }
-                  secondary="退場時刻"
-                />
-              </ListItem>
-            </Grid>
-          </Grid>
-          <Grid container spacing={0}>
-            <Grid item xs={6}>
-              <ListItem>
-                <ListItemIcon>
-                  <AccessTime />
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    guest.term.enter_scheduled_time
-                      ? getStringDateTimeBrief(guest.term.enter_scheduled_time)
-                      : "-"
-                  }
-                  secondary="入場予定時刻"
-                />
-              </ListItem>
-            </Grid>
-            <Grid item xs={6}>
-              <ListItem>
-                <ListItemIcon>
-                  <AccessTime />
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    guest.term.exit_scheduled_time
-                      ? getStringDateTimeBrief(guest.term.exit_scheduled_time)
-                      : "-"
-                  }
-                  secondary="退場予定時刻"
-                />
-              </ListItem>
-            </Grid>
-          </Grid>
-        </>
-      )}
-    </List>
-  );
-};
 
 const PrivateInfoList: React.VFC<{
   rsvId: string;
