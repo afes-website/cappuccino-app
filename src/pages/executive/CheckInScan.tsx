@@ -25,7 +25,7 @@ import ResultPopup, { ResultPopupRefs } from "components/ResultPopup";
 import ErrorDialog from "components/ErrorDialog";
 import { useTitleSet } from "libs/title";
 import { useAuthState } from "libs/auth/useAuth";
-import { useVerifyPermission } from "libs/auth/useVerifyPermission";
+import { useRequirePermission } from "libs/auth/useRequirePermission";
 import useErrorHandler from "libs/errorHandler";
 import { getStringDateTimeBrief, getStringTime } from "libs/stringDate";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
@@ -90,7 +90,7 @@ const useStyles = makeStyles((theme) =>
 
 const CheckInScan: React.VFC = () => {
   useTitleSet("文化祭 入場スキャン");
-  useVerifyPermission("executive");
+  useRequirePermission("executive");
   const classes = useStyles();
   const { currentUser } = useAuthState();
 

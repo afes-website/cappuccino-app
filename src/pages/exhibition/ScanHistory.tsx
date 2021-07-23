@@ -12,7 +12,7 @@ import {
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Login, Logout } from "components/MaterialSvgIcons";
 import { useAuthState } from "libs/auth/useAuth";
-import { useVerifyPermission } from "libs/auth/useVerifyPermission";
+import { useRequirePermission } from "libs/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
 import { getStringDateTime } from "libs/stringDate";
@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) =>
 
 const ScanHistory: React.VFC = () => {
   useTitleSet("入退室スキャン履歴");
-  useVerifyPermission("exhibition");
+  useRequirePermission("exhibition");
 
   const classes = useStyles();
   const { currentUser } = useAuthState();

@@ -6,7 +6,7 @@ import PwaAlertCard from "components/PwaAlertCard";
 import { GeneralStatusCard, ExhStatusCard } from "components/StayStatusCard";
 import ExhInfoCard from "components/ExhInfoCard";
 import { useAuthState } from "libs/auth/useAuth";
-import { verifyPermission } from "libs/auth/useVerifyPermission";
+import { verifyPermission } from "libs/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
 
 const Home: React.VFC = () => {

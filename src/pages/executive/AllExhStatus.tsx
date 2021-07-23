@@ -17,7 +17,7 @@ import { createStyles, makeStyles } from "@material-ui/core/styles";
 import ReloadButton from "components/ReloadButton";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
 import { useAuthState } from "libs/auth/useAuth";
-import { useVerifyPermission } from "libs/auth/useVerifyPermission";
+import { useRequirePermission } from "libs/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
 import { compareTerm } from "libs/compare";
 import api, { AllStatus, ExhibitionStatus, Terms } from "@afes-website/docs";
@@ -71,7 +71,7 @@ type SortKey = typeof sortKeys[number];
 
 const AllExhStatus: React.VFC = () => {
   useTitleSet("全展示の滞在状況一覧");
-  useVerifyPermission("executive");
+  useRequirePermission("executive");
 
   const classes = useStyles();
   const { currentUser } = useAuthState();

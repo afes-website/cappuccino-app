@@ -1,14 +1,14 @@
 import React from "react";
 import { useTitleSet } from "libs/title";
 import { useAuthState } from "libs/auth/useAuth";
-import { useVerifyPermission } from "libs/auth/useVerifyPermission";
+import { useRequirePermission } from "libs/auth/useRequirePermission";
 import api from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import GuestScan from "components/GuestScan";
 
 const CheckOutScan: React.VFC = () => {
   useTitleSet("文化祭 退場スキャン");
-  useVerifyPermission("executive");
+  useRequirePermission("executive");
   const { currentUser } = useAuthState();
 
   return (

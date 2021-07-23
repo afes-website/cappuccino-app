@@ -30,7 +30,7 @@ export const verifyPermission = (
  * 指定された権限（の少なくとも1つ）があるか確認し、なければ 403 ページにリダイレクトする
  * @param _permission 権限の種類文字列もしくはその配列
  */
-export const useVerifyPermission = (
+export const useRequirePermission = (
   _permission:
     | keyof StorageUserInfo["permissions"]
     | (keyof StorageUserInfo["permissions"])[]

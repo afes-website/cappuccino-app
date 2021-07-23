@@ -22,7 +22,7 @@ import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import DirectInputFab from "components/DirectInputFab";
 import DirectInputModal from "components/DirectInputModal";
 import { useAuthState } from "libs/auth/useAuth";
-import { useVerifyPermission } from "libs/auth/useVerifyPermission";
+import { useRequirePermission } from "libs/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
 import isAxiosError from "libs/isAxiosError";
 import { getStringDateTime, getStringDateTimeBrief } from "libs/stringDate";
@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme) =>
 
 const GuestInfo: React.VFC = () => {
   useTitleSet("来場者・予約情報照会");
-  useVerifyPermission(["executive", "reservation"]);
+  useRequirePermission(["executive", "reservation"]);
 
   const classes = useStyles();
   const { currentUser } = useAuthState();

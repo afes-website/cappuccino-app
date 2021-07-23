@@ -1,14 +1,14 @@
 import React from "react";
 import { useTitleSet } from "libs/title";
 import { useAuthState } from "libs/auth/useAuth";
-import { useVerifyPermission } from "libs/auth/useVerifyPermission";
+import { useRequirePermission } from "libs/auth/useRequirePermission";
 import api from "@afes-website/docs";
 import aspida from "@aspida/axios";
 import GuestScan from "components/GuestScan";
 
 const EnterScan: React.VFC = () => {
   useTitleSet("展示教室 入室スキャン");
-  useVerifyPermission("exhibition");
+  useRequirePermission("exhibition");
   const { currentUser, currentUserId } = useAuthState();
 
   return (
