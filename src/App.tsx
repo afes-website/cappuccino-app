@@ -1,4 +1,10 @@
-import React, { PropsWithChildren, useEffect, useMemo, useState } from "react";
+import React, {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Theme, useMediaQuery, useTheme } from "@material-ui/core";
 import TypesafeRouter from "components/TypesafeRouter";
 import LayoutWrapper from "components/LayoutWrapper";
@@ -6,26 +12,26 @@ import MainLayout from "layouts/Main";
 import TabletLayout from "layouts/Tablet";
 import NotFound from "pages/NotFound";
 import { createBrowserHistory } from "history";
-import useAuthProvideValue from "libs/auth/useAuthProvideValue";
-import {
-  AuthStateContextProvider,
-  AuthDispatchContextProvider,
-} from "libs/auth/useAuth";
 import routes from "libs/routes";
+import AuthContext from "components/AuthContext";
 
 const App: React.VFC = () => {
   const [history] = useState(createBrowserHistory());
 
-  const [authState, authDispatch] = useAuthProvideValue(() => {
-    if (
-      !authState.currentUserId &&
-      ![routes.Login.route.create({}), routes.Terms.route.create({})].includes(
-        history.location.pathname
-      )
-    ) {
-      history.push(routes.Login.route.create({}));
-    }
-  });
+  const onAuthUpdate = useCallback(
+    (authState) => {
+      if (
+        !authState.currentUserId &&
+        ![
+          routes.Login.route.create({}),
+          routes.Terms.route.create({}),
+        ].includes(history.location.pathname)
+      ) {
+        history.push(routes.Login.route.create({}));
+      }
+    },
+    [history]
+  );
 
   useEffect(() => {
     handleResize();
@@ -38,16 +44,14 @@ const App: React.VFC = () => {
   }, []);
 
   return (
-    <AuthStateContextProvider value={authState}>
-      <AuthDispatchContextProvider value={authDispatch}>
-        <TypesafeRouter
-          routes={routes}
-          history={history}
-          layout={LayoutWithProviders}
-          fallback={NotFound}
-        />
-      </AuthDispatchContextProvider>
-    </AuthStateContextProvider>
+    <AuthContext updateCallback={onAuthUpdate}>
+      <TypesafeRouter
+        routes={routes}
+        history={history}
+        layout={LayoutWithProviders}
+        fallback={NotFound}
+      />
+    </AuthContext>
   );
 };
 
