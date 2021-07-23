@@ -169,7 +169,7 @@ const AllExhStatus: React.VFC = () => {
                   alt={exhStatus.info.name}
                   src={api(aspida())
                     .images._id(exhStatus.info.thumbnail_image_id)
-                    .$path()}
+                    .$path({ query: { size: "s" } })}
                 />
               </ListItemIcon>
               <ListItemText
