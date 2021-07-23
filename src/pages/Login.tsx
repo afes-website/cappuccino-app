@@ -42,7 +42,7 @@ const useStyles = makeStyles((theme) =>
 const Login: React.VFC = () => {
   const classes = useStyles();
   const history = useHistory();
-  const { registerUser, switchCurrentUser } = useAuthDispatch();
+  const { registerUser } = useAuthDispatch();
 
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
@@ -64,7 +64,6 @@ const Login: React.VFC = () => {
       })
       .then((res) => {
         registerUser(res.token).then(() => {
-          switchCurrentUser(id);
           if (gtag) gtag("event", "login");
           history.push(routes.Home.route.create({}));
         });
