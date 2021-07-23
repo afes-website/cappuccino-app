@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import routes from "libs/routes";
 import {
@@ -25,12 +25,12 @@ import {
   Snackbar,
 } from "@material-ui/core";
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
-import { useAuth } from "libs/auth";
-import AccountIcon from "components/AccountIcon";
-import { useSetThemeMode } from "libs/themeMode";
 import { DarkMode, LightMode, Reload } from "components/MaterialSvgIcons";
-import { Alert } from "@material-ui/lab";
+import AccountIcon from "components/AccountIcon";
 import PermissionIcon from "components/PermissionIcon";
+import { useAuthDispatch, useAuthState } from "libs/auth/useAuth";
+import { useSetThemeMode } from "libs/themeMode";
+import { Alert } from "@material-ui/lab";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -95,52 +95,59 @@ interface Props {
   onDrawerClose: () => undefined;
 }
 
-const AccountDrawer: React.VFC<Props> = (props) => {
+const AccountDrawer: React.VFC<Props> = ({
+  isOpen,
+  onDrawerClose,
+  setIsOpen,
+}) => {
   const classes = useStyles();
-  const auth = useAuth();
+  const { allUsers, currentUser, currentUserId } = useAuthState();
+  const { removeUser, switchCurrentUser } = useAuthDispatch();
   const theme = useTheme<Theme>();
   const toggleThemeMode = useSetThemeMode();
 
   const [isLogoutAlertVisible, setIsLogoutAlertVisible] = useState(false);
   const [snackBarOpen, setSnackBarOpen] = useState(false);
 
+  useEffect(() => {
+    if (!currentUserId) setIsOpen(false);
+  }, [currentUserId, setIsOpen]);
+
   return (
     <Drawer
-      open={props.isOpen}
-      onClose={props.onDrawerClose}
+      open={isOpen}
+      onClose={onDrawerClose}
       classes={{
         paper: classes.paper,
       }}
     >
       {/* ==== current list ==== */}
-      <Paper className={classes.currentUser} square={true}>
-        <div className={classes.currentUserIconWrapper}>
-          <AccountIcon
-            account={auth.get_current_user()}
-            className={classes.menuIcon}
-            color="inherit"
-          />
-          <PermissionsList />
-        </div>
-        <Typography variant="h6">
-          {auth.get_current_user()?.name || ""}
-        </Typography>
-        <Typography variant="body2">
-          @{auth.get_current_user()?.id || ""}
-        </Typography>
-      </Paper>
+      {currentUser && (
+        <Paper className={classes.currentUser} square={true}>
+          <div className={classes.currentUserIconWrapper}>
+            <AccountIcon
+              account={currentUser}
+              className={classes.menuIcon}
+              color="inherit"
+            />
+            <PermissionsList />
+          </div>
+          <Typography variant="h6">{currentUser.name}</Typography>
+          <Typography variant="body2">@{currentUser.id}</Typography>
+        </Paper>
+      )}
 
       {/* ==== account list ==== */}
       <List>
-        {Object.values(auth.get_all_users())
-          .filter((account) => account.id !== auth.get_current_user()?.id)
+        {Object.values(allUsers)
+          .filter((account) => account.id !== currentUserId)
           .map((account, index, array) => {
             return (
               <React.Fragment key={account.id}>
                 <ListItem
                   button
                   onClick={() => {
-                    auth.switch_user(account.id);
+                    switchCurrentUser(account.id);
                   }}
                 >
                   <ListItemAvatar>
@@ -171,7 +178,7 @@ const AccountDrawer: React.VFC<Props> = (props) => {
         component={Link}
         to={routes.Login.route.create({})}
         onClick={() => {
-          props.setIsOpen(false);
+          setIsOpen(false);
         }}
       >
         アカウントを追加（ログイン）
@@ -183,7 +190,7 @@ const AccountDrawer: React.VFC<Props> = (props) => {
           setIsLogoutAlertVisible(true);
         }}
       >
-        @{auth.get_current_user_id()} からログアウト
+        @{currentUserId} からログアウト
       </Button>
 
       {/* ==== bottom buttons ==== */}
@@ -194,7 +201,7 @@ const AccountDrawer: React.VFC<Props> = (props) => {
           component={Link}
           to={routes.Terms.route.create({})}
           onClick={() => {
-            props.setIsOpen(false);
+            setIsOpen(false);
           }}
           className={classes.actionButton}
         >
@@ -236,10 +243,10 @@ const AccountDrawer: React.VFC<Props> = (props) => {
         <DialogTitle>ログアウトしますか？</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            @{auth.get_current_user_id()} からログアウトしますか？
+            @{currentUserId} からログアウトしますか？
           </DialogContentText>
           <DialogContentText>
-            {`ログアウト後、再び @${auth.get_current_user_id()} を使用するにはパスワードが必要です。`}
+            {`ログアウト後、再び @${currentUserId} を使用するにはパスワードが必要です。`}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -253,9 +260,8 @@ const AccountDrawer: React.VFC<Props> = (props) => {
           </Button>
           <Button
             onClick={() => {
-              auth.remove_user(auth.get_current_user_id() || "");
-              if (!auth.get_current_user_id()) props.setIsOpen(false);
               setIsLogoutAlertVisible(false);
+              if (currentUserId) removeUser(currentUserId);
             }}
             color="secondary"
           >
@@ -296,9 +302,8 @@ export const PermissionsList: React.VFC<{ className?: string }> = ({
   className,
 }) => {
   const classes = useStyles();
-  const auth = useAuth();
+  const { currentUser } = useAuthState();
 
-  const currentUser = auth.get_current_user();
   if (!currentUser) return null;
   return (
     <div className={clsx(classes.permissionsList, className)}>

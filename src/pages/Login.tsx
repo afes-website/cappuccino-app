@@ -17,7 +17,7 @@ import api from "@afes-website/docs";
 import axios from "@aspida/axios";
 import CardList from "components/CardList";
 import PwaAlertCard from "components/PwaAlertCard";
-import { useAuth } from "libs/auth";
+import { useAuthDispatch } from "libs/auth/useAuth";
 import routes from "libs/routes";
 import isAxiosError from "libs/isAxiosError";
 import { useTitleSet } from "libs/title";
@@ -42,12 +42,13 @@ const useStyles = makeStyles((theme) =>
 const Login: React.VFC = () => {
   const classes = useStyles();
   const history = useHistory();
+  const { registerUser } = useAuthDispatch();
+
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState<string[]>([]);
-  const auth = useAuth();
   useTitleSet("ログイン");
 
   const login = (e?: React.FormEvent<HTMLFormElement>) => {
@@ -62,8 +63,7 @@ const Login: React.VFC = () => {
         },
       })
       .then((res) => {
-        auth.register_user(res.token).then(() => {
-          auth.switch_user(id);
+        registerUser(res.token).then(() => {
           if (gtag) gtag("event", "login");
           history.push(routes.Home.route.create({}));
         });

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Avatar,
   CircularProgress,
@@ -14,13 +14,14 @@ import {
   Button,
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
+import ReloadButton from "components/ReloadButton";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
-import { AuthContext, useVerifyPermission } from "libs/auth";
+import { useAuthState } from "libs/auth/useAuth";
+import { useRequirePermission } from "libs/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
 import { compareTerm } from "libs/compare";
 import api, { AllStatus, ExhibitionStatus, Terms } from "@afes-website/docs";
 import aspida from "@aspida/axios";
-import ReloadButton from "components/ReloadButton";
 import moment, { Moment } from "moment";
 
 const useStyles = makeStyles((theme) =>
@@ -70,10 +71,10 @@ type SortKey = typeof sortKeys[number];
 
 const AllExhStatus: React.VFC = () => {
   useTitleSet("全展示の滞在状況一覧");
-  useVerifyPermission("executive");
+  useRequirePermission("executive");
 
   const classes = useStyles();
-  const auth = useContext(AuthContext).val;
+  const { currentUser } = useAuthState();
 
   const [status, setStatus] = useState<AllStatus | null>(null);
   const [terms, setTerms] = useState<Terms | null>(null);
@@ -87,7 +88,7 @@ const AllExhStatus: React.VFC = () => {
         api(aspida())
           .exhibitions.$get({
             headers: {
-              Authorization: "bearer " + auth.get_current_user()?.token,
+              Authorization: "bearer " + currentUser?.token,
             },
           })
           .then((res) => {
@@ -96,7 +97,7 @@ const AllExhStatus: React.VFC = () => {
         api(aspida())
           .terms.$get({
             headers: {
-              Authorization: "bearer " + auth.get_current_user()?.token,
+              Authorization: "bearer " + currentUser?.token,
             },
           })
           .then((terms) => {
@@ -105,12 +106,12 @@ const AllExhStatus: React.VFC = () => {
       ]).then(() => {
         setLastUpdated(moment());
       }),
-    [auth]
+    [currentUser?.token]
   );
 
   useEffect(() => {
     load();
-  }, [auth, load]);
+  }, [load]);
 
   if (status === null || terms === null)
     return (

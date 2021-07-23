@@ -22,7 +22,8 @@ import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import DirectInputFab from "components/DirectInputFab";
 import DirectInputModal from "components/DirectInputModal";
-import { useAuth, useVerifyPermission } from "libs/auth";
+import { useAuthState } from "libs/auth/useAuth";
+import { useRequirePermission } from "libs/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
 import isAxiosError from "libs/isAxiosError";
 import { getStringDateTimeBrief } from "libs/stringDate";
@@ -76,16 +77,16 @@ const useStyles = makeStyles((theme) =>
 
 const GuestInfo: React.VFC = () => {
   useTitleSet("来場者・予約情報照会");
-  useVerifyPermission(["executive", "reservation"]);
+  useRequirePermission(["executive", "reservation"]);
 
   const classes = useStyles();
-  const auth = useAuth();
+  const { currentUser } = useAuthState();
   const resultChipRef = useRef<ResultChipRefs>(null);
 
   const wristBandPaletteColor = useWristBandPaletteColor();
 
   const [mode, setMode] = useState<"guest" | "rsv">(
-    auth.get_current_user()?.permissions.executive ? "guest" : "rsv"
+    currentUser?.permissions.executive ? "guest" : "rsv"
   );
 
   // guest
@@ -151,7 +152,7 @@ const GuestInfo: React.VFC = () => {
           .guests._id(_guestId)
           .$get({
             headers: {
-              Authorization: "bearer " + auth.get_current_user()?.token,
+              Authorization: "bearer " + currentUser?.token,
             },
           })
           .then((_info) => {
@@ -160,7 +161,7 @@ const GuestInfo: React.VFC = () => {
         const getActivityLog = api(aspida())
           .log.$get({
             headers: {
-              Authorization: "bearer " + auth.get_current_user()?.token,
+              Authorization: "bearer " + currentUser?.token,
             },
             query: { guest_id: _guestId },
           })
@@ -170,7 +171,7 @@ const GuestInfo: React.VFC = () => {
         const getExhStatus = api(aspida())
           .exhibitions.$get({
             headers: {
-              Authorization: "bearer " + auth.get_current_user()?.token,
+              Authorization: "bearer " + currentUser?.token,
             },
           })
           .then((_status) => {
@@ -197,7 +198,7 @@ const GuestInfo: React.VFC = () => {
         .reservations._id(_rsvId)
         .$get({
           headers: {
-            Authorization: "bearer " + auth.get_current_user()?.token,
+            Authorization: "bearer " + currentUser?.token,
           },
         })
         .then((_rsvInfo) => {
@@ -254,13 +255,13 @@ const GuestInfo: React.VFC = () => {
           <Tab
             label="来場者 行動履歴一覧"
             value="guest"
-            disabled={!auth.get_current_user()?.permissions.executive}
+            disabled={!currentUser?.permissions.executive}
           />
 
           <Tab
             label="予約 登録情報一覧"
             value="rsv"
-            disabled={!auth.get_current_user()?.permissions.reservation}
+            disabled={!currentUser?.permissions.reservation}
           />
         </Tabs>
       </Paper>

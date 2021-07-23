@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Card, Typography } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { useAuth } from "libs/auth";
 import api, { ExhibitionStatus } from "@afes-website/docs";
 import aspida from "@aspida/axios";
+import { useAuthState } from "libs/auth/useAuth";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -18,24 +18,24 @@ const useStyles = makeStyles((theme) =>
 );
 
 const ExhInfoCard: React.VFC = () => {
-  const auth = useAuth();
+  const { currentUser } = useAuthState();
   const classes = useStyles();
 
   const [exhInfo, setExhInfo] = useState<ExhibitionStatus | null>(null);
 
   const getExhInfo = () => {
-    const user = auth.get_current_user();
-    if (!user || !user.permissions.exhibition) return;
+    if (!currentUser || !currentUser.permissions.exhibition) return;
     api(aspida())
-      .exhibitions._id(user.id)
-      .$get({ headers: { Authorization: "bearer " + user.token } })
+      .exhibitions._id(currentUser.id)
+      .$get({ headers: { Authorization: "bearer " + currentUser.token } })
       .then((_exhInfo) => {
         setExhInfo(_exhInfo);
       });
   };
 
-  useEffect(getExhInfo, [auth]);
+  useEffect(getExhInfo, [currentUser]);
 
+  if (!currentUser) return null;
   return (
     <Card className={classes.root}>
       <Typography variant="h5" component="h2" className={classes.title}>
@@ -43,7 +43,7 @@ const ExhInfoCard: React.VFC = () => {
       </Typography>
       <Typography variant="body2">
         {exhInfo ? (
-          `${exhInfo.info.room_id} ･ @${auth.get_current_user_id()}`
+          `${exhInfo.info.room_id} ･ @${currentUser.id}`
         ) : (
           <Skeleton />
         )}

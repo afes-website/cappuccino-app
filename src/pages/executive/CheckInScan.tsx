@@ -24,7 +24,8 @@ import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import ResultPopup, { ResultPopupRefs } from "components/ResultPopup";
 import ErrorDialog from "components/ErrorDialog";
 import { useTitleSet } from "libs/title";
-import { useAuth, useVerifyPermission } from "libs/auth";
+import { useAuthState } from "libs/auth/useAuth";
+import { useRequirePermission } from "libs/auth/useRequirePermission";
 import useErrorHandler from "libs/errorHandler";
 import { getStringDateTimeBrief, getStringTime } from "libs/stringDate";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
@@ -89,9 +90,10 @@ const useStyles = makeStyles((theme) =>
 
 const CheckInScan: React.VFC = () => {
   useTitleSet("文化祭 入場スキャン");
-  useVerifyPermission("executive");
+  useRequirePermission("executive");
   const classes = useStyles();
-  const auth = useAuth();
+  const { currentUser } = useAuthState();
+
   const wristBandPaletteColor = useWristBandPaletteColor();
   const resultPopupRef = useRef<ResultPopupRefs>(null);
   const resultChipRef = useRef<ResultChipRefs>(null);
@@ -178,7 +180,7 @@ const CheckInScan: React.VFC = () => {
       .reservations._id(rsvId)
       .check.$get({
         headers: {
-          Authorization: "bearer " + auth.get_current_user()?.token,
+          Authorization: "bearer " + currentUser?.token,
         },
       })
       .then((res) => {
@@ -240,7 +242,7 @@ const CheckInScan: React.VFC = () => {
             guest_id: guestId,
           },
           headers: {
-            Authorization: "bearer " + auth.get_current_user()?.token,
+            Authorization: "bearer " + currentUser?.token,
           },
         })
         .then(() => {
