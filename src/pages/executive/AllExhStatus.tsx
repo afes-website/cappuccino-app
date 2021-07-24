@@ -86,11 +86,7 @@ const AllExhStatus: React.VFC = () => {
     () =>
       Promise.all([
         api(aspida())
-          .exhibitions.$get({
-            headers: {
-              Authorization: "bearer " + currentUser?.token,
-            },
-          })
+          .exhibitions.$get()
           .then((res) => {
             setStatus(res);
           }),

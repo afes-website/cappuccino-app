@@ -27,7 +27,7 @@ const ExhInfoCard: React.VFC = () => {
     if (!currentUser || !currentUser.permissions.exhibition) return;
     api(aspida())
       .exhibitions._id(currentUser.id)
-      .$get({ headers: { Authorization: "bearer " + currentUser.token } })
+      .$get()
       .then((_exhInfo) => {
         setExhInfo(_exhInfo);
       });

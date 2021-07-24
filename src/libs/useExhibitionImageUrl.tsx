@@ -17,9 +17,7 @@ const useExhibitionImageUrl = (
   useEffect(() => {
     if (!imageIds)
       api(aspida())
-        .exhibitions.$get({
-          headers: { Authorization: "" },
-        })
+        .exhibitions.$get()
         .then((allStatus) => {
           imageIds = Object.fromEntries(
             Object.entries(allStatus.exhibition).map(([id, status]) => [
