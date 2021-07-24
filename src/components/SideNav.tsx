@@ -139,11 +139,7 @@ const SideNav: React.VFC<{ className?: string }> = ({ className }) => {
         >
           <CardContent>
             <div className={classes.currentUserIconWrapper}>
-              <AccountIcon
-                account={currentUser}
-                className={classes.menuIcon}
-                color="inherit"
-              />
+              <AccountIcon account={currentUser} className={classes.menuIcon} />
               <PermissionsList />
             </div>
             <Typography variant="h6">{currentUser.name || ""}</Typography>
