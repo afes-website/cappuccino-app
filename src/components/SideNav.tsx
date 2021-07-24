@@ -59,20 +59,6 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       justifyContent: "space-between",
     },
-    currentUser: {
-      color: theme.palette.primary.contrastText,
-      background: theme.palette.primary.main,
-      padding: theme.spacing(2),
-      paddingTop: `calc(${theme.spacing(2)}px + env(safe-area-inset-top))`,
-    },
-    permissionsList: {
-      display: "flex",
-      height: "min-content",
-      marginTop: theme.spacing(0.5),
-      "& > * + *": {
-        marginLeft: theme.spacing(0.5),
-      },
-    },
     menuIcon: {
       marginBottom: theme.spacing(1),
       fontSize: "40px",
