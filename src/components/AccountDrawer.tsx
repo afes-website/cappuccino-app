@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     currentUser: {
       color: theme.palette.primary.contrastText,
-      background: theme.palette.primary.main,
+      background: `linear-gradient(120deg, ${theme.palette.afesLight.main}, ${theme.palette.afesBlue.main})`,
       padding: theme.spacing(2),
       paddingTop: `calc(${theme.spacing(2)}px + env(safe-area-inset-top))`,
     },

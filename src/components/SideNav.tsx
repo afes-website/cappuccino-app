@@ -82,7 +82,11 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingBottom: theme.spacing(1),
     },
     menuCurrent: {
-      backgroundColor: `${theme.palette.primary.main} !important`,
+      background: `${theme.palette.primary.main} !important`,
+      color: theme.palette.primary.contrastText,
+    },
+    menuCurrentAccountCard: {
+      background: `linear-gradient(120deg, ${theme.palette.afesLight.main}, ${theme.palette.afesBlue.main}) !important`,
       color: theme.palette.primary.contrastText,
     },
     bottomWrapper: {
@@ -133,7 +137,7 @@ const SideNav: React.VFC<{ className?: string }> = ({ className }) => {
             history.push(routes.Account.route.create({}));
           }}
           className={clsx({
-            [classes.menuCurrent]:
+            [classes.menuCurrentAccountCard]:
               history.location.pathname === routes.Account.route.create({}),
           })}
         >
