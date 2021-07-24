@@ -3,9 +3,9 @@
 
 
 "@afes-website/docs@>3.0.0-alpha.0":
-  version "3.0.0-alpha.18"
-  resolved "https://registry.yarnpkg.com/@afes-website/docs/-/docs-3.0.0-alpha.18.tgz#46177f71c9d99bf4a582661f4dd5b4063c0dcf93"
-  integrity sha512-ujsjn+tsat0bE6Fuavz3CqQgG5g0piayT5j6wgsoGuQa6uYuqHX0yd1z1c0LO3Ngng159c27qmFVf3Pp3h1vrw==
+  version "3.0.0-alpha.19"
+  resolved "https://registry.yarnpkg.com/@afes-website/docs/-/docs-3.0.0-alpha.19.tgz#8d05451de7c3b26803ca5e08c2764d958cd1fcf9"
+  integrity sha512-h8vDQEGaZKuAfjVP2I7mYWzIgSw2gs6ByhFXKpI2qRHD8/Tcojo/PlsG45gXiDcuFXBIvJJRWhpLf1DEvL/tMQ==
 
 "@aspida/axios@^1.6.3":
   version "1.6.3"
