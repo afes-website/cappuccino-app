@@ -86,11 +86,7 @@ const AllExhStatus: React.VFC = () => {
     () =>
       Promise.all([
         api(aspida())
-          .exhibitions.$get({
-            headers: {
-              Authorization: "bearer " + currentUser?.token,
-            },
-          })
+          .exhibitions.$get()
           .then((res) => {
             setStatus(res);
           }),
@@ -169,7 +165,7 @@ const AllExhStatus: React.VFC = () => {
                   alt={exhStatus.info.name}
                   src={api(aspida())
                     .images._id(exhStatus.info.thumbnail_image_id)
-                    .$path()}
+                    .$path({ query: { size: "s" } })}
                 />
               </ListItemIcon>
               <ListItemText

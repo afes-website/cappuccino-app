@@ -169,11 +169,7 @@ const GuestInfo: React.VFC = () => {
             setActivityLogs(_logs);
           });
         const getExhStatus = api(aspida())
-          .exhibitions.$get({
-            headers: {
-              Authorization: "bearer " + currentUser?.token,
-            },
-          })
+          .exhibitions.$get()
           .then((_status) => {
             setExhStatus(_status);
           });

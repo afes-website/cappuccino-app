@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     currentUser: {
       color: theme.palette.primary.contrastText,
-      background: theme.palette.primary.main,
+      background: `linear-gradient(120deg, ${theme.palette.afesLight.main}, ${theme.palette.afesBlue.main})`,
       padding: theme.spacing(2),
       paddingTop: `calc(${theme.spacing(2)}px + env(safe-area-inset-top))`,
     },
@@ -125,11 +125,7 @@ const AccountDrawer: React.VFC<Props> = ({
       {currentUser && (
         <Paper className={classes.currentUser} square={true}>
           <div className={classes.currentUserIconWrapper}>
-            <AccountIcon
-              account={currentUser}
-              className={classes.menuIcon}
-              color="inherit"
-            />
+            <AccountIcon account={currentUser} className={classes.menuIcon} />
             <PermissionsList />
           </div>
           <Typography variant="h6">{currentUser.name}</Typography>
@@ -154,7 +150,6 @@ const AccountDrawer: React.VFC<Props> = ({
                     <AccountIcon
                       account={account}
                       className={classes.listIcon}
-                      color="inherit"
                     />
                   </ListItemAvatar>
                   <ListItemText

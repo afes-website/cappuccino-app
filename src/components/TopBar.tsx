@@ -115,7 +115,7 @@ const TopBar: React.VFC<Props> = ({ title, scrollTop, className }) => {
                     setIsDrawerOpen(true);
                   }}
                 >
-                  <AccountIcon account={currentUser} fontSize="large" />
+                  <AccountIcon account={currentUser} />
                 </IconButton>
               )
             ))}

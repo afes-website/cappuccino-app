@@ -85,7 +85,6 @@ const Account: React.VFC = () => {
         <AccountIcon
           account={currentUser}
           className={classes.currentUserIcon}
-          color="inherit"
         />
         <Typography variant="h6">{currentUser?.name ?? ""}</Typography>
         <Typography variant="body2">@{currentUser?.id ?? ""}</Typography>
@@ -113,7 +112,6 @@ const Account: React.VFC = () => {
                           <AccountIcon
                             account={account}
                             className={classes.listIcon}
-                            color="inherit"
                           />
                         </ListItemAvatar>
                         <ListItemText

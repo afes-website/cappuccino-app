@@ -111,18 +111,13 @@ const useHomeCardStyles = makeStyles((theme) =>
 
 export const GeneralStatusCard: React.VFC = () => {
   const classes = useHomeCardStyles();
-  const { currentUser } = useAuthState();
 
   const getStatus = useCallback(
     () =>
       api(aspida())
-        .exhibitions.$get({
-          headers: {
-            Authorization: "bearer " + currentUser?.token,
-          },
-        })
+        .exhibitions.$get()
         .then((status) => status.all),
-    [currentUser?.token]
+    []
   );
 
   return (
@@ -155,11 +150,7 @@ export const ExhStatusCard: React.VFC = () => {
     () =>
       api(aspida())
         .exhibitions._id(currentUser?.id || "")
-        .$get({
-          headers: {
-            Authorization: "bearer " + currentUser?.token,
-          },
-        }),
+        .$get(),
     [currentUser]
   );
 
