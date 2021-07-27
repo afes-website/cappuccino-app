@@ -35,7 +35,8 @@ const useExhibitionImageUrl = (
     case "waitingPromise":
       return null;
     case "ready":
-      if (!imageIds || !{}.hasOwnProperty.call(imageIds, exhId)) return null;
+      if (!imageIds || !Object.prototype.hasOwnProperty.call(imageIds, exhId))
+        return null;
       return api(aspida()).images._id(imageIds[exhId]).$path({ query });
   }
 };
