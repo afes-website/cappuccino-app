@@ -13,8 +13,6 @@ const useExhibitionImageUrl = (
     "beforeInit" | "waitingPromise" | "ready"
   >("beforeInit");
 
-  console.log(imageIdsFetchPromise);
-
   switch (fetchStatus) {
     case "beforeInit":
       if (!imageIdsFetchPromise) {
