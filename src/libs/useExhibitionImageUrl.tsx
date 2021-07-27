@@ -29,7 +29,6 @@ const useExhibitionImageUrl = (
         });
   }, [exhId]);
 
-  if (!imageIds) return null;
   return imageId ? api(aspida()).images._id(imageId).$path({ query }) : null;
 };
 
