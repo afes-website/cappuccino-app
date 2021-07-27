@@ -10,7 +10,7 @@ const useExhibitionImageUrl = (
   query?: { size?: "s" | "m" }
 ): string | null => {
   const [fetchStatus, setFetchStatus] = useState<
-    "beforeInit" | "waitingPromise" | "ready"
+    "beforeInit" | "waiting" | "ready"
   >("beforeInit");
 
   switch (fetchStatus) {
@@ -30,9 +30,9 @@ const useExhibitionImageUrl = (
       imageIdsFetchPromise.then(() => {
         setFetchStatus("ready");
       });
-      setFetchStatus("waitingPromise");
+      setFetchStatus("waiting");
       return null;
-    case "waitingPromise":
+    case "waiting":
       return null;
     case "ready":
       if (!imageIds || !Object.prototype.hasOwnProperty.call(imageIds, exhId))
