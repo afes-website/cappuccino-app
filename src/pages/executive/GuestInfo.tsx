@@ -13,9 +13,9 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import { AccessTime, Assignment } from "@material-ui/icons";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { WristBand } from "components/MaterialSvgIcons";
+import { AccessTime, Face } from "@material-ui/icons";
+import { ReservationTicket } from "components/MaterialSvgIcons";
 import ActivityLogTimeline from "components/ActivityLogTimeline";
 import CardList from "components/CardList";
 import QRScanner from "components/QRScanner";
@@ -321,7 +321,7 @@ const GuestInfo: React.VFC = () => {
                     <List>
                       <ListItem>
                         <ListItemIcon>
-                          <WristBand />
+                          <Face />
                         </ListItemIcon>
                         <ListItemText
                           primary={
@@ -478,7 +478,7 @@ const PrivateInfoList: React.VFC<{
     <List>
       <ListItem>
         <ListItemIcon>
-          <Assignment />
+          <ReservationTicket />
         </ListItemIcon>
         <ListItemText primary={rsvId} secondary="予約 ID" />
       </ListItem>
