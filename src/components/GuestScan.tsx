@@ -10,9 +10,8 @@ import {
   ListItemText,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import { CheckCircle } from "@material-ui/icons";
+import { CheckCircle, Face } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
-import { WristBand } from "components/MaterialSvgIcons";
 import CardList from "components/CardList";
 import QRScanner from "components/QRScanner";
 import DirectInputModal from "components/DirectInputModal";
@@ -179,7 +178,7 @@ const GuestScan: React.VFC<Props> = (props) => {
                       {checkStatus === "success" ? (
                         <CheckCircle className={classes.successIcon} />
                       ) : (
-                        <WristBand />
+                        <Face />
                       )}
                       {checkStatus === "loading" && (
                         <CircularProgress

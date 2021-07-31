@@ -13,9 +13,9 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import { Assignment, CheckCircle, Replay } from "@material-ui/icons";
+import { CheckCircle, Face, Replay } from "@material-ui/icons";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { WristBand } from "components/MaterialSvgIcons";
+import { ReservationTicket } from "components/MaterialSvgIcons";
 import CardList from "components/CardList";
 import QRScanner from "components/QRScanner";
 import DirectInputModal from "components/DirectInputModal";
@@ -339,7 +339,7 @@ const CheckInScan: React.VFC = () => {
                       {rsvCheckStatus === "success" ? (
                         <CheckCircle className={classes.successIcon} />
                       ) : (
-                        <Assignment />
+                        <ReservationTicket />
                       )}
                       {rsvCheckStatus === "loading" && (
                         <CircularProgress
@@ -365,7 +365,7 @@ const CheckInScan: React.VFC = () => {
                   </ListItem>
                   <ListItem disabled={activeScanner !== "guest"}>
                     <ListItemIcon>
-                      <WristBand />
+                      <Face />
                     </ListItemIcon>
                     <ListItemText
                       primary={latestGuestId ? latestGuestId : "-"}
