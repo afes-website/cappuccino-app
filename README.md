@@ -2,8 +2,10 @@
 
 ***C**ontrol **APP**lication for **U**nited **C**ontactless **C**heck-**IN** **O**peration*
 
-![ver](https://img.shields.io/github/package-json/v/afes-website/manage-app?style=for-the-badge)
-<!--![build](https://img.shields.io/github/workflow/status/afes-website/manage-app/Deploy%20into%20production%20server/master?label=Deploy&style=for-the-badge)-->
+![ver](https://img.shields.io/github/package-json/v/afes-website/cappuccino-app?style=for-the-badge)
+
+![[deploy] app.afes.info](https://img.shields.io/github/workflow/status/afes-website/cappuccino-app/Deploy%20to%20production%20server?label=%5Bdeploy%5D%20app.afes.info&style=flat-square)
+![[deploy] dev.app.afes.info](https://img.shields.io/github/workflow/status/afes-website/cappuccino-app/Deploy%20to%20develop%20server?label=%5Bdeploy%5D%20dev.app.afes.info&style=flat-square)
 
 ![ts](https://img.shields.io/badge/dynamic/json?color=555&label=TypeScript&labelColor=007ACC&logo=typescript&logoColor=fff&style=flat-square&query=devDependencies.typescript&url=https://raw.githubusercontent.com/afes-website/manage-app/develop/package.json)
 ![React](https://img.shields.io/badge/dynamic/json?color=555&label=React&labelColor=282c34&logo=react&logoColor=61dafb&style=flat-square&query=dependencies.react&url=https://raw.githubusercontent.com/afes-website/manage-app/develop/package.json)
