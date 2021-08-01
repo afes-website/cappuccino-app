@@ -21,26 +21,29 @@
 yarn install
 ```
 
-### Start development server
+## Start development server
 
 ```
 yarn start
 ```
 
-Runs the app in the development mode.  
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+If you need to use **WebRTC** on your network (not `localhost`), it must be configured for **https** correctly.
 
-The page will reload if you make edits.  
-You will also see any lint errors in the console.
+**PWA does not work**. PWA only works in production mode.
 
-### Compiles and minifies for production
+### Example of `.env.development.local`
+
+```dotenv
+HTTPS=true
+SSL_CRT_FILE=./hoge/cert.crt
+SSL_KEY_FILE=./hoge/cert.key
+```
+[Using HTTPS in Development \| Create React App](https://create-react-app.dev/docs/using-https-in-development/)
+
+## Build for production
 
 ```
 yarn build
 ```
 
-Builds the app for production to the `build` folder.  
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.  
-Your app is ready to be deployed!
+If you need to use **WebRTC** or **PWA** on your network (not `localhost`), it must be run in an environment that is properly configured for **https**.
