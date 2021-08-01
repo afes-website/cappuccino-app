@@ -1,4 +1,7 @@
-# 73rd Afes Manage App for Executive and Exhibition
+# CAPPUCCINO app
+
+***C**ontrol **APP**lication for **U**nited **C**ontactless **C**heck-**IN** **O**peration*
+
 ![ver](https://img.shields.io/github/package-json/v/afes-website/manage-app?style=for-the-badge)
 <!--![build](https://img.shields.io/github/workflow/status/afes-website/manage-app/Deploy%20into%20production%20server/master?label=Deploy&style=for-the-badge)-->
 
