@@ -10,31 +10,10 @@ import {
   orange,
   grey,
 } from "@material-ui/core/colors";
-
-const white = "#ffffff";
-const black = "#000000";
-
-const generateLightPaletteColor = (color: {
-  300: string;
-  500: string;
-  700: string;
-}): PaletteColor => ({
-  light: color[300],
-  main: color[500],
-  dark: color[700],
-  contrastText: white,
-});
-
-const generateDarkPaletteColor = (color: {
-  100: string;
-  200: string;
-  300: string;
-}): PaletteColor => ({
-  light: color[100],
-  main: color[200],
-  dark: color[300],
-  contrastText: black,
-});
+import {
+  generateLightPaletteColor,
+  generateDarkPaletteColor,
+} from "libs/paletteColor";
 
 export const wristBandPaletteColor = (
   prefix: GuestType,
@@ -63,7 +42,7 @@ export const wristBandPaletteColor = (
         light: grey[50],
         main: grey[100],
         dark: grey[200],
-        contrastText: black,
+        contrastText: "#000000",
       };
     case "StudentGray":
       return generatePaletteColor(grey);
