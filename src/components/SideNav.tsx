@@ -21,7 +21,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import { History, Home, Room } from "@material-ui/icons";
+import { History, Home, Map, Room } from "@material-ui/icons";
 import {
   DarkMode,
   LightMode,
@@ -297,6 +297,11 @@ const menuItems: { [key in keyof UserInfo["permissions"]]?: MenuItem[] } = {
           "全展示の滞在状況一覧",
           routes.AllExhStatus.route.create({}),
           <Room key="Status" />,
+        ],
+        [
+          "混雑状況ヒートマップ",
+          routes.HeatMap.route.create({}),
+          <Map key="HeatMap" />,
         ],
       ],
     },
