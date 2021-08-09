@@ -7,9 +7,10 @@ import {
   Typography,
   useTheme,
 } from "@material-ui/core";
-import { AllStatus } from "@afes-website/docs";
 import congestionColor from "libs/congestionColor";
 import clsx from "clsx";
+import api, { AllStatus } from "@afes-website/docs";
+import aspida from "@aspida/axios";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -97,6 +98,21 @@ const CongestionHeatMap: React.VFC<Props> = ({ exhStatus }) => {
     return theme.palette.action.disabledBackground;
   };
 
+  const exhImageUrl = (roomId: string): string => {
+    if (
+      exhStatus &&
+      Object.prototype.hasOwnProperty.call(exhIds, roomId) &&
+      Object.prototype.hasOwnProperty.call(exhStatus.exhibition, exhIds[roomId])
+    ) {
+      return api(aspida())
+        .images._id(
+          exhStatus.exhibition[exhIds[roomId]].info.thumbnail_image_id
+        )
+        .$path({ query: { size: "s" } });
+    }
+    return "";
+  };
+
   return (
     <Grid container spacing={2} className={classes.root}>
       {(["1F", "2F", "3F", "4F"] as const).map((elev, index) => (
@@ -113,15 +129,28 @@ const CongestionHeatMap: React.VFC<Props> = ({ exhStatus }) => {
           <div className={classes.svgWrapper}>
             <svg className={classes.svg} viewBox="0 0 800 736">
               {Object.entries(rooms[elev]).map(([id, info]) => (
-                <rect
-                  key={id}
-                  x={info.x}
-                  y={info.y}
-                  width={info.width ?? 64}
-                  height={info.height ?? 64}
-                  className={classes.path}
-                  style={{ fill: fillColor(id) }}
-                />
+                <>
+                  <rect
+                    key={id}
+                    x={info.x}
+                    y={info.y}
+                    width={info.width ?? 64}
+                    height={info.height ?? 64}
+                    className={classes.path}
+                    style={{ fill: fillColor(id) }}
+                  />
+                  <image
+                    x={info.x + (info.width ?? 64) / 2 - 24}
+                    y={info.y + (info.height ?? 64) / 2 - 24}
+                    width={48}
+                    height={48}
+                    href={exhImageUrl(id)}
+                    clipPath="circle(24px)"
+                    transform={`rotate(45, ${
+                      info.x + (info.width ?? 64) / 2
+                    }, ${info.y + (info.height ?? 64) / 2})`}
+                  />
+                </>
               ))}
               {lines[elev].map((points, index) => (
                 <polyline
