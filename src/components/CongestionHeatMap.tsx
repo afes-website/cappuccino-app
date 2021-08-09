@@ -38,13 +38,6 @@ const useStyles = makeStyles((theme: Theme) =>
         marginBottom: 0,
       },
     },
-    svgWrapper: {
-      // rotate と一度にやると軸が回転前のままなので
-      transform: "scaleY(0.6)",
-    },
-    svg: {
-      transform: "rotate(-45deg)",
-    },
     path: {
       fill: "none",
       stroke: theme.palette.text.primary,
@@ -61,9 +54,15 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface Props {
   exhStatus: AllStatus | null;
+  rotateDeg: number;
+  scaleY: number;
 }
 
-const CongestionHeatMap: React.VFC<Props> = ({ exhStatus }) => {
+const CongestionHeatMap: React.VFC<Props> = ({
+  exhStatus,
+  rotateDeg,
+  scaleY,
+}) => {
   const classes = useStyles();
   const theme = useTheme<Theme>();
 
@@ -126,8 +125,11 @@ const CongestionHeatMap: React.VFC<Props> = ({ exhStatus }) => {
             [classes.floorUpper, classes.floorLower][index % 2]
           )}
         >
-          <div className={classes.svgWrapper}>
-            <svg className={classes.svg} viewBox="0 0 800 736">
+          <div style={{ transform: `scaleY(${scaleY})` }}>
+            <svg
+              style={{ transform: `rotate(${rotateDeg}deg)` }}
+              viewBox="0 0 800 736"
+            >
               {Object.entries(rooms[elev]).map(([id, info]) => (
                 <>
                   <rect
@@ -146,7 +148,7 @@ const CongestionHeatMap: React.VFC<Props> = ({ exhStatus }) => {
                     height={60}
                     href={exhImageUrl(id)}
                     clipPath="circle(30px)"
-                    transform={`rotate(45, ${
+                    transform={`rotate(${-rotateDeg}, ${
                       info.x + (info.width ?? 64) / 2
                     }, ${info.y + (info.height ?? 64) / 2})`}
                     opacity={0.5}
