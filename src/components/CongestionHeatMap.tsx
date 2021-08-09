@@ -114,12 +114,12 @@ const CongestionHeatMap: React.VFC<Props> = ({
 
   return (
     <Grid container spacing={2} className={classes.root}>
-      {(["1F", "2F", "3F", "4F"] as const).map((elev, index) => (
+      {(["1F", "2F", "3F", "4F"] as const).map((floor, index) => (
         <Grid
           item
           xs={12}
           md={6}
-          key={elev}
+          key={floor}
           className={clsx(
             classes.floor,
             [classes.floorUpper, classes.floorLower][index % 2]
@@ -130,7 +130,7 @@ const CongestionHeatMap: React.VFC<Props> = ({
               style={{ transform: `rotate(${rotateDeg}deg)` }}
               viewBox="0 0 800 736"
             >
-              {Object.entries(rooms[elev]).map(([id, info]) => (
+              {Object.entries(rooms[floor]).map(([id, info]) => (
                 <>
                   <rect
                     key={id}
@@ -155,7 +155,7 @@ const CongestionHeatMap: React.VFC<Props> = ({
                   />
                 </>
               ))}
-              {lines[elev].map((points, index) => (
+              {lines[floor].map((points, index) => (
                 <polyline
                   key={index}
                   points={points}
@@ -169,7 +169,7 @@ const CongestionHeatMap: React.VFC<Props> = ({
             variant="h5"
             color="textPrimary"
           >
-            {elev}
+            {floor}
           </Typography>
         </Grid>
       ))}
@@ -272,9 +272,9 @@ const _upperNormalClassrooms: RoomInfo[] = [
   { x: 512, y: 256 },
 ];
 
-const arrToObj = (arr: RoomInfo[], elev: string, start = 1) =>
+const arrToObj = (arr: RoomInfo[], floor: string, start = 1) =>
   Object.fromEntries(
-    arr.map((info, index) => [elev + ("00" + (start + index)).slice(-2), info])
+    arr.map((info, index) => [floor + ("00" + (start + index)).slice(-2), info])
   );
 
 const scienceRoom: RoomInfo = {
