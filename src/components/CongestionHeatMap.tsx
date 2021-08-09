@@ -140,15 +140,16 @@ const CongestionHeatMap: React.VFC<Props> = ({ exhStatus }) => {
                     style={{ fill: fillColor(id) }}
                   />
                   <image
-                    x={info.x + (info.width ?? 64) / 2 - 24}
-                    y={info.y + (info.height ?? 64) / 2 - 24}
-                    width={48}
-                    height={48}
+                    x={info.x + (info.width ?? 64) / 2 - 30}
+                    y={info.y + (info.height ?? 64) / 2 - 30}
+                    width={60}
+                    height={60}
                     href={exhImageUrl(id)}
-                    clipPath="circle(24px)"
+                    clipPath="circle(30px)"
                     transform={`rotate(45, ${
                       info.x + (info.width ?? 64) / 2
                     }, ${info.y + (info.height ?? 64) / 2})`}
+                    opacity={0.5}
                   />
                 </>
               ))}
