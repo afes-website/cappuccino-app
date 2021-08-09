@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     bottom: {
       display: "flex",
-      flexDirection: "row-reverse",
+      flexDirection: "row",
       marginTop: theme.spacing(2),
     },
   })

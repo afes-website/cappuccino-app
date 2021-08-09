@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Card,
   createStyles,
   Grid,
   makeStyles,
@@ -14,12 +13,47 @@ import clsx from "clsx";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {},
+    root: {
+      flexDirection: "row-reverse",
+      flexWrap: "wrap-reverse",
+      // 画面幅の違いによる突き抜け防止
+      marginTop: "calc(100% * 0.1)",
+    },
+    floor: {
+      position: "relative",
+      overflow: "hidden",
+      // margin の基準は横幅なので、viewBox 比率
+      margin: "calc(100% * 0.92 * 0.17 * -1) 0",
+    },
+    floorUpper: {
+      [theme.breakpoints.up("md")]: {
+        marginBottom: "calc(100% * 0.92 * 0.17 * -1)",
+        marginTop: 0,
+      },
+    },
+    floorLower: {
+      [theme.breakpoints.up("md")]: {
+        marginTop: "calc(100% * 0.92 * 0.17 * -1)",
+        marginBottom: 0,
+      },
+    },
+    svgWrapper: {
+      // rotate と一度にやると軸が回転前のままなので
+      transform: "scaleY(0.6)",
+    },
+    svg: {
+      transform: "rotate(-45deg)",
+    },
     path: {
       fill: "none",
       stroke: theme.palette.text.primary,
-      strokeWidth: 2,
+      strokeWidth: 3,
       strokeLinejoin: "round",
+    },
+    floorNum: {
+      position: "absolute",
+      right: "15%",
+      top: "20%",
     },
   })
 );
@@ -65,10 +99,19 @@ const CongestionHeatMap: React.VFC<Props> = ({ exhStatus }) => {
 
   return (
     <Grid container spacing={2} className={classes.root}>
-      {(["1F", "2F", "3F", "4F"] as const).map((elev) => (
-        <Grid item xs={12} md={6} key={elev}>
-          <Card>
-            <svg viewBox="0 0 800 736">
+      {(["1F", "2F", "3F", "4F"] as const).map((elev, index) => (
+        <Grid
+          item
+          xs={12}
+          md={6}
+          key={elev}
+          className={clsx(
+            classes.floor,
+            [classes.floorUpper, classes.floorLower][index % 2]
+          )}
+        >
+          <div className={classes.svgWrapper}>
+            <svg className={classes.svg} viewBox="0 0 800 736">
               {Object.entries(rooms[elev]).map(([id, info]) => (
                 <rect
                   key={id}
@@ -88,7 +131,14 @@ const CongestionHeatMap: React.VFC<Props> = ({ exhStatus }) => {
                 />
               ))}
             </svg>
-          </Card>
+          </div>
+          <Typography
+            className={classes.floorNum}
+            variant="h5"
+            color="textPrimary"
+          >
+            {elev}
+          </Typography>
         </Grid>
       ))}
     </Grid>
@@ -109,22 +159,22 @@ const useCongestionExampleStyles = makeStyles((theme: Theme) =>
     colorList: {
       "& > *": {
         borderRadius: 4,
-        width: 24,
-        height: 24,
+        width: 16,
+        height: 16,
       },
       "& > * + *": {
         marginLeft: 16,
       },
     },
     labelList: {
-      marginLeft: 16,
+      marginLeft: 8,
       marginTop: 8,
       "& > *": {
         width: 32,
         height: 20,
       },
       "& > * + *": {
-        marginLeft: 8,
+        marginLeft: 0,
       },
     },
   })
@@ -155,7 +205,7 @@ export const CongestionExample: React.VFC = () => {
           <Typography
             key={congestionLabel}
             align="center"
-            variant="body2"
+            variant="caption"
             color="textSecondary"
           >
             {`${congestionLabel}%`}
