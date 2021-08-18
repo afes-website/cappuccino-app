@@ -2,16 +2,14 @@ import React, {
   forwardRef,
   useEffect,
   useImperativeHandle,
-  useRef,
   useState,
 } from "react";
 import { Chip, Fade, SvgIcon } from "@material-ui/core";
 import { CheckCircleOutline, ErrorOutline } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
+import { successAudio, errorAudio } from "libs/audio";
 import { StatusColor } from "types/statusColor";
 import clsx from "clsx";
-import successMp3 from "assets/sounds/success.mp3";
-import errorMp3 from "assets/sounds/error.mp3";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -57,9 +55,6 @@ const ResultChipRenderFunction: React.ForwardRefRenderFunction<
 > = (props, ref) => {
   const classes = useStyles();
 
-  const successAudio = useRef(new Audio(successMp3));
-  const errorAudio = useRef(new Audio(errorMp3));
-
   const [chipStatus, setChipStatus] = useState<
     "triggered" | "opened" | "closed"
   >("closed");
@@ -79,17 +74,15 @@ const ResultChipRenderFunction: React.ForwardRefRenderFunction<
         setMessage(message);
         setDuration(duration || null);
         setChipStatus("triggered");
-        if (successAudio.current) {
-          switch (color) {
-            case "success":
-              successAudio.current.currentTime = 0;
-              successAudio.current.play();
-              break;
-            case "error":
-              errorAudio.current.currentTime = 0;
-              errorAudio.current.play();
-              break;
-          }
+        switch (color) {
+          case "success":
+            successAudio.currentTime = 0;
+            successAudio.play();
+            break;
+          case "error":
+            errorAudio.currentTime = 0;
+            errorAudio.play();
+            break;
         }
 
         if (timeoutId) {
