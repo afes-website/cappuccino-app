@@ -1,6 +1,6 @@
 import { Route, Router, Switch } from "react-router-dom";
 import { Route as TypedRoute, PathPart } from "typesafe-react-router";
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import { History } from "history";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,14 +32,11 @@ interface Props {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   routes: { [key: string]: TypedRouteWithComponent<any, any> };
   history: History;
-  layout: React.ComponentType<{ children: React.ReactNode }>;
-  fallback: React.FunctionComponent;
+  layout: React.ComponentType<PropsWithChildren<unknown>>;
+  fallback: React.VFC;
 }
 
-const TypesafeRouter: React.FunctionComponent<Props> = ({
-  layout: Layout,
-  ...props
-}) => (
+const TypesafeRouter: React.VFC<Props> = ({ layout: Layout, ...props }) => (
   <Router history={props.history}>
     <Layout>
       <Switch>

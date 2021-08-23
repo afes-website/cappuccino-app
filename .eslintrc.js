@@ -4,14 +4,6 @@ module.exports = {
     es2020: true,
     node: true,
   },
-  extends: [
-    "eslint:recommended",
-    "plugin:prettier/recommended",
-    "prettier",
-    "prettier/react",
-    "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
-  ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaFeatures: {
@@ -20,21 +12,28 @@ module.exports = {
     ecmaVersion: 11,
     sourceType: "module",
   },
-  plugins: ["react", "prettier", "react-hooks"],
-  rules: {
-    "react/prop-types": "off",
-    "react-hooks/exhaustive-deps": "off",
-  },
+  plugins: ["react-hooks", "react", "@typescript-eslint"],
   settings: {
     react: {
       version: "detect",
     },
   },
+  rules: {
+    "react/prop-types": "off",
+    "react-hooks/exhaustive-deps": "error",
+  },
+  extends: [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "prettier",
+  ],
   overrides: [
     {
       files: ["**/*.ts", "**/*.tsx"],
       extends: [
-        "prettier/@typescript-eslint",
         "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended",
       ],
@@ -42,9 +41,10 @@ module.exports = {
       rules: {
         "@typescript-eslint/no-explicit-any": "error",
         "@typescript-eslint/no-unused-vars": [
-          "error",
+          "warn",
           { ignoreRestSiblings: true },
         ],
+        "react/jsx-no-useless-fragment": "warn",
       },
     },
   ],

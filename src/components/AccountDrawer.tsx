@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import routes from "@/libs/routes";
+import routes from "libs/routes";
 import {
   Button,
   createStyles,
@@ -17,23 +17,42 @@ import {
   ListItemText,
   makeStyles,
   Paper,
-  SvgIcon,
   Theme,
   Typography,
+  useTheme,
+  IconButton,
+  Toolbar,
+  Snackbar,
 } from "@material-ui/core";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
-import { AuthContext, get_user_icon } from "@/libs/auth";
+import { DarkMode, LightMode, Reload } from "components/MaterialSvgIcons";
+import AccountIcon from "components/AccountIcon";
+import PermissionIcon from "components/PermissionIcon";
+import { useAuthDispatch, useAuthState } from "libs/auth/useAuth";
+import { useSetThemeMode } from "libs/themeMode";
+import { Alert } from "@material-ui/lab";
+import clsx from "clsx";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     paper: {
       width: "70vw",
     },
-    nowAccount: {
+    currentUserIconWrapper: {
+      display: "flex",
+      justifyContent: "space-between",
+    },
+    currentUser: {
       color: theme.palette.primary.contrastText,
-      background: theme.palette.primary.main,
+      background: `linear-gradient(120deg, ${theme.palette.afesLight.main}, ${theme.palette.afesBlue.main})`,
       padding: theme.spacing(2),
+      paddingTop: `calc(${theme.spacing(2)}px + env(safe-area-inset-top))`,
+    },
+    currentUserPerm: {
+      marginTop: theme.spacing(0.5),
+    },
+    disabledIcon: {
+      opacity: theme.palette.action.disabledOpacity,
     },
     menuIcon: {
       marginBottom: theme.spacing(1),
@@ -45,9 +64,27 @@ const useStyles = makeStyles((theme: Theme) =>
     actionButton: {
       paddingLeft: theme.spacing(2),
       justifyContent: "left",
+      width: "100%",
     },
     logoutButton: {
       color: theme.palette.error.main,
+    },
+    bottomWrapper: {
+      marginTop: "auto",
+      marginBottom: "env(safe-area-inset-bottom)",
+      "& hr": {
+        marginTop: theme.spacing(0.5),
+      },
+    },
+    snackBar: {
+      bottom: "calc(64px + env(safe-area-inset-bottom))",
+    },
+    permissionsList: {
+      display: "flex",
+      height: "min-content",
+      "& > * + *": {
+        marginLeft: theme.spacing(0.5),
+      },
     },
   })
 );
@@ -58,66 +95,77 @@ interface Props {
   onDrawerClose: () => undefined;
 }
 
-const AccountDrawer: React.FunctionComponent<Props> = (props) => {
+const AccountDrawer: React.VFC<Props> = ({
+  isOpen,
+  onDrawerClose,
+  setIsOpen,
+}) => {
   const classes = useStyles();
-  const auth = React.useContext(AuthContext);
-  const [isLogoutAlertVisible, setIsLogoutAlertVisible] = React.useState(false);
+  const { allUsers, currentUser, currentUserId } = useAuthState();
+  const { removeUser, switchCurrentUser } = useAuthDispatch();
+  const theme = useTheme<Theme>();
+  const toggleThemeMode = useSetThemeMode();
+
+  const [isLogoutAlertVisible, setIsLogoutAlertVisible] = useState(false);
+  const [snackBarOpen, setSnackBarOpen] = useState(false);
+
+  useEffect(() => {
+    if (!currentUserId) setIsOpen(false);
+  }, [currentUserId, setIsOpen]);
 
   return (
     <Drawer
-      open={props.isOpen}
-      onClose={props.onDrawerClose}
+      open={isOpen}
+      onClose={onDrawerClose}
       classes={{
         paper: classes.paper,
       }}
     >
-      <Paper className={classes.nowAccount} square={true}>
-        <SvgIcon className={classes.menuIcon} color="inherit">
-          <FontAwesomeIcon icon={get_user_icon(auth.val.get_current_user())} />
-        </SvgIcon>
-        <Typography variant="h6">
-          {auth.val.get_current_user()?.name || ""}
-        </Typography>
-        <Typography variant="body2">
-          @{auth.val.get_current_user()?.id || ""}
-        </Typography>
-      </Paper>
+      {/* ==== current list ==== */}
+      {currentUser && (
+        <Paper className={classes.currentUser} square={true}>
+          <div className={classes.currentUserIconWrapper}>
+            <AccountIcon account={currentUser} className={classes.menuIcon} />
+            <PermissionsList />
+          </div>
+          <Typography variant="h6">{currentUser.name}</Typography>
+          <Typography variant="body2">@{currentUser.id}</Typography>
+        </Paper>
+      )}
+
+      {/* ==== account list ==== */}
       <List>
-        {Object.values(auth.val.get_all_users())
-          .map((info) => {
-            return info;
-          })
-          .filter((account) => {
-            return account.id !== auth.val.get_current_user()?.id;
-          })
+        {Object.values(allUsers)
+          .filter((account) => account.id !== currentUserId)
           .map((account, index, array) => {
             return (
               <React.Fragment key={account.id}>
                 <ListItem
                   button
                   onClick={() => {
-                    auth.val.switch_user(account.id);
+                    switchCurrentUser(account.id);
                   }}
                 >
                   <ListItemAvatar>
-                    <SvgIcon className={classes.listIcon} color="inherit">
-                      <FontAwesomeIcon icon={get_user_icon(account)} />
-                    </SvgIcon>
+                    <AccountIcon
+                      account={account}
+                      className={classes.listIcon}
+                    />
                   </ListItemAvatar>
                   <ListItemText
                     primary={account.name}
                     secondary={"@" + account.id}
                   />
                 </ListItem>
-                {index !== array.length - 1 ? (
+                {index !== array.length - 1 && (
                   <Divider variant="inset" component="li" />
-                ) : (
-                  <React.Fragment />
                 )}
               </React.Fragment>
             );
           })}
       </List>
+
+      {/* ==== login / logout ==== */}
       <Button
         className={classes.actionButton}
         color="secondary"
@@ -125,7 +173,7 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
         component={Link}
         to={routes.Login.route.create({})}
         onClick={() => {
-          props.setIsOpen(false);
+          setIsOpen(false);
         }}
       >
         アカウントを追加（ログイン）
@@ -137,16 +185,63 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
           setIsLogoutAlertVisible(true);
         }}
       >
-        @{auth.val.get_current_user_id()} からログアウト
+        @{currentUserId} からログアウト
       </Button>
+
+      {/* ==== bottom buttons ==== */}
+      <div className={classes.bottomWrapper}>
+        <Button
+          variant="text"
+          color="inherit"
+          component={Link}
+          to={routes.Terms.route.create({})}
+          onClick={() => {
+            setIsOpen(false);
+          }}
+          className={classes.actionButton}
+        >
+          利用規約 & プライバシーポリシー
+        </Button>
+        <Button
+          variant="text"
+          color="inherit"
+          component="span"
+          className={classes.actionButton}
+          disabled
+        >
+          {`Version ${process.env.REACT_APP_VERSION}-${process.env.REACT_APP_BUILD_NUMBER}`}
+        </Button>
+        <Divider />
+        <Toolbar>
+          <IconButton onClick={toggleThemeMode}>
+            {theme.palette.type === "light" ? <DarkMode /> : <LightMode />}
+          </IconButton>
+          <IconButton
+            onClick={() => {
+              navigator.serviceWorker.getRegistration().then((reg) => {
+                if (reg)
+                  reg.update().then(() => {
+                    setTimeout(() => {
+                      setSnackBarOpen(true);
+                    }, 500);
+                  });
+              });
+            }}
+          >
+            <Reload />
+          </IconButton>
+        </Toolbar>
+      </div>
+
+      {/* ==== dialogs ==== */}
       <Dialog open={isLogoutAlertVisible}>
         <DialogTitle>ログアウトしますか？</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            @{auth.val.get_current_user_id()} からログアウトしますか？
+            @{currentUserId} からログアウトしますか？
           </DialogContentText>
           <DialogContentText>
-            {`ログアウト後、再び @${auth.val.get_current_user_id()} を使用するにはパスワードが必要です。`}
+            {`ログアウト後、再び @${currentUserId} を使用するにはパスワードが必要です。`}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -160,9 +255,8 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
           </Button>
           <Button
             onClick={() => {
-              auth.val.remove_user(auth.val.get_current_user_id() || "");
-              if (!auth.val.get_current_user_id()) props.setIsOpen(false);
               setIsLogoutAlertVisible(false);
+              if (currentUserId) removeUser(currentUserId);
             }}
             color="secondary"
           >
@@ -170,7 +264,53 @@ const AccountDrawer: React.FunctionComponent<Props> = (props) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* ==== already up to date snack bar ==== */}
+      <Snackbar
+        open={snackBarOpen}
+        onClose={() => {
+          setSnackBarOpen(false);
+        }}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        autoHideDuration={3000}
+        className={classes.snackBar}
+      >
+        <Alert
+          severity="success"
+          variant="filled"
+          elevation={6}
+          onClose={() => {
+            setSnackBarOpen(false);
+          }}
+        >
+          すでに最新版です！
+        </Alert>
+      </Snackbar>
     </Drawer>
+  );
+};
+
+export const PermissionsList: React.VFC<{ className?: string }> = ({
+  className,
+}) => {
+  const classes = useStyles();
+  const { currentUser } = useAuthState();
+
+  if (!currentUser) return null;
+  return (
+    <div className={clsx(classes.permissionsList, className)}>
+      {Object.entries(currentUser.permissions).map(([name, val]) => (
+        <PermissionIcon
+          permName={name}
+          key={name}
+          fontSize="small"
+          className={clsx({ [classes.disabledIcon]: !val })}
+        />
+      ))}
+    </div>
   );
 };
 

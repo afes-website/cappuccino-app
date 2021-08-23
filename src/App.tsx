@@ -1,45 +1,80 @@
-import React, { useState } from "react";
-import TypesafeRouter from "@/components/TypesafeRouter";
-import routes from "@/libs/routes";
+import React, {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { Theme, useMediaQuery, useTheme } from "@material-ui/core";
+import TypesafeRouter from "components/TypesafeRouter";
+import LayoutWrapper from "components/LayoutWrapper";
+import MainLayout from "layouts/Main";
+import TabletLayout from "layouts/Tablet";
+import NotFound from "pages/NotFound";
 import { createBrowserHistory } from "history";
-import NotFound from "@/pages/NotFound";
-import MainLayout from "@/layouts/Main";
-import Auth, { AuthContext } from "@/libs/auth";
+import routes from "libs/routes";
+import AuthContext from "components/AuthContext";
 
-const App: React.FunctionComponent = () => {
+const App: React.VFC = () => {
   const [history] = useState(createBrowserHistory());
-  const [provideVal, setProvideVal] = React.useState(() => ({
-    val: new Auth(),
-  }));
-  React.useEffect(() => {
-    provideVal.val.on_change(() => {
-      setProvideVal((old) => ({ ...old }));
-    });
+
+  const onAuthUpdate = useCallback(
+    (authState) => {
+      if (
+        !authState.currentUserId &&
+        ![
+          routes.Login.route.create({}),
+          routes.Terms.route.create({}),
+        ].includes(history.location.pathname)
+      ) {
+        history.push(routes.Login.route.create({}));
+      }
+    },
+    [history]
+  );
+
+  useEffect(() => {
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
+    };
   }, []);
 
-  const redirect_to_login = () => {
-    if (
-      !provideVal.val.get_current_user_id() &&
-      history.location.pathname !== routes.Login.route.create({})
-    ) {
-      history.push(routes.Login.route.create({}));
-    }
-  };
-  React.useEffect(redirect_to_login, [provideVal]);
-  React.useEffect(() => {
-    return history.listen(redirect_to_login);
-  });
-
   return (
-    <AuthContext.Provider value={provideVal}>
+    <AuthContext updateCallback={onAuthUpdate}>
       <TypesafeRouter
         routes={routes}
         history={history}
-        layout={MainLayout}
+        layout={LayoutWithProviders}
         fallback={NotFound}
       />
-    </AuthContext.Provider>
+    </AuthContext>
+  );
+};
+
+const LayoutWithProviders: React.VFC<PropsWithChildren<unknown>> = ({
+  children,
+}) => {
+  const theme = useTheme<Theme>();
+  const isTablet = useMediaQuery(theme.breakpoints.up("sm"));
+
+  const Layout = useMemo(() => (isTablet ? TabletLayout : MainLayout), [
+    isTablet,
+  ]);
+
+  return (
+    <LayoutWrapper>
+      <Layout>{children}</Layout>
+    </LayoutWrapper>
   );
 };
 
 export default App;
+
+const handleResize = () => {
+  const height = window.innerHeight;
+  document.documentElement.style.setProperty("--100vh", `${height}px`);
+};

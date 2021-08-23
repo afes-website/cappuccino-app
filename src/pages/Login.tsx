@@ -1,5 +1,5 @@
-import React from "react";
-import { useHistory } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useHistory } from "react-router-dom";
 import {
   Button,
   Card,
@@ -15,38 +15,46 @@ import {
 } from "@material-ui/core";
 import api from "@afes-website/docs";
 import axios from "@aspida/axios";
-import { AuthContext } from "@/libs/auth";
-import routes from "@/libs/routes";
-import isAxiosError from "@/libs/isAxiosError";
-import { useTitleSet } from "@/libs/title";
+import CardList from "components/CardList";
+import PwaAlertCard from "components/PwaAlertCard";
+import { useAuthDispatch } from "libs/auth/useAuth";
+import routes from "libs/routes";
+import isAxiosError from "libs/isAxiosError";
+import { useTitleSet } from "libs/title";
+import { createStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles({
-  root: {
-    padding: "10px",
-  },
-  form: {
-    display: "block",
-    margin: 0,
-    padding: 0,
-  },
-  mb: {
-    marginBottom: "10px",
-  },
-});
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    form: {
+      display: "block",
+      margin: 0,
+      padding: 0,
+    },
+    mb: {
+      marginBottom: theme.spacing(1),
+    },
+    terms: {
+      width: "100%",
+    },
+  })
+);
 
-const Login: React.FunctionComponent = () => {
+const Login: React.VFC = () => {
   const classes = useStyles();
   const history = useHistory();
-  const [id, setId] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [isError, setIsError] = React.useState(false);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [errorText, setErrorText] = React.useState<string[]>([]);
-  const auth = React.useContext(AuthContext);
+  const { registerUser } = useAuthDispatch();
+
+  const [id, setId] = useState("");
+  const [password, setPassword] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorText, setErrorText] = useState<string[]>([]);
   useTitleSet("ログイン");
 
   const login = (e?: React.FormEvent<HTMLFormElement>) => {
     setIsLoading(true);
+    setIsError(false);
+    setErrorText([]);
     api(axios())
       .auth.login.$post({
         body: {
@@ -55,8 +63,8 @@ const Login: React.FunctionComponent = () => {
         },
       })
       .then((res) => {
-        auth.val.register_user(res.token).then(() => {
-          auth.val.switch_user(id);
+        registerUser(res.token).then(() => {
+          if (gtag) gtag("event", "login");
           history.push(routes.Home.route.create({}));
         });
       })
@@ -64,6 +72,11 @@ const Login: React.FunctionComponent = () => {
         setIsError(true);
         if (e.response?.status === 401)
           setErrorText(["ID またはパスワードが間違っています。"]);
+        else if (e.response?.status === 429)
+          setErrorText([
+            "ログイン失敗が多すぎます。",
+            "ID・パスワードを確認し、1分後にもう一度お試しください。",
+          ]);
         else
           setErrorText([
             "不明なエラーです。もう一度お試しください。",
@@ -79,7 +92,8 @@ const Login: React.FunctionComponent = () => {
   };
 
   return (
-    <div className={classes.root}>
+    <CardList>
+      <PwaAlertCard />
       <Card>
         <form onSubmit={login} className={classes.form}>
           <CardContent>
@@ -105,7 +119,11 @@ const Login: React.FunctionComponent = () => {
               }}
               className={classes.mb}
               fullWidth={true}
+              color="secondary"
               error={isError}
+              inputProps={{
+                autocapitalize: "off",
+              }}
             />
             <TextField
               label="パスワード"
@@ -115,6 +133,7 @@ const Login: React.FunctionComponent = () => {
                 setPassword(e.target.value);
               }}
               fullWidth={true}
+              color="secondary"
               error={isError}
             />
           </CardContent>
@@ -123,13 +142,13 @@ const Login: React.FunctionComponent = () => {
               variant="contained"
               color="primary"
               fullWidth={true}
-              disabled={!(id && password)}
+              disabled={!(id && password) || isLoading}
               type="submit"
             >
               {isLoading ? (
                 <Fade
                   in={isLoading}
-                  style={{ transitionDelay: "500ms" }}
+                  style={{ transitionDelay: "300ms" }}
                   unmountOnExit
                 >
                   <CircularProgress color="inherit" size={24} thickness={5} />
@@ -141,7 +160,27 @@ const Login: React.FunctionComponent = () => {
           </CardActions>
         </form>
       </Card>
-    </div>
+      <div>
+        <Button
+          variant="text"
+          color="inherit"
+          component={Link}
+          to={routes.Terms.route.create({})}
+          className={classes.terms}
+        >
+          利用規約 & プライバシーポリシー
+        </Button>
+        <Button
+          variant="text"
+          color="inherit"
+          component="span"
+          className={classes.terms}
+          disabled
+        >
+          {`Version ${process.env.REACT_APP_VERSION}-${process.env.REACT_APP_BUILD_NUMBER}`}
+        </Button>
+      </div>
+    </CardList>
   );
 };
 

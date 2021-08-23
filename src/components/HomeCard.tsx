@@ -4,25 +4,36 @@ import {
   Card,
   CardActions,
   CardContent,
+  Divider,
   Typography,
 } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
-const useStyles = makeStyles({
-  root: {
-    marginBottom: "10px",
-  },
-  cardContent: {
-    paddingBottom: "0",
-  },
-  title: {
-    marginBottom: "12px",
-  },
-  paragraphs: {
-    marginBottom: "8px",
-  },
-});
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    cardContent: {
+      paddingBottom: "0",
+    },
+    title: {
+      marginBottom: "12px",
+    },
+    paragraphs: {
+      marginBottom: "8px",
+    },
+    actionsWrapper: {
+      position: "relative",
+      display: "flex",
+      justifyContent: "space-around",
+      padding: theme.spacing(0.5),
+    },
+    divider: {
+      position: "absolute",
+      top: 0,
+      left: "50%",
+    },
+  })
+);
 
 interface Props {
   title: string;
@@ -30,11 +41,11 @@ interface Props {
   buttons: [string, string][];
 }
 
-const HomeCard: React.FunctionComponent<Props> = (props) => {
+const HomeCard: React.VFC<Props> = (props) => {
   const classes = useStyles();
 
   return (
-    <Card variant="outlined" className={classes.root}>
+    <Card>
       <CardContent className={classes.cardContent}>
         <Typography variant="h5" component="h2" className={classes.title}>
           {props.title}
@@ -52,7 +63,8 @@ const HomeCard: React.FunctionComponent<Props> = (props) => {
           );
         })}
       </CardContent>
-      <CardActions>
+      <Divider />
+      <CardActions className={classes.actionsWrapper} disableSpacing>
         {props.buttons.map(([label, route]) => {
           return (
             <Button color="secondary" key={label} component={Link} to={route}>
@@ -60,6 +72,13 @@ const HomeCard: React.FunctionComponent<Props> = (props) => {
             </Button>
           );
         })}
+        {props.buttons.length === 2 && (
+          <Divider
+            orientation="vertical"
+            // flexItem
+            className={classes.divider}
+          />
+        )}
       </CardActions>
     </Card>
   );

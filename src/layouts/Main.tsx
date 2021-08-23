@@ -1,75 +1,72 @@
-import React from "react";
-import {
-  createStyles,
-  makeStyles,
-  Paper,
-  ThemeProvider,
-} from "@material-ui/core";
-import TopBar from "@/components/TopBar";
-import BottomNav from "@/components/BottomNav";
-import themes from "@/assets/styles/theme";
-import { TitleContextProvider } from "@/libs/title";
-import { useHistory } from "react-router-dom";
+import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
+import { createStyles, makeStyles, Paper } from "@material-ui/core";
+import TopBar from "components/TopBar";
+import BottomNav from "components/BottomNav";
+import { useTitleContext } from "libs/title";
+import { useAuthState } from "libs/auth/useAuth";
 
-const useStyles = makeStyles(() =>
+const useStyles = makeStyles((theme) =>
   createStyles({
     root: {
-      minHeight: "100vh",
-      height: "max-content",
+      height: "var(--100vh, 0px)",
+      width: "100vw",
+      overflowY: "scroll",
+      overscrollBehavior: "none",
+      background: theme.palette.background.default,
     },
     topBar: {
-      position: "sticky",
+      position: "absolute",
       top: 0,
+      left: 0,
       width: "100%",
       zIndex: 600,
     },
     main: {
-      marginBottom: "56px", // bottom Nav
+      width: "100%",
+      paddingTop: "calc(env(safe-area-inset-top) + 56px)",
+      paddingBottom: "calc(env(safe-area-inset-bottom) + 56px)",
     },
     bottomNav: {
       position: "fixed",
       bottom: 0,
+      left: 0,
       width: "100%",
       zIndex: 600,
     },
   })
 );
 
-interface Props {
-  children: React.ReactNode;
-}
-const TITLE_SUFFIX = "73rd Afes Manage App";
-const TOP_TITLE = "73rd Afes Manage App";
-
-const MainLayout: React.FunctionComponent<Props> = (props) => {
+const MainLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
   const classes = useStyles();
-  const history = useHistory();
-  const [titleState, _setTitleState] = React.useState({
-    title: "",
-    _setTitle,
-  });
+  const titleCtx = useTitleContext();
+  const { currentUserId } = useAuthState();
 
-  function _setTitle(_new_title: string) {
-    _setTitleState((old) => ({ ...old, title: _new_title }));
-    document.title = _new_title + " - " + TITLE_SUFFIX;
-    if (_new_title === "" || history.location.pathname === "/")
-      document.title = TOP_TITLE;
-  }
+  const [scrollTop, setScrollTop] = useState(0);
+  const root = useRef<HTMLDivElement>(null);
+
+  const onScroll = () => {
+    setScrollTop(root.current ? root.current.scrollTop : 0);
+  };
+
+  useEffect(() => {
+    const ref = root.current;
+    if (!ref) return;
+    ref.addEventListener("scroll", onScroll);
+    return () => {
+      ref.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
   return (
-    <ThemeProvider theme={themes.light}>
-      <TitleContextProvider value={titleState}>
-        <Paper className={classes.root} square={true}>
-          <div className={classes.topBar}>
-            <TopBar title={titleState.title} />
-          </div>
-          <main className={classes.main}>{props.children}</main>
-          <div className={classes.bottomNav}>
-            <BottomNav />
-          </div>
-        </Paper>
-      </TitleContextProvider>
-    </ThemeProvider>
+    <Paper className={classes.root} square={true} ref={root}>
+      <TopBar
+        title={titleCtx.title}
+        scrollTop={scrollTop}
+        className={classes.topBar}
+      />
+      <main className={classes.main}>{children}</main>
+      {currentUserId && <BottomNav className={classes.bottomNav} />}
+    </Paper>
   );
 };
 
