@@ -86,7 +86,7 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
     data: StorageUserInfo
   ): Promise<StorageUserInfo | null> => {
     try {
-      const user = await api(aspida()).auth.user.$get({
+      const user = await api(aspida()).auth.me.$get({
         headers: { Authorization: `bearer ${data.token}` },
       });
       return { ...user, token: data.token };
@@ -103,7 +103,7 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
    * @param token 登録したい user の JWT
    */
   const registerUser = useCallback(async (token: string) => {
-    const user = await api(aspida()).auth.user.$get({
+    const user = await api(aspida()).auth.me.$get({
       headers: { Authorization: `bearer ${token}` },
     });
     setAllUsers((prev) => ({ ...prev, [user.id]: { ...user, token } }));
