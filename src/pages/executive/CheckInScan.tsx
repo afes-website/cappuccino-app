@@ -178,11 +178,7 @@ const CheckInScan: React.VFC = () => {
     setRsvCheckStatus("loading");
     api(aspida())
       .reservations._id(rsvId)
-      .check.$get({
-        headers: {
-          Authorization: "bearer " + currentUser?.token,
-        },
-      })
+      .check.$get()
       .then((res) => {
         setLatestRsv(res.reservation);
         if (res.valid) {
