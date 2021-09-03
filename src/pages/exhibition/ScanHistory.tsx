@@ -17,7 +17,7 @@ import { useTitleSet } from "libs/title";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
 import { getStringDateTime } from "libs/stringDate";
 import api, { ActivityLog } from "@afes-website/docs";
-import aspida from "@aspida/axios";
+import { useAspidaClient } from "components/AspidaClientContext";
 import moment, { Moment } from "moment";
 import ReloadButton from "components/ReloadButton";
 
@@ -53,6 +53,7 @@ const ScanHistory: React.VFC = () => {
   useRequirePermission("exhibition");
 
   const classes = useStyles();
+  const aspida = useAspidaClient();
   const { currentUser } = useAuthState();
   const wristBandPaletteColor = useWristBandPaletteColor();
   const theme = useTheme<Theme>();
@@ -62,7 +63,7 @@ const ScanHistory: React.VFC = () => {
 
   const load = useCallback(
     () =>
-      api(aspida())
+      api(aspida)
         .log.$get({
           headers: {
             Authorization: "bearer " + currentUser?.token,
@@ -75,7 +76,7 @@ const ScanHistory: React.VFC = () => {
           setLogs(res);
           setLastUpdated(moment());
         }),
-    [currentUser]
+    [aspida, currentUser?.id, currentUser?.token]
   );
 
   useEffect(() => {

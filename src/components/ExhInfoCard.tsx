@@ -3,8 +3,8 @@ import { Card, Typography } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import api, { ExhibitionStatus } from "@afes-website/docs";
-import aspida from "@aspida/axios";
 import { useAuthState } from "libs/auth/useAuth";
+import { useAspidaClient } from "components/AspidaClientContext";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -20,12 +20,13 @@ const useStyles = makeStyles((theme) =>
 const ExhInfoCard: React.VFC = () => {
   const { currentUser } = useAuthState();
   const classes = useStyles();
+  const aspida = useAspidaClient();
 
   const [exhInfo, setExhInfo] = useState<ExhibitionStatus | null>(null);
 
   const getExhInfo = () => {
     if (!currentUser || !currentUser.permissions.exhibition) return;
-    api(aspida())
+    api(aspida)
       .exhibitions._id(currentUser.id)
       .$get()
       .then((_exhInfo) => {
@@ -33,7 +34,7 @@ const ExhInfoCard: React.VFC = () => {
       });
   };
 
-  useEffect(getExhInfo, [currentUser]);
+  useEffect(getExhInfo, [aspida, currentUser]);
 
   if (!currentUser) return null;
   return (

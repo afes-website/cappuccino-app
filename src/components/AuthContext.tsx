@@ -12,7 +12,7 @@ import {
 import { AuthState, StorageUserInfo, StorageUsers } from "libs/auth/@types";
 import isAxiosError from "libs/isAxiosError";
 import api from "@afes-website/docs";
-import aspida from "@aspida/axios";
+import { useAspidaClient } from "components/AspidaClientContext";
 
 const ls_key_users = "users";
 const ls_key_current_user = "current_user";
@@ -25,6 +25,8 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
   updateCallback,
   children,
 }) => {
+  const aspida = useAspidaClient();
+
   const [allUsers, setAllUsers] = useState<StorageUsers>(
     JSON.parse(localStorage.getItem(ls_key_users) ?? "{}")
   );
@@ -82,19 +84,20 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
     if (updateCallback) updateCallback(authState);
   }, [_saveCurrentUserId, authState, updateCallback, currentUserId]);
 
-  const _updateUserInfo = async (
-    data: StorageUserInfo
-  ): Promise<StorageUserInfo | null> => {
-    try {
-      const user = await api(aspida()).auth.me.$get({
-        headers: { Authorization: `bearer ${data.token}` },
-      });
-      return { ...user, token: data.token };
-    } catch (e) {
-      if (isAxiosError(e) && e.response?.status === 401) return null;
-      else return data;
-    }
-  };
+  const _updateUserInfo = useCallback(
+    async (data: StorageUserInfo): Promise<StorageUserInfo | null> => {
+      try {
+        const user = await api(aspida).auth.me.$get({
+          headers: { Authorization: `bearer ${data.token}` },
+        });
+        return { ...user, token: data.token };
+      } catch (e) {
+        if (isAxiosError(e) && e.response?.status === 401) return null;
+        else return data;
+      }
+    },
+    [aspida]
+  );
 
   // ======== dispatch functions ========
 
@@ -102,13 +105,16 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
    * 指定された token に紐づいている user を登録する
    * @param token 登録したい user の JWT
    */
-  const registerUser = useCallback(async (token: string) => {
-    const user = await api(aspida()).auth.me.$get({
-      headers: { Authorization: `bearer ${token}` },
-    });
-    setAllUsers((prev) => ({ ...prev, [user.id]: { ...user, token } }));
-    setCurrentUserId(user.id);
-  }, []);
+  const registerUser = useCallback(
+    async (token: string) => {
+      const user = await api(aspida).auth.me.$get({
+        headers: { Authorization: `bearer ${token}` },
+      });
+      setAllUsers((prev) => ({ ...prev, [user.id]: { ...user, token } }));
+      setCurrentUserId(user.id);
+    },
+    [aspida]
+  );
 
   /**
    * 指定された id の user を削除する
@@ -136,7 +142,7 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
         }
       })
     );
-  }, [allUsers, removeUser]);
+  }, [_updateUserInfo, allUsers, removeUser]);
 
   /**
    * 現在の user を指定された id の user に切り替える
