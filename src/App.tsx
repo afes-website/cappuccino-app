@@ -13,6 +13,7 @@ import TabletLayout from "layouts/Tablet";
 import NotFound from "pages/NotFound";
 import { createBrowserHistory } from "history";
 import routes from "libs/routes";
+import AspidaClientContext from "components/AspidaClientContext";
 import AuthContext from "components/AuthContext";
 
 const App: React.VFC = () => {
@@ -44,14 +45,16 @@ const App: React.VFC = () => {
   }, []);
 
   return (
-    <AuthContext updateCallback={onAuthUpdate}>
-      <TypesafeRouter
-        routes={routes}
-        history={history}
-        layout={LayoutWithProviders}
-        fallback={NotFound}
-      />
-    </AuthContext>
+    <AspidaClientContext history={history}>
+      <AuthContext updateCallback={onAuthUpdate}>
+        <TypesafeRouter
+          routes={routes}
+          history={history}
+          layout={LayoutWithProviders}
+          fallback={NotFound}
+        />
+      </AuthContext>
+    </AspidaClientContext>
   );
 };
 
