@@ -55,6 +55,7 @@ const Login: React.VFC = () => {
     setIsLoading(true);
     setIsError(false);
     setErrorText([]);
+    // ログイン失敗として 401 が返ってくるので useAspidaClient しない！
     api(axios())
       .auth.login.$post({
         body: {
