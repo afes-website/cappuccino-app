@@ -15,7 +15,7 @@ import axios from "@aspida/axios";
 import { useTitleSet } from "libs/title";
 import { useAuthDispatch } from "libs/auth/useAuth";
 import routes from "libs/routes";
-import { StatusColor } from "../types/statusColor";
+import { StatusColor } from "types/statusColor";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
