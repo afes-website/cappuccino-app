@@ -3,7 +3,6 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import { useHistory } from "react-router-dom";
@@ -15,7 +14,7 @@ import {
 import { AuthState, StorageUserInfo, StorageUsers } from "libs/auth/@types";
 import isAxiosError from "libs/isAxiosError";
 import api from "@afes-website/docs";
-import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import { AspidaClient } from "aspida";
 import aspidaClient from "@aspida/axios";
 import routes from "libs/routes";
@@ -178,19 +177,14 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
 
   useEffect(() => {
     const axiosInstance = axios.create();
-    axiosInstance.interceptors.response.use(
-      undefined,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (error: any) => {
-        if (isAxiosError(error) && error.response?.status === 401) {
-          console.log("userId:", currentUserId);
-          if (currentUserId) removeUser(currentUserId);
-          // history.push(routes.Login.route.create({}));
-          return false;
-        }
-        return error;
+    axiosInstance.interceptors.response.use(undefined, (error: unknown) => {
+      if (isAxiosError(error) && error.response?.status === 401) {
+        if (currentUserId) removeUser(currentUserId);
+        history.push(routes.Home.route.create({}));
+        return false;
       }
-    );
+      return error;
+    });
     setAspida(aspidaClient(axiosInstance));
   }, [currentUserId, history, removeUser]);
 
