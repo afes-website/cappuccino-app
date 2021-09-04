@@ -2,6 +2,7 @@ import { typedRoute } from "components/TypesafeRouter";
 import { route } from "typesafe-react-router";
 import Home from "pages/Home";
 import Login from "pages/Login";
+import LoginQR from "pages/LoginQR";
 import Account from "pages/Account";
 import Forbidden from "pages/Forbidden";
 import Terms from "pages/Terms";
@@ -16,6 +17,7 @@ import ScanHistory from "pages/exhibition/ScanHistory";
 const routes = {
   Home: typedRoute(route(""), Home),
   Login: typedRoute(route("login"), Login),
+  LoginQR: typedRoute(route("login-qr"), LoginQR),
   Account: typedRoute(route("account"), Account),
   Forbidden: typedRoute(route("forbidden"), Forbidden),
   Terms: typedRoute(route("terms"), Terms),

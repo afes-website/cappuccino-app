@@ -95,7 +95,8 @@ const TopBar: React.VFC<Props> = ({ title, scrollTop, className }) => {
       >
         <Toolbar>
           {(currentUser ||
-            routes.Terms.route.create({}) === history.location.pathname) &&
+            routes.Terms.route.create({}) === history.location.pathname ||
+            routes.LoginQR.route.create({}) === history.location.pathname) &&
             (isNeedBackButton ? (
               <IconButton
                 className={classes.menuIcon}

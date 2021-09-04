@@ -6,6 +6,7 @@ import {
   CardActions,
   CardContent,
   CircularProgress,
+  Divider,
   Fade,
   FormGroup,
   FormHelperText,
@@ -174,6 +175,18 @@ const Login: React.VFC = () => {
               ) : (
                 "ログイン"
               )}
+            </Button>
+          </CardActions>
+          <Divider />
+          <CardActions>
+            <Button
+              variant="contained"
+              color="primary"
+              component={Link}
+              to={routes.LoginQR.route.create({})}
+              fullWidth={true}
+            >
+              QRコードでログイン
             </Button>
           </CardActions>
         </form>
