@@ -1,9 +1,8 @@
 import React from "react";
 import { useTitleSet } from "libs/title";
-import { useAuthState } from "libs/auth/useAuth";
+import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
 import { useRequirePermission } from "libs/auth/useRequirePermission";
 import api from "@afes-website/docs";
-import { useAspidaClient } from "components/AspidaClientContext";
 import GuestScan from "components/GuestScan";
 
 const EnterScan: React.VFC = () => {

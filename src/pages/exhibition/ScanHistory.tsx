@@ -3,21 +3,20 @@ import {
   CircularProgress,
   List,
   ListItem,
-  ListItemText,
   ListItemIcon,
+  ListItemText,
+  Theme,
   Typography,
   useTheme,
-  Theme,
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Login, Logout } from "components/MaterialSvgIcons";
-import { useAuthState } from "libs/auth/useAuth";
+import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
 import { useRequirePermission } from "libs/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
 import { getStringDateTime } from "libs/stringDate";
 import api, { ActivityLog } from "@afes-website/docs";
-import { useAspidaClient } from "components/AspidaClientContext";
 import moment, { Moment } from "moment";
 import ReloadButton from "components/ReloadButton";
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Button,
   Card,
@@ -24,14 +24,13 @@ import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import ResultPopup, { ResultPopupRefs } from "components/ResultPopup";
 import ErrorDialog from "components/ErrorDialog";
 import { useTitleSet } from "libs/title";
-import { useAuthState } from "libs/auth/useAuth";
+import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
 import { useRequirePermission } from "libs/auth/useRequirePermission";
 import useErrorHandler from "libs/errorHandler";
 import { getStringDateTimeBrief, getStringTime } from "libs/stringDate";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
 import { StatusColor } from "types/statusColor";
 import api, { Reservation, Term } from "@afes-website/docs";
-import { useAspidaClient } from "components/AspidaClientContext";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>

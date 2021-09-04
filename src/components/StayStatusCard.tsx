@@ -15,10 +15,9 @@ import {
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import StayStatus from "components/StayStatus";
-import { useAuthState } from "libs/auth/useAuth";
+import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
 import routes from "libs/routes";
 import api, { ExhibitionStatus, Terms } from "@afes-website/docs";
-import { useAspidaClient } from "components/AspidaClientContext";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

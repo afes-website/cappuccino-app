@@ -22,7 +22,7 @@ import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import DirectInputFab from "components/DirectInputFab";
 import DirectInputModal from "components/DirectInputModal";
-import { useAuthState } from "libs/auth/useAuth";
+import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
 import { useRequirePermission } from "libs/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
 import isAxiosError from "libs/isAxiosError";
@@ -36,7 +36,6 @@ import api, {
   Guest,
   Reservation,
 } from "@afes-website/docs";
-import { useAspidaClient } from "components/AspidaClientContext";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>
