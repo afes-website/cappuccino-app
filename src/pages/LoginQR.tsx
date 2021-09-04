@@ -16,6 +16,8 @@ import { useTitleSet } from "libs/title";
 import { useAuthDispatch } from "libs/auth/useAuth";
 import routes from "libs/routes";
 import { StatusColor } from "types/statusColor";
+import isAxiosError from "../libs/isAxiosError";
+import ErrorDialog from "../components/ErrorDialog";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -33,43 +35,87 @@ const LoginQR: React.VFC = () => {
   const { registerUser } = useAuthDispatch();
   const [checkStatus, setCheckStatus] = useState<StatusColor | null>(null);
   const [id, setId] = useState("");
-
   const [encoded, setEncoded] = useState("");
+  const [errorText, setErrorText] = useState<string[]>([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleScan = (data: string | null) => {
-    if (data && encoded !== data && checkStatus !== "loading") {
-      setCheckStatus("loading");
-      setEncoded(data);
-      const json = atob(data);
-      const obj = JSON.parse(json);
+    if (data === null || encoded === data || checkStatus === "loading") return;
+    setCheckStatus("loading");
+    setEncoded(data);
 
-      if (
-        typeof obj === "object" &&
-        Object.prototype.hasOwnProperty.call(obj, "id") &&
-        Object.prototype.hasOwnProperty.call(obj, "pw")
-      ) {
-        const id = obj.id;
-        const pw = obj.pw;
-        setId(id);
-        if (typeof id === "string" && typeof pw === "string") {
-          api(axios())
-            .auth.login.$post({ body: { id: id, password: pw } })
-            .then((res) => {
-              registerUser(res.token).then(() => {
-                setCheckStatus("success");
-                if (gtag) gtag("event", "login");
-                history.push(routes.Home.route.create({}));
-              });
-            })
-            .catch((e) => {
-              setCheckStatus("error");
-              // setError(e);
-            });
+    const obj = (() => {
+      try {
+        const json = atob(data);
+        return JSON.parse(json);
+      } catch (e) {
+        setCheckStatus("error");
+        setDialogOpen(true);
+        if (e instanceof DOMException) {
+          setErrorText([
+            "デコード中に問題が発生しました。",
+            "読み取るQRコードが違う可能性があります。",
+          ]);
+        } else if (e instanceof SyntaxError) {
+          setErrorText([
+            "パース中に問題が発生しました。",
+            "読み取るQRコードが違う可能性があります。",
+          ]);
+        } else {
+          setErrorText([
+            "変換中の不明なエラーです。",
+            "読み取るQRコードが違う可能性があります。",
+          ]);
         }
-        // invalid json
+        return null;
       }
-      // invalid qr
+    })();
+
+    if (obj === null) return;
+
+    if (
+      typeof obj === "object" &&
+      Object.prototype.hasOwnProperty.call(obj, "id") &&
+      Object.prototype.hasOwnProperty.call(obj, "pw")
+    ) {
+      const id = obj.id;
+      const pw = obj.pw;
+      setId(id);
+      if (typeof id === "string" && typeof pw === "string") {
+        api(axios())
+          .auth.login.$post({ body: { id: id, password: pw } })
+          .then((res) => {
+            registerUser(res.token).then(() => {
+              setCheckStatus("success");
+              if (gtag) gtag("event", "login");
+              history.push(routes.Home.route.create({}));
+            });
+          })
+          .catch((e) => {
+            setCheckStatus("error");
+            setDialogOpen(true);
+            if (e.response?.status === 401)
+              setErrorText([
+                "ID またはパスワードが間違っています。",
+                "QRコードが古い可能性があります。展示責任者から最新のQRコードを受け取って下さい。",
+              ]);
+            else if (e.response?.status === 429)
+              setErrorText([
+                "ログイン失敗が多すぎます。",
+                "QRコードを確認し、1分後にもう一度お試しください。",
+              ]);
+            else
+              setErrorText([
+                "不明なエラーです。もう一度お試しください。",
+                `Message: ${
+                  (isAxiosError(e) && e.response?.data.message) || e.message
+                }`,
+              ]);
+          });
+      }
+      // invalid json
     }
+    // invalid qr
   };
 
   return (
@@ -92,6 +138,15 @@ const LoginQR: React.VFC = () => {
             </ListItem>
           </List>
         </CardContent>
+      </Card>
+      <Card>
+        <ErrorDialog
+          open={dialogOpen}
+          message={errorText}
+          onClose={() => {
+            setDialogOpen(false);
+          }}
+        />
       </Card>
     </CardList>
   );
