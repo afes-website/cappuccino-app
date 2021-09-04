@@ -3,16 +3,22 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
+import { useHistory } from "react-router-dom";
 import {
-  AuthStateContextProvider,
   AuthDispatchContextProvider,
+  AuthStateContextProvider,
+  AspidaClientContextProvider,
 } from "libs/auth/useAuth";
 import { AuthState, StorageUserInfo, StorageUsers } from "libs/auth/@types";
 import isAxiosError from "libs/isAxiosError";
 import api from "@afes-website/docs";
-import { useAspidaClient } from "components/AspidaClientContext";
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import { AspidaClient } from "aspida";
+import aspidaClient from "@aspida/axios";
+import routes from "libs/routes";
 
 const ls_key_users = "users";
 const ls_key_current_user = "current_user";
@@ -25,7 +31,11 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
   updateCallback,
   children,
 }) => {
-  const aspida = useAspidaClient();
+  const history = useHistory();
+
+  const [aspida, setAspida] = useState<AspidaClient<AxiosRequestConfig>>(
+    aspidaClient()
+  );
 
   const [allUsers, setAllUsers] = useState<StorageUsers>(
     JSON.parse(localStorage.getItem(ls_key_users) ?? "{}")
@@ -164,10 +174,32 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
     [registerUser, removeUser, switchCurrentUser, updateAllUsers]
   );
 
+  // ======== aspida client ========
+
+  useEffect(() => {
+    const axiosInstance = axios.create();
+    axiosInstance.interceptors.response.use(
+      undefined,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (error: any) => {
+        if (isAxiosError(error) && error.response?.status === 401) {
+          console.log("userId:", currentUserId);
+          if (currentUserId) removeUser(currentUserId);
+          // history.push(routes.Login.route.create({}));
+          return false;
+        }
+        return error;
+      }
+    );
+    setAspida(aspidaClient(axiosInstance));
+  }, [currentUserId, history, removeUser]);
+
   return (
     <AuthStateContextProvider value={authState}>
       <AuthDispatchContextProvider value={authDispatch}>
-        {children}
+        <AspidaClientContextProvider value={aspida}>
+          {children}
+        </AspidaClientContextProvider>
       </AuthDispatchContextProvider>
     </AuthStateContextProvider>
   );
