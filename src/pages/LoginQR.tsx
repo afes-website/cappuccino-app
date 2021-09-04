@@ -113,9 +113,7 @@ const LoginQR: React.VFC = () => {
               ]);
           });
       }
-      // invalid json
     }
-    // invalid qr
   };
 
   return (
