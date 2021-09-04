@@ -83,6 +83,16 @@ const LoginQR: React.VFC = () => {
           />
         </CardContent>
       </Card>
+      <Card>
+        <CardContent className={classes.noPadding}>
+          <List>
+            <ListItem>
+              {/*ListItemIcon*/}
+              <ListItemText primary={id ? id : "-"} secondary="User Id" />
+            </ListItem>
+          </List>
+        </CardContent>
+      </Card>
     </CardList>
   );
 };
