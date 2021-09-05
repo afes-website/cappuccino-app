@@ -32,15 +32,14 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
 }) => {
   const history = useHistory();
 
-  const [aspida, setAspida] = useState<AspidaClient<AxiosRequestConfig>>(
-    aspidaClient()
-  );
-
   const [allUsers, setAllUsers] = useState<StorageUsers>(
     JSON.parse(localStorage.getItem(ls_key_users) ?? "{}")
   );
   const [currentUserId, setCurrentUserId] = useState<string | null>(
     localStorage.getItem(ls_key_current_user) || null
+  );
+  const [aspida, setAspida] = useState<AspidaClient<AxiosRequestConfig>>(
+    aspidaClient()
   );
 
   useEffect(() => {
@@ -64,6 +63,31 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
 
   // ======== inner functions ========
 
+  /**
+   * 401 check 付き aspida client を再生成する
+   *
+   * useEffect で呼び出すのでは遅いので、setCurrentUserId と同時に呼び出す必要がある
+   */
+  const _generateAspidaClient = useCallback(
+    (userId: string | null) => {
+      const axiosInstance = axios.create();
+      axiosInstance.interceptors.response.use(undefined, (error: unknown) => {
+        if (isAxiosError(error) && error.response?.status === 401) {
+          if (userId)
+            setAllUsers((prev) => {
+              const { [userId]: _, ...next } = prev;
+              return next;
+            });
+          history.push(routes.Home.route.create({}));
+          return false;
+        }
+        return error;
+      });
+      setAspida(aspidaClient(axiosInstance));
+    },
+    [history]
+  );
+
   const _saveAllUsers = useCallback(
     () => localStorage.setItem(ls_key_users, JSON.stringify(allUsers)),
     [allUsers]
@@ -76,22 +100,11 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
 
   const _reloadCurrentUser = useCallback(() => {
     if (currentUserId === null || !(currentUserId in allUsers)) {
-      setCurrentUserId(Object.keys(allUsers)[0] ?? null);
+      const newUserId: string | null = Object.keys(allUsers)[0] ?? null;
+      setCurrentUserId(newUserId);
+      _generateAspidaClient(newUserId);
     }
-  }, [allUsers, currentUserId]);
-
-  // allUsers 監視
-  useEffect(() => {
-    _saveAllUsers();
-    _reloadCurrentUser();
-    if (updateCallback) updateCallback(authState);
-  }, [_saveAllUsers, _reloadCurrentUser, updateCallback, allUsers, authState]);
-
-  // currentUserId 監視
-  useEffect(() => {
-    _saveCurrentUserId();
-    if (updateCallback) updateCallback(authState);
-  }, [_saveCurrentUserId, authState, updateCallback, currentUserId]);
+  }, [_generateAspidaClient, allUsers, currentUserId]);
 
   const _updateUserInfo = useCallback(
     async (data: StorageUserInfo): Promise<StorageUserInfo | null> => {
@@ -108,6 +121,19 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
     [aspida]
   );
 
+  // allUsers 監視
+  useEffect(() => {
+    _saveAllUsers();
+    _reloadCurrentUser();
+    if (updateCallback) updateCallback(authState);
+  }, [_saveAllUsers, _reloadCurrentUser, updateCallback, allUsers, authState]);
+
+  // currentUserId 監視
+  useEffect(() => {
+    _saveCurrentUserId();
+    if (updateCallback) updateCallback(authState);
+  }, [_saveCurrentUserId, authState, updateCallback, currentUserId]);
+
   // ======== dispatch functions ========
 
   /**
@@ -121,8 +147,9 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
       });
       setAllUsers((prev) => ({ ...prev, [user.id]: { ...user, token } }));
       setCurrentUserId(user.id);
+      _generateAspidaClient(user.id);
     },
-    [aspida]
+    [_generateAspidaClient, aspida]
   );
 
   /**
@@ -161,9 +188,10 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
     (userId: string): void => {
       if (userId in allUsers) {
         setCurrentUserId(userId);
+        _generateAspidaClient(userId);
       }
     },
-    [allUsers]
+    [_generateAspidaClient, allUsers]
   );
 
   // ======== provide dispatch value ========
@@ -172,21 +200,6 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
     () => ({ registerUser, removeUser, updateAllUsers, switchCurrentUser }),
     [registerUser, removeUser, switchCurrentUser, updateAllUsers]
   );
-
-  // ======== aspida client ========
-
-  useEffect(() => {
-    const axiosInstance = axios.create();
-    axiosInstance.interceptors.response.use(undefined, (error: unknown) => {
-      if (isAxiosError(error) && error.response?.status === 401) {
-        if (currentUserId) removeUser(currentUserId);
-        history.push(routes.Home.route.create({}));
-        return false;
-      }
-      return error;
-    });
-    setAspida(aspidaClient(axiosInstance));
-  }, [currentUserId, history, removeUser]);
 
   return (
     <AuthStateContextProvider value={authState}>
