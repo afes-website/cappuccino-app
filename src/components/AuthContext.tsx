@@ -6,6 +6,8 @@ import React, {
   useState,
 } from "react";
 import { useHistory } from "react-router-dom";
+import { Snackbar } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 import {
   AuthDispatchContextProvider,
   AuthStateContextProvider,
@@ -13,11 +15,11 @@ import {
 } from "libs/auth/useAuth";
 import { AuthState, StorageUserInfo, StorageUsers } from "libs/auth/@types";
 import isAxiosError from "libs/isAxiosError";
+import routes from "libs/routes";
 import api from "@afes-website/docs";
 import axios, { AxiosRequestConfig } from "axios";
 import { AspidaClient } from "aspida";
 import aspidaClient from "@aspida/axios";
-import routes from "libs/routes";
 
 const ls_key_users = "users";
 const ls_key_current_user = "current_user";
@@ -41,6 +43,8 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
   const [aspida, setAspida] = useState<AspidaClient<AxiosRequestConfig>>(
     aspidaClient()
   );
+  const [revokedUserId, setRevokedUserId] = useState<string | null>(null);
+  const [snackBarOpen, setSnackBarOpen] = useState(false);
 
   useEffect(() => {
     updateAllUsers();
@@ -78,7 +82,9 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
               const { [userId]: _, ...next } = prev;
               return next;
             });
-          history.push(routes.Home.route.create({}));
+          setRevokedUserId(userId);
+          setSnackBarOpen(true);
+          history.push(routes.Login.route.create({}), { id: userId });
           return false;
         }
         return error;
@@ -205,7 +211,16 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
     <AuthStateContextProvider value={authState}>
       <AuthDispatchContextProvider value={authDispatch}>
         <AspidaClientContextProvider value={aspida}>
-          {children}
+          <>
+            {children}
+            <RevokedNotice
+              userId={revokedUserId}
+              open={snackBarOpen}
+              onClose={() => {
+                setSnackBarOpen(false);
+              }}
+            />
+          </>
         </AspidaClientContextProvider>
       </AuthDispatchContextProvider>
     </AuthStateContextProvider>
@@ -213,3 +228,20 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
 };
 
 export default AuthContext;
+
+const RevokedNotice: React.VFC<{
+  userId: string | null;
+  open: boolean;
+  onClose: () => void;
+}> = ({ userId, open, onClose }) => (
+  <Snackbar
+    open={open}
+    onClose={onClose}
+    style={{ bottom: "calc(64px + env(safe-area-inset-bottom, 0))" }}
+  >
+    <Alert onClose={onClose} severity="warning">
+      もう一度{` @${userId} `}
+      を使用するにはログインしてください。
+    </Alert>
+  </Snackbar>
+);

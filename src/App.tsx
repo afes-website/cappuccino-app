@@ -71,11 +71,11 @@ const LayoutWithProviders: React.VFC<PropsWithChildren<unknown>> = ({
   ]);
 
   return (
-    <Auth>
-      <LayoutWrapper>
+    <LayoutWrapper>
+      <Auth>
         <Layout>{children}</Layout>
-      </LayoutWrapper>
-    </Auth>
+      </Auth>
+    </LayoutWrapper>
   );
 };
 

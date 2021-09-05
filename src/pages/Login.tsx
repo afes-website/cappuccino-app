@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import {
   Button,
@@ -50,6 +50,19 @@ const Login: React.VFC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState<string[]>([]);
   useTitleSet("ログイン");
+
+  useEffect(() => {
+    const state: unknown = history.location.state;
+    if (state && typeof state === "object") {
+      const stateObj = state as Record<string, unknown>;
+      if (
+        Object.prototype.hasOwnProperty.call(stateObj, "id") &&
+        typeof stateObj.id === "string"
+      ) {
+        setId(stateObj.id);
+      }
+    }
+  }, [history.location.state]);
 
   const login = (e?: React.FormEvent<HTMLFormElement>) => {
     setIsLoading(true);
