@@ -43,8 +43,6 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
   const [aspida, setAspida] = useState<AspidaClient<AxiosRequestConfig>>(
     aspidaClient()
   );
-  const [revokedUserId, setRevokedUserId] = useState<string | null>(null);
-  const [snackBarOpen, setSnackBarOpen] = useState(false);
 
   useEffect(() => {
     updateAllUsers();
@@ -82,8 +80,6 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
               const { [userId]: _, ...next } = prev;
               return next;
             });
-          setRevokedUserId(userId);
-          setSnackBarOpen(true);
           history.push(routes.Login.route.create({}), { id: userId });
           return false;
         }
@@ -211,16 +207,7 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
     <AuthStateContextProvider value={authState}>
       <AuthDispatchContextProvider value={authDispatch}>
         <AspidaClientContextProvider value={aspida}>
-          <>
-            {children}
-            <RevokedNotice
-              userId={revokedUserId}
-              open={snackBarOpen}
-              onClose={() => {
-                setSnackBarOpen(false);
-              }}
-            />
-          </>
+          {children}
         </AspidaClientContextProvider>
       </AuthDispatchContextProvider>
     </AuthStateContextProvider>
@@ -228,20 +215,3 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
 };
 
 export default AuthContext;
-
-const RevokedNotice: React.VFC<{
-  userId: string | null;
-  open: boolean;
-  onClose: () => void;
-}> = ({ userId, open, onClose }) => (
-  <Snackbar
-    open={open}
-    onClose={onClose}
-    style={{ bottom: "calc(64px + env(safe-area-inset-bottom, 0))" }}
-  >
-    <Alert onClose={onClose} severity="warning">
-      もう一度{` @${userId} `}
-      を使用するにはログインしてください。
-    </Alert>
-  </Snackbar>
-);

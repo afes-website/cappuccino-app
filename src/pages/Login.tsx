@@ -49,6 +49,7 @@ const Login: React.VFC = () => {
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState<string[]>([]);
+  const [revokedId, setRevokedId] = useState<string | null>(null);
   useTitleSet("ログイン");
 
   useEffect(() => {
@@ -59,6 +60,7 @@ const Login: React.VFC = () => {
         Object.prototype.hasOwnProperty.call(stateObj, "id") &&
         typeof stateObj.id === "string"
       ) {
+        setRevokedId(stateObj.id);
         setId(stateObj.id);
       }
     }
@@ -112,7 +114,9 @@ const Login: React.VFC = () => {
         <form onSubmit={login} className={classes.form}>
           <CardContent>
             <Typography variant="body2" className={classes.mb}>
-              配布されたアカウントを追加
+              {revokedId
+                ? `@${revokedId} を使用するにはログインしてください`
+                : "配布されたアカウントを追加"}
             </Typography>
             <FormGroup className={classes.mb}>
               {isError
