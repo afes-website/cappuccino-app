@@ -157,10 +157,10 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
       const user = await api(aspida).auth.me.$get({
         headers: { Authorization: `bearer ${token}` },
       });
-      setAllUsers((prev) => ({
-        ...prev,
-        [user.id]: { ...user, token, valid: true },
-      }));
+      setAllUsers((prev) => {
+        const { [user.id]: _, ...users } = prev;
+        return { [user.id]: { ...user, token }, ...users };
+      });
       setCurrentUserId(user.id);
     },
     [aspida, setCurrentUserId]
@@ -202,9 +202,18 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
     (userId: string): void => {
       if (userId in allUsers) {
         setCurrentUserId(userId);
+        if (currentUserId) {
+          setAllUsers((prev) => {
+            const { [currentUserId]: currentUser, ...otherUsers } = prev;
+            return {
+              [currentUserId]: currentUser,
+              ...otherUsers,
+            };
+          });
+        }
       }
     },
-    [allUsers, setCurrentUserId]
+    [allUsers, currentUserId, setCurrentUserId]
   );
 
   // ======== provide dispatch value ========
