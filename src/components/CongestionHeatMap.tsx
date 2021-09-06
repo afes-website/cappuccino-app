@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
     path: {
       fill: "none",
       stroke: theme.palette.text.primary,
-      strokeWidth: 3,
+      strokeWidth: 4,
       strokeLinejoin: "round",
     },
     floorNum: {
