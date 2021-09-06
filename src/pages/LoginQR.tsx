@@ -8,7 +8,7 @@ import {
   ListItemText,
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import api from "@afes-website/docs";
+import api, { UserInfo } from "@afes-website/docs";
 import axios from "@aspida/axios";
 import CardList from "components/CardList";
 import ErrorDialog from "components/ErrorDialog";
@@ -33,7 +33,10 @@ const LoginQR: React.VFC = () => {
   const classes = useStyles();
   const history = useHistory();
   const { registerUser } = useAuthDispatch();
-  const [checkStatus, setCheckStatus] = useState<StatusColor | null>(null);
+  const [checkStatus, setCheckStatus] = useState<
+    StatusColor | "confirm" | null
+  >(null);
+  const [user, setUser] = useState<UserInfo | null>(null);
   const [id, setId] = useState("");
   const [encoded, setEncoded] = useState("");
   const [errorText, setErrorText] = useState<string[]>([]);
@@ -85,11 +88,30 @@ const LoginQR: React.VFC = () => {
         api(axios())
           .auth.login.$post({ body: { id: id, password: pw } })
           .then((res) => {
-            registerUser(res.token).then(() => {
-              setCheckStatus("success");
-              if (gtag) gtag("event", "login");
-              history.push(routes.Home.route.create({}));
-            });
+            api(axios())
+              .auth.me.$get({
+                headers: {
+                  Authorization: "bearer " + res.token,
+                },
+              })
+              .then((Info) => {
+                setCheckStatus("confirm");
+                setUser(Info);
+              })
+              .catch((e) => {
+                setCheckStatus("error");
+                setDialogOpen(true);
+                setErrorText([
+                  "情報を取得できませんでした",
+                  (isAxiosError(e) && e.response?.data.message) || e.message,
+                ]);
+              });
+
+            // registerUser(res.token).then(() => {
+            //   setColorStatus("success");
+            //   if (gtag) gtag("event", "login");
+            //   history.push(routes.Home.route.create({}));
+            // });
           })
           .catch((e) => {
             setCheckStatus("error");
@@ -117,36 +139,62 @@ const LoginQR: React.VFC = () => {
   };
 
   return (
-    <CardList>
-      <Card>
-        <CardContent className={classes.noPadding}>
-          <QRScanner
-            onScanFunc={handleScan}
-            videoStop={false}
-            color={checkStatus ?? undefined}
-          />
-        </CardContent>
-      </Card>
-      <Card>
-        <CardContent className={classes.noPadding}>
-          <List>
-            <ListItem>
-              {/*ListItemIcon*/}
-              <ListItemText primary={id ? id : "-"} secondary="User Id" />
-            </ListItem>
-          </List>
-        </CardContent>
-      </Card>
-      <Card>
-        <ErrorDialog
-          open={dialogOpen}
-          message={errorText}
-          onClose={() => {
-            setDialogOpen(false);
-          }}
-        />
-      </Card>
-    </CardList>
+    <div>
+      {checkStatus === "confirm" ? (
+        <CardList>
+          <Card>
+            <CardContent className={classes.noPadding}>
+              <List>
+                <ListItem>
+                  <ListItemText
+                    primary={user ? user.id : "-"}
+                    secondary="User Id"
+                  />
+                </ListItem>
+                <ListItem>
+                  {/*ListItemIcon*/}
+                  <ListItemText
+                    primary={user ? user.name : "-"}
+                    secondary="User Name"
+                  />
+                </ListItem>
+              </List>
+            </CardContent>
+          </Card>
+        </CardList>
+      ) : (
+        <CardList>
+          <Card>
+            <CardContent className={classes.noPadding}>
+              <QRScanner
+                onScanFunc={handleScan}
+                videoStop={false}
+                color={checkStatus ?? undefined}
+              />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className={classes.noPadding}>
+              <List>
+                <ListItem>
+                  {/*ListItemIcon*/}
+                  <ListItemText primary={id ? id : "-"} secondary="User Id" />
+                </ListItem>
+              </List>
+            </CardContent>
+          </Card>
+          <Card>
+            <ErrorDialog
+              open={dialogOpen}
+              message={errorText}
+              onClose={() => {
+                setDialogOpen(false);
+              }}
+            />
+          </Card>
+        </CardList>
+      )}
+    </div>
   );
 };
 
