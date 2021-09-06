@@ -6,8 +6,6 @@ import React, {
   useState,
 } from "react";
 import { useHistory } from "react-router-dom";
-import { Snackbar } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
 import {
   AuthDispatchContextProvider,
   AuthStateContextProvider,
