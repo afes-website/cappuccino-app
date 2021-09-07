@@ -37,6 +37,7 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
 }) => {
   const history = useHistory();
 
+  // 数字のみで構成される key については挿入順が保証されないけど、数字のみ id なんて使わないだろうしヨシ！
   const [allUsers, setAllUsers] = useState<StorageUsers>(
     JSON.parse(localStorage.getItem(ls_key_users) ?? "{}")
   );
@@ -157,6 +158,7 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
       const user = await api(aspida).auth.me.$get({
         headers: { Authorization: `bearer ${token}` },
       });
+      // user を先頭に追加
       setAllUsers((prev) => {
         const { [user.id]: _, ...users } = prev;
         return { [user.id]: { ...user, token }, ...users };
@@ -186,6 +188,7 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
         try {
           const user = await _updateUserInfo(allUsers[userId]);
           if (!user) removeUser(userId);
+          // 全ての user が順番に末尾に追加されるので順序は保持される
           else setAllUsers((prev) => ({ ...prev, [userId]: user }));
         } catch {
           removeUser(userId);
@@ -203,6 +206,7 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
       if (userId in allUsers) {
         setCurrentUserId(userId);
         if (currentUserId) {
+          // currentUser を先頭に移動
           setAllUsers((prev) => {
             const { [currentUserId]: currentUser, ...otherUsers } = prev;
             return {
