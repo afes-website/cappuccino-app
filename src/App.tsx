@@ -14,9 +14,33 @@ import NotFound from "pages/NotFound";
 import { createBrowserHistory } from "history";
 import routes from "libs/routes";
 import AuthContext from "components/AuthContext";
+import { useHistory } from "react-router-dom";
 
 const App: React.VFC = () => {
   const [history] = useState(createBrowserHistory());
+
+  useEffect(() => {
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
+    };
+  }, []);
+
+  return (
+    <TypesafeRouter
+      routes={routes}
+      history={history}
+      layout={LayoutWithProviders}
+      fallback={NotFound}
+    />
+  );
+};
+
+const Auth: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
+  const history = useHistory();
 
   const onAuthUpdate = useCallback(
     (authState) => {
@@ -33,26 +57,7 @@ const App: React.VFC = () => {
     [history]
   );
 
-  useEffect(() => {
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("orientationchange", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("orientationchange", handleResize);
-    };
-  }, []);
-
-  return (
-    <AuthContext updateCallback={onAuthUpdate}>
-      <TypesafeRouter
-        routes={routes}
-        history={history}
-        layout={LayoutWithProviders}
-        fallback={NotFound}
-      />
-    </AuthContext>
-  );
+  return <AuthContext updateCallback={onAuthUpdate}>{children}</AuthContext>;
 };
 
 const LayoutWithProviders: React.VFC<PropsWithChildren<unknown>> = ({
@@ -66,9 +71,11 @@ const LayoutWithProviders: React.VFC<PropsWithChildren<unknown>> = ({
   ]);
 
   return (
-    <LayoutWrapper>
-      <Layout>{children}</Layout>
-    </LayoutWrapper>
+    <Auth>
+      <LayoutWrapper>
+        <Layout>{children}</Layout>
+      </LayoutWrapper>
+    </Auth>
   );
 };
 

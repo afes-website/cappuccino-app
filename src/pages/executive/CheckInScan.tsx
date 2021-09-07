@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Button,
   Card,
@@ -24,14 +24,13 @@ import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import ResultPopup, { ResultPopupRefs } from "components/ResultPopup";
 import ErrorDialog from "components/ErrorDialog";
 import { useTitleSet } from "libs/title";
-import { useAuthState } from "libs/auth/useAuth";
+import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
 import { useRequirePermission } from "libs/auth/useRequirePermission";
 import useErrorHandler from "libs/errorHandler";
 import { getStringDateTimeBrief, getStringTime } from "libs/stringDate";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
 import { StatusColor } from "types/statusColor";
 import api, { Reservation, Term } from "@afes-website/docs";
-import aspida from "@aspida/axios";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>
@@ -92,6 +91,7 @@ const CheckInScan: React.VFC = () => {
   useTitleSet("文化祭 入場スキャン");
   useRequirePermission("executive");
   const classes = useStyles();
+  const aspida = useAspidaClient();
   const { currentUser } = useAuthState();
 
   const wristBandPaletteColor = useWristBandPaletteColor();
@@ -176,7 +176,7 @@ const CheckInScan: React.VFC = () => {
 
   const checkRsv = (rsvId: string) => {
     setRsvCheckStatus("loading");
-    api(aspida())
+    api(aspida)
       .reservations._id(rsvId)
       .check.$get()
       .then((res) => {
@@ -231,7 +231,7 @@ const CheckInScan: React.VFC = () => {
       setLatestGuestId(guestId);
       setGuestCheckStatus("loading");
       // guest id 検証 (rsv id は有効性を確認済)
-      api(aspida())
+      api(aspida)
         .guests.check_in.$post({
           body: {
             reservation_id: latestRsvId,

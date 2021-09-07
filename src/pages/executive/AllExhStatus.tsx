@@ -1,27 +1,26 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Avatar,
+  Button,
+  ButtonGroup,
   CircularProgress,
   List,
-  ListItemText,
+  ListItem,
   ListItemIcon,
   ListItemSecondaryAction,
-  ListItem,
+  ListItemText,
+  Theme,
   Typography,
   useTheme,
-  Theme,
-  ButtonGroup,
-  Button,
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import ReloadButton from "components/ReloadButton";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
-import { useAuthState } from "libs/auth/useAuth";
+import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
 import { useRequirePermission } from "libs/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
 import { compareTerm } from "libs/compare";
 import api, { AllStatus, ExhibitionStatus, Terms } from "@afes-website/docs";
-import aspida from "@aspida/axios";
 import moment, { Moment } from "moment";
 
 const useStyles = makeStyles((theme) =>
@@ -74,6 +73,7 @@ const AllExhStatus: React.VFC = () => {
   useRequirePermission("executive");
 
   const classes = useStyles();
+  const aspida = useAspidaClient();
   const { currentUser } = useAuthState();
 
   const [status, setStatus] = useState<AllStatus | null>(null);
@@ -85,12 +85,12 @@ const AllExhStatus: React.VFC = () => {
   const load = useCallback(
     () =>
       Promise.all([
-        api(aspida())
+        api(aspida)
           .exhibitions.$get()
           .then((res) => {
             setStatus(res);
           }),
-        api(aspida())
+        api(aspida)
           .terms.$get({
             headers: {
               Authorization: "bearer " + currentUser?.token,
@@ -102,7 +102,7 @@ const AllExhStatus: React.VFC = () => {
       ]).then(() => {
         setLastUpdated(moment());
       }),
-    [currentUser?.token]
+    [aspida, currentUser?.token]
   );
 
   useEffect(() => {
@@ -163,7 +163,7 @@ const AllExhStatus: React.VFC = () => {
               <ListItemIcon>
                 <Avatar
                   alt={exhStatus.info.name}
-                  src={api(aspida())
+                  src={api(aspida)
                     .images._id(exhStatus.info.thumbnail_image_id)
                     .$path({ query: { size: "s" } })}
                 />

@@ -22,7 +22,7 @@ import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import DirectInputFab from "components/DirectInputFab";
 import DirectInputModal from "components/DirectInputModal";
-import { useAuthState } from "libs/auth/useAuth";
+import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
 import { useRequirePermission } from "libs/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
 import isAxiosError from "libs/isAxiosError";
@@ -36,7 +36,6 @@ import api, {
   Guest,
   Reservation,
 } from "@afes-website/docs";
-import aspida from "@aspida/axios";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>
@@ -80,6 +79,7 @@ const GuestInfo: React.VFC = () => {
   useRequirePermission(["executive", "reservation"]);
 
   const classes = useStyles();
+  const aspida = useAspidaClient();
   const { currentUser } = useAuthState();
   const resultChipRef = useRef<ResultChipRefs>(null);
 
@@ -148,7 +148,7 @@ const GuestInfo: React.VFC = () => {
       setGuestId(_guestId);
       setStatus("loading");
       try {
-        const getGuestInfo = api(aspida())
+        const getGuestInfo = api(aspida)
           .guests._id(_guestId)
           .$get({
             headers: {
@@ -158,7 +158,7 @@ const GuestInfo: React.VFC = () => {
           .then((_info) => {
             setGuestInfo(_info);
           });
-        const getActivityLog = api(aspida())
+        const getActivityLog = api(aspida)
           .log.$get({
             headers: {
               Authorization: "bearer " + currentUser?.token,
@@ -168,7 +168,7 @@ const GuestInfo: React.VFC = () => {
           .then((_logs) => {
             setActivityLogs(_logs);
           });
-        const getExhStatus = api(aspida())
+        const getExhStatus = api(aspida)
           .exhibitions.$get()
           .then((_status) => {
             setExhStatus(_status);
@@ -190,7 +190,7 @@ const GuestInfo: React.VFC = () => {
     if (_rsvId !== rsvId) {
       setRsvId(_rsvId);
       setStatus("loading");
-      api(aspida())
+      api(aspida)
         .reservations._id(_rsvId)
         .$get({
           headers: {

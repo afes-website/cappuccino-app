@@ -15,10 +15,9 @@ import {
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import StayStatus from "components/StayStatus";
-import { useAuthState } from "libs/auth/useAuth";
+import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
 import routes from "libs/routes";
 import api, { ExhibitionStatus, Terms } from "@afes-website/docs";
-import aspida from "@aspida/axios";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -44,6 +43,7 @@ const StatusCard: React.VFC<
 > = ({ children, getStatus, ...props }) => {
   const { currentUser } = useAuthState();
   const classes = useStyles();
+  const aspida = useAspidaClient();
 
   const [status, setStatus] = useState<Status | null>(null);
   const [terms, setTerms] = useState<Terms | null>(null);
@@ -52,7 +52,7 @@ const StatusCard: React.VFC<
     getStatus().then((status) => {
       setStatus(status);
     });
-    api(aspida())
+    api(aspida)
       .terms.$get({
         headers: {
           Authorization: "bearer " + currentUser?.token,
@@ -61,7 +61,7 @@ const StatusCard: React.VFC<
       .then((terms) => {
         setTerms(terms);
       });
-  }, [currentUser?.token, getStatus]);
+  }, [aspida, currentUser?.token, getStatus]);
 
   return (
     <Card>
@@ -111,13 +111,14 @@ const useHomeCardStyles = makeStyles((theme) =>
 
 export const GeneralStatusCard: React.VFC = () => {
   const classes = useHomeCardStyles();
+  const aspida = useAspidaClient();
 
   const getStatus = useCallback(
     () =>
-      api(aspida())
+      api(aspida)
         .exhibitions.$get()
         .then((status) => status.all),
-    []
+    [aspida]
   );
 
   return (
@@ -145,13 +146,14 @@ export const GeneralStatusCard: React.VFC = () => {
 
 export const ExhStatusCard: React.VFC = () => {
   const { currentUser } = useAuthState();
+  const aspida = useAspidaClient();
 
   const getStatus = useCallback(
     () =>
-      api(aspida())
+      api(aspida)
         .exhibitions._id(currentUser?.id || "")
         .$get(),
-    [currentUser]
+    [aspida, currentUser?.id]
   );
 
   return (

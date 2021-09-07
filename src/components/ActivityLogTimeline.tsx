@@ -11,9 +11,9 @@ import {
 } from "@material-ui/lab";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Login } from "components/MaterialSvgIcons";
+import { useAspidaClient } from "libs/auth/useAuth";
 import { getStringTime } from "libs/stringDate";
 import api, { ActivityLog, AllStatus, Guest } from "@afes-website/docs";
-import aspida from "@aspida/axios";
 import moment from "moment";
 import clsx from "clsx";
 
@@ -69,6 +69,7 @@ const ActivityLogTimeline: React.VFC<{
   exhStatus: AllStatus;
 }> = ({ guestInfo, logs: activityLogs, exhStatus }) => {
   const classes = useStyles();
+  const aspida = useAspidaClient();
 
   const exhLogs = useMemo(() => convertToExhLog(activityLogs), [activityLogs]);
 
@@ -118,7 +119,7 @@ const ActivityLogTimeline: React.VFC<{
                     ? exhStatus.exhibition[log.exhId].info.name
                     : "?"
                 }
-                src={api(aspida())
+                src={api(aspida)
                   .images._id(
                     log.exhId in exhStatus.exhibition
                       ? exhStatus.exhibition[log.exhId].info.thumbnail_image_id

@@ -5,14 +5,24 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useHistory } from "react-router-dom";
 import {
-  AuthStateContextProvider,
   AuthDispatchContextProvider,
+  AuthStateContextProvider,
+  AspidaClientContextProvider,
 } from "libs/auth/useAuth";
-import { AuthState, StorageUserInfo, StorageUsers } from "libs/auth/@types";
+import {
+  AuthDispatch,
+  AuthState,
+  StorageUserInfo,
+  StorageUsers,
+} from "libs/auth/@types";
 import isAxiosError from "libs/isAxiosError";
+import routes from "libs/routes";
 import api from "@afes-website/docs";
-import aspida from "@aspida/axios";
+import axios, { AxiosRequestConfig } from "axios";
+import { AspidaClient } from "aspida";
+import aspidaClient from "@aspida/axios";
 
 const ls_key_users = "users";
 const ls_key_current_user = "current_user";
@@ -25,11 +35,18 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
   updateCallback,
   children,
 }) => {
+  const history = useHistory();
+
   const [allUsers, setAllUsers] = useState<StorageUsers>(
     JSON.parse(localStorage.getItem(ls_key_users) ?? "{}")
   );
-  const [currentUserId, setCurrentUserId] = useState<string | null>(
+  const [currentUserId, _setCurrentUserId] = useState<string | null>(
     localStorage.getItem(ls_key_current_user) || null
+  );
+  // setCurrentUserId() is defined after _generateAspidaClient()
+
+  const [aspida, setAspida] = useState<AspidaClient<AxiosRequestConfig>>(
+    aspidaClient()
   );
 
   useEffect(() => {
@@ -53,6 +70,37 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
 
   // ======== inner functions ========
 
+  /**
+   * 401 check 付き aspida client を再生成する
+   */
+  const _generateAspidaClient = useCallback(
+    (userId: string | null) => {
+      const axiosInstance = axios.create();
+      axiosInstance.interceptors.response.use(undefined, (error: unknown) => {
+        if (isAxiosError(error) && error.response?.status === 401) {
+          if (userId)
+            setAllUsers((prev) => {
+              const { [userId]: _, ...next } = prev;
+              return next;
+            });
+          history.push(routes.Login.route.create({}), { id: userId });
+          return false;
+        }
+        return error;
+      });
+      setAspida(aspidaClient(axiosInstance));
+    },
+    [history]
+  );
+
+  const setCurrentUserId = useCallback<React.Dispatch<string | null>>(
+    (value) => {
+      _setCurrentUserId(value);
+      _generateAspidaClient(value);
+    },
+    [_generateAspidaClient]
+  );
+
   const _saveAllUsers = useCallback(
     () => localStorage.setItem(ls_key_users, JSON.stringify(allUsers)),
     [allUsers]
@@ -65,9 +113,25 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
 
   const _reloadCurrentUser = useCallback(() => {
     if (currentUserId === null || !(currentUserId in allUsers)) {
-      setCurrentUserId(Object.keys(allUsers)[0] ?? null);
+      const newUserId: string | null = Object.keys(allUsers)[0] ?? null;
+      setCurrentUserId(newUserId);
     }
-  }, [allUsers, currentUserId]);
+  }, [allUsers, currentUserId, setCurrentUserId]);
+
+  const _updateUserInfo = useCallback(
+    async (data: StorageUserInfo): Promise<StorageUserInfo | null> => {
+      try {
+        const user = await api(aspida).auth.me.$get({
+          headers: { Authorization: `bearer ${data.token}` },
+        });
+        return { ...user, token: data.token };
+      } catch (e) {
+        if (isAxiosError(e) && e.response?.status === 401) return null;
+        else return data;
+      }
+    },
+    [aspida]
+  );
 
   // allUsers 監視
   useEffect(() => {
@@ -82,33 +146,25 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
     if (updateCallback) updateCallback(authState);
   }, [_saveCurrentUserId, authState, updateCallback, currentUserId]);
 
-  const _updateUserInfo = async (
-    data: StorageUserInfo
-  ): Promise<StorageUserInfo | null> => {
-    try {
-      const user = await api(aspida()).auth.me.$get({
-        headers: { Authorization: `bearer ${data.token}` },
-      });
-      return { ...user, token: data.token };
-    } catch (e) {
-      if (isAxiosError(e) && e.response?.status === 401) return null;
-      else return data;
-    }
-  };
-
   // ======== dispatch functions ========
 
   /**
    * 指定された token に紐づいている user を登録する
    * @param token 登録したい user の JWT
    */
-  const registerUser = useCallback(async (token: string) => {
-    const user = await api(aspida()).auth.me.$get({
-      headers: { Authorization: `bearer ${token}` },
-    });
-    setAllUsers((prev) => ({ ...prev, [user.id]: { ...user, token } }));
-    setCurrentUserId(user.id);
-  }, []);
+  const registerUser = useCallback(
+    async (token: string) => {
+      const user = await api(aspida).auth.me.$get({
+        headers: { Authorization: `bearer ${token}` },
+      });
+      setAllUsers((prev) => ({
+        ...prev,
+        [user.id]: { ...user, token, valid: true },
+      }));
+      setCurrentUserId(user.id);
+    },
+    [aspida, setCurrentUserId]
+  );
 
   /**
    * 指定された id の user を削除する
@@ -136,7 +192,7 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
         }
       })
     );
-  }, [allUsers, removeUser]);
+  }, [_updateUserInfo, allUsers, removeUser]);
 
   /**
    * 現在の user を指定された id の user に切り替える
@@ -148,20 +204,27 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
         setCurrentUserId(userId);
       }
     },
-    [allUsers]
+    [allUsers, setCurrentUserId]
   );
 
   // ======== provide dispatch value ========
 
-  const authDispatch = useMemo(
-    () => ({ registerUser, removeUser, updateAllUsers, switchCurrentUser }),
+  const authDispatch: AuthDispatch = useMemo(
+    () => ({
+      registerUser,
+      removeUser,
+      updateAllUsers,
+      switchCurrentUser,
+    }),
     [registerUser, removeUser, switchCurrentUser, updateAllUsers]
   );
 
   return (
     <AuthStateContextProvider value={authState}>
       <AuthDispatchContextProvider value={authDispatch}>
-        {children}
+        <AspidaClientContextProvider value={aspida}>
+          {children}
+        </AspidaClientContextProvider>
       </AuthDispatchContextProvider>
     </AuthStateContextProvider>
   );

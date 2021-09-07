@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import {
   Button,
@@ -49,12 +49,28 @@ const Login: React.VFC = () => {
   const [isError, setIsError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorText, setErrorText] = useState<string[]>([]);
+  const [revokedId, setRevokedId] = useState<string | null>(null);
   useTitleSet("ログイン");
+
+  useEffect(() => {
+    const state: unknown = history.location.state;
+    if (state && typeof state === "object") {
+      const stateObj = state as Record<string, unknown>;
+      if (
+        Object.prototype.hasOwnProperty.call(stateObj, "id") &&
+        typeof stateObj.id === "string"
+      ) {
+        setRevokedId(stateObj.id);
+        setId(stateObj.id);
+      }
+    }
+  }, [history.location.state]);
 
   const login = (e?: React.FormEvent<HTMLFormElement>) => {
     setIsLoading(true);
     setIsError(false);
     setErrorText([]);
+    // ログイン失敗として 401 が返ってくるので useAspidaClient しない！
     api(axios())
       .auth.login.$post({
         body: {
@@ -98,7 +114,9 @@ const Login: React.VFC = () => {
         <form onSubmit={login} className={classes.form}>
           <CardContent>
             <Typography variant="body2" className={classes.mb}>
-              配布されたアカウントを追加
+              {revokedId
+                ? `@${revokedId} を使用するにはログインしてください`
+                : "配布されたアカウントを追加"}
             </Typography>
             <FormGroup className={classes.mb}>
               {isError

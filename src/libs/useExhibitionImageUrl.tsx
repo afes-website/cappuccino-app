@@ -1,6 +1,6 @@
-import api from "@afes-website/docs";
-import aspida from "@aspida/axios";
 import { useState } from "react";
+import api from "@afes-website/docs";
+import { useAspidaClient } from "libs/auth/useAuth";
 
 let imageIds: { [exhId: string]: string } | null = null;
 let imageIdsFetchPromise: Promise<unknown> | null = null;
@@ -9,6 +9,8 @@ const useExhibitionImageUrl = (
   exhId: string,
   query?: { size?: "s" | "m" }
 ): string | null => {
+  const aspida = useAspidaClient();
+
   const [fetchStatus, setFetchStatus] = useState<
     "beforeInit" | "waiting" | "ready"
   >("beforeInit");
@@ -16,7 +18,7 @@ const useExhibitionImageUrl = (
   switch (fetchStatus) {
     case "beforeInit":
       if (!imageIdsFetchPromise) {
-        imageIdsFetchPromise = api(aspida())
+        imageIdsFetchPromise = api(aspida)
           .exhibitions.$get()
           .then((allStatus) => {
             imageIds = Object.fromEntries(
@@ -37,7 +39,7 @@ const useExhibitionImageUrl = (
     case "ready":
       if (!imageIds || !Object.prototype.hasOwnProperty.call(imageIds, exhId))
         return null;
-      return api(aspida()).images._id(imageIds[exhId]).$path({ query });
+      return api(aspida).images._id(imageIds[exhId]).$path({ query });
   }
 };
 
