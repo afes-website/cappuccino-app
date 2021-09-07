@@ -16,4 +16,4 @@ const init = (): void => {
   }
 };
 
-document.documentElement.addEventListener("click", init);
+document.documentElement.addEventListener("click", init, { once: true });
