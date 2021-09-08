@@ -220,7 +220,7 @@ const GuestInfo: React.VFC = () => {
         if (resultChipRef.current) resultChipRef.current.close();
         break;
       case "success":
-        if (resultChipRef.current)
+        if (resultChipRef.current && id[mode])
           resultChipRef.current.open(
             "success",
             `取得成功 / ${name[mode]} ID: ${id[mode]}`,
@@ -228,7 +228,7 @@ const GuestInfo: React.VFC = () => {
           );
         break;
       case "error":
-        if (resultChipRef.current)
+        if (resultChipRef.current && id[mode])
           resultChipRef.current.open(
             "error",
             `取得失敗 / ${name[mode]} ID: ${id[mode]}`
