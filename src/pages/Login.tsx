@@ -6,7 +6,6 @@ import {
   CardActions,
   CardContent,
   CircularProgress,
-  Divider,
   Fade,
   FormGroup,
   FormHelperText,
@@ -36,6 +35,18 @@ const useStyles = makeStyles((theme) =>
     },
     terms: {
       width: "100%",
+    },
+    divider: {
+      display: "flex",
+      alignItems: "center",
+      margin: "16px 0",
+      "&::before, &::after": {
+        content: '""',
+        flexGrow: 1,
+        height: 1,
+        background: theme.palette.divider,
+        margin: "0 16px",
+      },
     },
   })
 );
@@ -177,7 +188,11 @@ const Login: React.VFC = () => {
               )}
             </Button>
           </CardActions>
-          <Divider />
+          <div className={classes.divider}>
+            <Typography variant="body2" color="textSecondary">
+              または
+            </Typography>
+          </div>
           <CardActions>
             <Button
               variant="contained"
