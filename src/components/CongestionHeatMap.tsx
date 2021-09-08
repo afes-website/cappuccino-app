@@ -44,6 +44,11 @@ const useStyles = makeStyles((theme: Theme) =>
       strokeWidth: 4,
       strokeLinejoin: "round",
     },
+    exhImgOutline: {
+      fill: "none",
+      stroke: "#fff",
+      strokeWidth: 4,
+    },
     floorNum: {
       position: "absolute",
       right: "15%",
@@ -141,18 +146,30 @@ const CongestionHeatMap: React.VFC<Props> = ({
                     className={classes.path}
                     style={{ fill: fillColor(id) }}
                   />
-                  <image
-                    x={info.x + (info.width ?? 64) / 2 - 30}
-                    y={info.y + (info.height ?? 64) / 2 - 30}
-                    width={60}
-                    height={60}
-                    href={exhImageUrl(id)}
-                    clipPath="circle(30px)"
-                    transform={`rotate(${-rotateDeg}, ${
-                      info.x + (info.width ?? 64) / 2
-                    }, ${info.y + (info.height ?? 64) / 2})`}
-                    opacity={0.5}
-                  />
+                  {exhImageUrl(id) && (
+                    <>
+                      <image
+                        x={info.x + (info.width ?? 64) / 2 - 25}
+                        y={info.y + (info.height ?? 64) / 2 - 25}
+                        width={50}
+                        height={50}
+                        href={exhImageUrl(id)}
+                        clipPath="circle(25px)"
+                        transform={`rotate(${-rotateDeg}, ${
+                          info.x + (info.width ?? 64) / 2
+                        }, ${info.y + (info.height ?? 64) / 2})`}
+                      />
+                      <circle
+                        cx={info.x + (info.width ?? 64) / 2}
+                        cy={info.y + (info.height ?? 64) / 2}
+                        r={26}
+                        transform={`rotate(${-rotateDeg}, ${
+                          info.x + (info.width ?? 64) / 2
+                        }, ${info.y + (info.height ?? 64) / 2})`}
+                        className={classes.exhImgOutline}
+                      />
+                    </>
+                  )}
                 </>
               ))}
               {lines[floor].map((points, index) => (
