@@ -10,10 +10,10 @@ import {
   FormGroup,
   FormHelperText,
   Grid,
-  makeStyles,
   TextField,
   Typography,
 } from "@material-ui/core";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
 import api from "@afes-website/docs";
 import axios from "@aspida/axios";
 import CardList from "components/CardList";
@@ -22,7 +22,6 @@ import { useAuthDispatch } from "libs/auth/useAuth";
 import routes from "libs/routes";
 import isAxiosError from "libs/isAxiosError";
 import { useTitleSet } from "libs/title";
-import { createStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
