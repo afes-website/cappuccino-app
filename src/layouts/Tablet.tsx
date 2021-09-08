@@ -3,6 +3,8 @@ import { createStyles, Grid, makeStyles, Paper } from "@material-ui/core";
 import TopBar from "components/TopBar";
 import SideNav from "components/SideNav";
 import { useTitleContext } from "libs/title";
+import clsx from "clsx";
+import { Menu } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -10,6 +12,7 @@ const useStyles = makeStyles((theme) =>
       height: "var(--100vh, 0px)",
       boxSizing: "border-box",
       paddingTop: "env(safe-area-inset-top)",
+      position: "relative",
     },
     content: {
       height: "calc(var(--100vh, 0px) - env(safe-area-inset-top))",
@@ -23,7 +26,7 @@ const useStyles = makeStyles((theme) =>
       position: "absolute",
       top: 0,
       right: 0,
-      width: "100%",
+      width: "100vw",
       zIndex: 600,
     },
     main: {
@@ -33,6 +36,37 @@ const useStyles = makeStyles((theme) =>
       paddingTop: 56,
       paddingBottom: "env(safe-area-inset-bottom)",
     },
+    openButton: {
+      position: "absolute",
+      background: theme.palette.background.default,
+      color: theme.palette.text.secondary,
+      boxShadow: theme.shadows[2],
+      borderRadius: "0 8px 8px 0",
+      boxSizing: "border-box",
+      left: 0,
+      bottom: 8,
+      width: 56,
+      height: 48,
+      padding: 12,
+      paddingLeft: 16,
+      transform: "translateX(-150%)",
+      transition: "all 0.3s ease 0.3s",
+      cursor: "pointer",
+    },
+    openButtonClosed: {
+      transform: "translateX(0)",
+    },
+    fullScreenContent: {
+      transition: "all 0.3s ease",
+    },
+    mainFullScreen: {
+      [theme.breakpoints.down("sm")]: {
+        transform: "translateX(-25%)",
+      },
+      [theme.breakpoints.up("md")]: {
+        transform: "translateX(-16.666%)",
+      },
+    },
   })
 );
 
@@ -41,6 +75,7 @@ const TabletLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
   const titleCtx = useTitleContext();
 
   const [scrollTop, setScrollTop] = useState(0);
+  const [navOpen, setNavOpen] = useState(true);
   const content = useRef<HTMLDivElement>(null);
 
   const onScroll = () => {
@@ -58,10 +93,31 @@ const TabletLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
 
   return (
     <Grid container className={classes.root}>
+      <div
+        onClick={() => {
+          setNavOpen(true);
+        }}
+        className={clsx(classes.openButton, {
+          [classes.openButtonClosed]: !navOpen,
+        })}
+      >
+        <Menu />
+      </div>
       <Grid item sm={4} md={3}>
-        <SideNav className={classes.content} />
+        <SideNav
+          navOpen={navOpen}
+          setNavOpen={setNavOpen}
+          className={classes.content}
+        />
       </Grid>
-      <Grid item sm={8} md={9}>
+      <Grid
+        item
+        sm={8}
+        md={9}
+        className={clsx(classes.fullScreenContent, {
+          [classes.mainFullScreen]: !navOpen,
+        })}
+      >
         <Paper
           square={true}
           ref={content}
@@ -71,7 +127,11 @@ const TabletLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
           <Grid container className={classes.topBar}>
             <Grid item sm={4} md={3} />
             <Grid item sm={8} md={9}>
-              <TopBar title={titleCtx.title} scrollTop={scrollTop} />
+              <TopBar
+                title={titleCtx.title}
+                scrollTop={scrollTop}
+                hideBackButton={!navOpen}
+              />
             </Grid>
           </Grid>
           <main className={classes.main}>{children}</main>
