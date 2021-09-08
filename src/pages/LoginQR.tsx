@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Button, Card, CardContent, Typography } from "@material-ui/core";
+import { Button, Card, CardContent, Grid, Typography } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import api from "@afes-website/docs";
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) =>
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      marginTop: "calc(var(--100vh) * 0.45 - 50%)",
+      marginTop: "calc(var(--100vh) * 0.5 - 56px - 50%)",
       "& > * + *": {
         marginTop: theme.spacing(4),
       },
@@ -179,71 +179,73 @@ const LoginQR: React.VFC = () => {
   };
 
   return (
-    <div>
-      {checkStatus === "confirm" ? (
-        <div className={classes.confirm}>
-          {user ? (
-            <>
-              <Typography variant="h5">ログインしますか？</Typography>
-              <div className={classes.userInfo}>
-                <AccountIcon account={user} className={classes.userIcon} />
-                <Typography variant="h6">{user.name}</Typography>
-                <Typography variant="body2">@{user.id}</Typography>
-              </div>
-              <div className={classes.login}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth={true}
-                  onClick={confirmLogin}
-                >
-                  ログイン
-                </Button>
-                <Button
-                  variant="text"
-                  color="secondary"
-                  size="small"
-                  fullWidth={true}
-                  onClick={cancelLogin}
-                >
-                  キャンセル
-                </Button>
-              </div>
-            </>
-          ) : (
-            <Typography>ユーザーが見つかりませんでした。</Typography>
-          )}
-        </div>
-      ) : (
-        <>
-          <CardList>
-            <Card>
-              <CardContent className={classes.noPadding}>
-                <QRScanner
-                  onScanFunc={handleScan}
-                  videoStop={false}
-                  color={checkStatus ?? undefined}
-                />
-              </CardContent>
-            </Card>
-            <Card>
-              <Alert severity="info">
-                <Typography variant="body2">
-                  配布されたQRコードをスキャンしてください。
-                </Typography>
-              </Alert>
-            </Card>
-          </CardList>
-          <ErrorDialog
-            open={dialogOpen}
-            message={errorText}
-            onClose={() => {
-              setDialogOpen(false);
-            }}
-          />
-        </>
-      )}
-    </div>
+    <Grid container justify="center">
+      <Grid xs={12} sm={10} md={8}>
+        {checkStatus === "confirm" ? (
+          <div className={classes.confirm}>
+            {user ? (
+              <>
+                <Typography variant="h5">ログインしますか？</Typography>
+                <div className={classes.userInfo}>
+                  <AccountIcon account={user} className={classes.userIcon} />
+                  <Typography variant="h6">{user.name}</Typography>
+                  <Typography variant="body2">@{user.id}</Typography>
+                </div>
+                <div className={classes.login}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth={true}
+                    onClick={confirmLogin}
+                  >
+                    ログイン
+                  </Button>
+                  <Button
+                    variant="text"
+                    color="secondary"
+                    size="small"
+                    fullWidth={true}
+                    onClick={cancelLogin}
+                  >
+                    キャンセル
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <Typography>ユーザーが見つかりませんでした。</Typography>
+            )}
+          </div>
+        ) : (
+          <>
+            <CardList>
+              <Card>
+                <CardContent className={classes.noPadding}>
+                  <QRScanner
+                    onScanFunc={handleScan}
+                    videoStop={false}
+                    color={checkStatus ?? undefined}
+                  />
+                </CardContent>
+              </Card>
+              <Card>
+                <Alert severity="info">
+                  <Typography variant="body2">
+                    配布されたQRコードをスキャンしてください。
+                  </Typography>
+                </Alert>
+              </Card>
+            </CardList>
+            <ErrorDialog
+              open={dialogOpen}
+              message={errorText}
+              onClose={() => {
+                setDialogOpen(false);
+              }}
+            />
+          </>
+        )}
+      </Grid>
+    </Grid>
   );
 };
 
