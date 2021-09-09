@@ -47,9 +47,6 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: theme.spacing(2),
       paddingTop: `calc(${theme.spacing(2)}px + env(safe-area-inset-top))`,
     },
-    currentUserPerm: {
-      marginTop: theme.spacing(0.5),
-    },
     menuIcon: {
       marginBottom: theme.spacing(1),
       fontSize: "40px",

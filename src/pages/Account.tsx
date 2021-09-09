@@ -53,9 +53,6 @@ const useStyles = makeStyles((theme: Theme) =>
     grid: {
       width: "100%",
     },
-    disabledIcon: {
-      opacity: theme.palette.action.disabledOpacity,
-    },
     listIcon: {
       fontSize: 32,
     },
