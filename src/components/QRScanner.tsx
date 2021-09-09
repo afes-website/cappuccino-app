@@ -192,7 +192,7 @@ const QRScanner: React.VFC<QRScannerProps> = (props) => {
             onLoad={() => {
               setScannerStatus("waiting");
             }}
-            delay={0}
+            delay={1}
             showViewFinder={false}
             facingMode="environment"
             constraints={{ deviceId: videoDeviceId, facingMode: "environment" }}
