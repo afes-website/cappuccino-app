@@ -91,17 +91,17 @@ const LoginQR: React.VFC = () => {
         if (e instanceof DOMException) {
           setErrorText([
             "デコード中に問題が発生しました。",
-            "読み取るQRコードが違う可能性があります。",
+            "誤った QR コードをスキャンしている可能性があります。",
           ]);
         } else if (e instanceof SyntaxError) {
           setErrorText([
             "パース中に問題が発生しました。",
-            "読み取るQRコードが違う可能性があります。",
+            "誤った QR コードをスキャンしている可能性があります。",
           ]);
         } else {
           setErrorText([
             "変換中の不明なエラーです。",
-            "読み取るQRコードが違う可能性があります。",
+            "誤った QR コードをスキャンしている可能性があります。",
           ]);
         }
         return null;
@@ -136,7 +136,7 @@ const LoginQR: React.VFC = () => {
                 setCheckStatus("error");
                 setDialogOpen(true);
                 setErrorText([
-                  "情報を取得できませんでした",
+                  "情報を取得できませんでした。",
                   (isAxiosError(e) && e.response?.data.message) || e.message,
                 ]);
               });
@@ -147,12 +147,12 @@ const LoginQR: React.VFC = () => {
             if (e.response?.status === 401)
               setErrorText([
                 "ID またはパスワードが間違っています。",
-                "QRコードが古い可能性があります。展示責任者から最新のQRコードを受け取って下さい。",
+                "QR コードが古い可能性があります。展示責任者から提示された最新の QR コードを使用してください。",
               ]);
             else if (e.response?.status === 429)
               setErrorText([
                 "ログイン失敗が多すぎます。",
-                "QRコードを確認し、1分後にもう一度お試しください。",
+                "QR コードを確認し、1分後にもう一度お試しください。",
               ]);
             else
               setErrorText([
