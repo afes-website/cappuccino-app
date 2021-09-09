@@ -16,8 +16,8 @@ import clsx from "clsx";
 const useStyles = makeStyles((theme) =>
   createStyles({
     avatar: {
-      background: `linear-gradient(120deg, ${theme.palette.afesBlue.main}, ${theme.palette.afesDark.main})`,
-      color: "#fff",
+      background: "none",
+      color: theme.palette.text.primary,
     },
     innerIcon: {
       fontSize: 28,

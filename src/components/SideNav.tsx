@@ -64,6 +64,10 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       justifyContent: "space-between",
     },
+    currentUserIconCurrent: {
+      background: "#fff",
+      color: theme.palette.primary.main,
+    },
     menuIcon: {
       marginBottom: theme.spacing(1),
       fontSize: "40px",
@@ -144,7 +148,14 @@ const SideNav: React.VFC<Props> = ({ navOpen, setNavOpen, className }) => {
         >
           <CardContent>
             <div className={classes.currentUserIconWrapper}>
-              <AccountIcon account={currentUser} className={classes.menuIcon} />
+              <AccountIcon
+                account={currentUser}
+                className={clsx(classes.menuIcon, {
+                  [classes.currentUserIconCurrent]:
+                  history.location.pathname ===
+                  routes.Account.route.create({}),
+                })}
+              />
               <PermissionList account={currentUser} />
             </div>
             <Typography variant="h6">{currentUser.name || ""}</Typography>
