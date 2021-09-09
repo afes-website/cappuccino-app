@@ -48,10 +48,16 @@ const useStyles = makeStyles((theme) =>
 interface Props {
   title: string;
   scrollTop: number;
+  hideBackButton?: boolean;
   className?: string;
 }
 
-const TopBar: React.VFC<Props> = ({ title, scrollTop, className }) => {
+const TopBar: React.VFC<Props> = ({
+  title,
+  scrollTop,
+  hideBackButton,
+  className,
+}) => {
   const classes = useStyles();
   const history = useHistory();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -96,7 +102,7 @@ const TopBar: React.VFC<Props> = ({ title, scrollTop, className }) => {
         <Toolbar>
           {(currentUser ||
             routes.Terms.route.create({}) === history.location.pathname) &&
-            (isNeedBackButton ? (
+            (isNeedBackButton && !hideBackButton ? (
               <IconButton
                 className={classes.menuIcon}
                 color="inherit"
