@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) =>
   })
 );
 
-const LoginQR: React.VFC = () => {
+const LoginWithQR: React.VFC = () => {
   useTitleSet("QRコードでログイン");
 
   const classes = useStyles();
@@ -249,4 +249,4 @@ const LoginQR: React.VFC = () => {
   );
 };
 
-export default LoginQR;
+export default LoginWithQR;

@@ -204,7 +204,7 @@ const Login: React.VFC = () => {
                   variant="contained"
                   color="primary"
                   component={Link}
-                  to={routes.LoginQR.route.create({})}
+                  to={routes.LoginWithQR.route.create({})}
                   fullWidth={true}
                 >
                   QRコードでログイン
