@@ -9,7 +9,6 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
 import { CheckCircle, Face } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
 import CardList from "components/CardList";
@@ -17,8 +16,8 @@ import QRScanner from "components/QRScanner";
 import DirectInputModal from "components/DirectInputModal";
 import DirectInputFab from "components/DirectInputFab";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
-import ErrorDialog from "components/ErrorDialog";
 import ExhInfoCard from "components/ExhInfoCard";
+import ErrorAlert from "components/ErrorAlert";
 import useErrorHandler from "libs/errorHandler";
 import { StatusColor } from "types/statusColor";
 import clsx from "clsx";
@@ -74,7 +73,7 @@ const GuestScan: React.VFC<Props> = (props) => {
   const [checkStatus, setCheckStatus] = useState<StatusColor | null>(null);
 
   // エラー処理
-  const [errorMessage, errorDialog, , setError] = useErrorHandler();
+  const [errorMessage, , setError] = useErrorHandler();
 
   const isExh = props.page.split("/")[0] === "exhibition";
 
@@ -160,7 +159,7 @@ const GuestScan: React.VFC<Props> = (props) => {
             {errorMessage && (
               <Card>
                 <CardContent className={classes.noPadding}>
-                  <Alert severity="error">{errorMessage}</Alert>
+                  <ErrorAlert errorMessage={errorMessage} />
                 </CardContent>
               </Card>
             )}
@@ -216,16 +215,6 @@ const GuestScan: React.VFC<Props> = (props) => {
         onIdChange={handleGuestIdScan}
         currentId={latestGuestId}
         type="guest"
-      />
-
-      {/* エラーダイアログ */}
-      <ErrorDialog
-        open={errorDialog.open}
-        title={errorDialog.title}
-        message={errorDialog.message}
-        onClose={() => {
-          errorDialog.setOpen(false);
-        }}
       />
     </div>
   );

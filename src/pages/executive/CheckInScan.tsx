@@ -12,7 +12,6 @@ import {
   ListItemText,
   Typography,
 } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
 import { CheckCircle, Face, Replay } from "@material-ui/icons";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { ReservationTicket } from "components/MaterialSvgIcons";
@@ -22,7 +21,6 @@ import DirectInputModal from "components/DirectInputModal";
 import DirectInputFab from "components/DirectInputFab";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import ResultPopup, { ResultPopupRefs } from "components/ResultPopup";
-import ErrorDialog from "components/ErrorDialog";
 import { useTitleSet } from "libs/title";
 import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
 import { useRequirePermission } from "libs/auth/useRequirePermission";
@@ -32,6 +30,7 @@ import { useWristBandPaletteColor } from "libs/wristBandColor";
 import { StatusColor } from "types/statusColor";
 import api, { Reservation, Term } from "@afes-website/docs";
 import clsx from "clsx";
+import ErrorAlert from "components/ErrorAlert";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -124,7 +123,7 @@ const CheckInScan: React.VFC = () => {
     null
   );
   // エラー処理
-  const [errorMessage, errorDialog, setErrorCode, setError] = useErrorHandler();
+  const [errorMessage, setErrorCode, setError] = useErrorHandler();
 
   // 全体のチェック結果の更新処理
   useEffect(() => {
@@ -317,7 +316,7 @@ const CheckInScan: React.VFC = () => {
             {errorMessage && (
               <Card>
                 <CardContent className={classes.noPadding}>
-                  <Alert severity="error">{errorMessage}</Alert>
+                  <ErrorAlert errorMessage={errorMessage} />
                 </CardContent>
               </Card>
             )}
@@ -468,16 +467,6 @@ const CheckInScan: React.VFC = () => {
         onIdChange={handleGuestIdScan}
         currentId={latestGuestId}
         type="guest"
-      />
-
-      {/* エラーダイアログ */}
-      <ErrorDialog
-        open={errorDialog.open}
-        title={errorDialog.title}
-        message={errorDialog.message}
-        onClose={() => {
-          errorDialog.setOpen(false);
-        }}
       />
     </div>
   );

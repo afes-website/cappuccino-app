@@ -12,7 +12,6 @@ import {
   Tabs,
   Typography,
 } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { AccessTime, Face } from "@material-ui/icons";
 import { ReservationTicket } from "components/MaterialSvgIcons";
@@ -22,6 +21,7 @@ import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import DirectInputFab from "components/DirectInputFab";
 import DirectInputModal from "components/DirectInputModal";
+import ErrorAlert from "components/ErrorAlert";
 import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
 import { useRequirePermission } from "libs/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
@@ -106,7 +106,7 @@ const GuestInfo: React.VFC = () => {
   const [status, setStatus] = useState<StatusColor | null>(null);
 
   // エラー処理
-  const [errorMessage, errorDialog, setErrorCode, setError] = useErrorHandler();
+  const [errorMessage, setErrorCode, setError] = useErrorHandler();
 
   const clearInfo = () => {
     // guest
@@ -277,19 +277,9 @@ const GuestInfo: React.VFC = () => {
                 />
               )}
             </Card>
-            {status == "error" && (
+            {errorMessage && (
               <Card>
-                <Alert severity="error">
-                  {errorDialog.open ? (
-                    errorDialog.message.map((msg) => (
-                      <span key={msg} className={classes.alertMessage}>
-                        {msg}
-                      </span>
-                    ))
-                  ) : (
-                    <span className={classes.alertMessage}>{errorMessage}</span>
-                  )}
-                </Alert>
+                <ErrorAlert errorMessage={errorMessage} />
               </Card>
             )}
           </CardList>

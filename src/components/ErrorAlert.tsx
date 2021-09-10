@@ -1,14 +1,16 @@
-import { Alert } from "@material-ui/lab";
 import React from "react";
+import { Alert } from "@material-ui/lab";
 
 interface Props {
-  errorMessages: string[];
+  errorMessage: readonly string[] | null;
 }
 
-const ErrorAlert: React.VFC<Props> = ({ errorMessages }) => {
+const ErrorAlert: React.VFC<Props> = ({ errorMessage }) => {
+  if (!errorMessage) return null;
+
   return (
-    <Alert>
-      {errorMessages.map((message, index) => (
+    <Alert severity="error">
+      {errorMessage.map((message, index) => (
         <p key={index}>{message}</p>
       ))}
     </Alert>
