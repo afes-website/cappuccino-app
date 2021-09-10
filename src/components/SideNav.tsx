@@ -152,8 +152,8 @@ const SideNav: React.VFC<Props> = ({ navOpen, setNavOpen, className }) => {
                 account={currentUser}
                 className={clsx(classes.menuIcon, {
                   [classes.currentUserIconCurrent]:
-                  history.location.pathname ===
-                  routes.Account.route.create({}),
+                    history.location.pathname ===
+                    routes.Account.route.create({}),
                 })}
               />
               <PermissionList account={currentUser} />

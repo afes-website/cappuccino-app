@@ -115,7 +115,9 @@ const AccountDrawer: React.VFC<Props> = ({
             <PermissionList account={currentUser} />
           </div>
           <Typography variant="h6">{currentUser.name}</Typography>
-          <Typography variant="body2" color="textSecondary">@{currentUser.id}</Typography>
+          <Typography variant="body2" color="textSecondary">
+            @{currentUser.id}
+          </Typography>
         </div>
       )}
 

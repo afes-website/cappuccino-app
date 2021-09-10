@@ -86,7 +86,10 @@ const Account: React.VFC = () => {
         <Typography variant="body2" color="textSecondary">
           @{currentUser?.id ?? ""}
         </Typography>
-        <PermissionList account={currentUser} className={classes.currentUserPerm} />
+        <PermissionList
+          account={currentUser}
+          className={classes.currentUserPerm}
+        />
       </Grid>
 
       {/* ==== account list ==== */}
