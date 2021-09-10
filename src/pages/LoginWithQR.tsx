@@ -111,58 +111,58 @@ const LoginWithQR: React.VFC = () => {
     if (obj === null) return;
 
     if (
-      typeof obj === "object" &&
-      Object.prototype.hasOwnProperty.call(obj, "id") &&
-      Object.prototype.hasOwnProperty.call(obj, "pw")
-    ) {
-      const id = obj.id;
-      const pw = obj.pw;
+      typeof obj !== "object" ||
+      !Object.prototype.hasOwnProperty.call(obj, "id") ||
+      !Object.prototype.hasOwnProperty.call(obj, "pw")
+    )
+      return;
 
-      if (typeof id === "string" && typeof pw === "string") {
-        api(axios())
-          .auth.login.$post({ body: { id: id, password: pw } })
-          .then((res) => {
-            api(axios())
-              .auth.me.$get({
-                headers: {
-                  Authorization: "bearer " + res.token,
-                },
-              })
-              .then((Info) => {
-                setCheckStatus("confirm");
-                setUser({ ...Info, token: res.token });
-              })
-              .catch((e) => {
-                setCheckStatus("error");
-                setDialogOpen(true);
-                setErrorText([
-                  "情報を取得できませんでした。",
-                  (isAxiosError(e) && e.response?.data.message) || e.message,
-                ]);
-              });
-          })
-          .catch((e) => {
-            setCheckStatus("error");
-            setDialogOpen(true);
-            if (e.response?.status === 401)
+    const id = obj.id;
+    const pw = obj.pw;
+    if (typeof id === "string" && typeof pw === "string") {
+      api(axios())
+        .auth.login.$post({ body: { id: id, password: pw } })
+        .then((res) => {
+          api(axios())
+            .auth.me.$get({
+              headers: {
+                Authorization: "bearer " + res.token,
+              },
+            })
+            .then((Info) => {
+              setCheckStatus("confirm");
+              setUser({ ...Info, token: res.token });
+            })
+            .catch((e) => {
+              setCheckStatus("error");
+              setDialogOpen(true);
               setErrorText([
-                "ID またはパスワードが間違っています。",
-                "QR コードが古い可能性があります。展示責任者から提示された最新の QR コードを使用してください。",
+                "情報を取得できませんでした。",
+                (isAxiosError(e) && e.response?.data.message) || e.message,
               ]);
-            else if (e.response?.status === 429)
-              setErrorText([
-                "ログイン失敗が多すぎます。",
-                "QR コードを確認し、1分後にもう一度お試しください。",
-              ]);
-            else
-              setErrorText([
-                "不明なエラーです。もう一度お試しください。",
-                `Message: ${
-                  (isAxiosError(e) && e.response?.data.message) || e.message
-                }`,
-              ]);
-          });
-      }
+            });
+        })
+        .catch((e) => {
+          setCheckStatus("error");
+          setDialogOpen(true);
+          if (e.response?.status === 401)
+            setErrorText([
+              "ID またはパスワードが間違っています。",
+              "QR コードが古い可能性があります。展示責任者から提示された最新の QR コードを使用してください。",
+            ]);
+          else if (e.response?.status === 429)
+            setErrorText([
+              "ログイン失敗が多すぎます。",
+              "QR コードを確認し、1分後にもう一度お試しください。",
+            ]);
+          else
+            setErrorText([
+              "不明なエラーです。もう一度お試しください。",
+              `Message: ${
+                (isAxiosError(e) && e.response?.data.message) || e.message
+              }`,
+            ]);
+        });
     }
   };
 
