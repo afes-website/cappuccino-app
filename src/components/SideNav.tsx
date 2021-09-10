@@ -31,7 +31,7 @@ import {
   Reload,
 } from "components/MaterialSvgIcons";
 import AccountIcon from "components/AccountIcon";
-import { PermissionsList } from "components/AccountDrawer";
+import PermissionList from "components/PermissionList";
 import { useAuthState } from "libs/auth/useAuth";
 import routes from "libs/routes";
 import { useSetThemeMode } from "libs/themeMode";
@@ -149,7 +149,7 @@ const SideNav: React.VFC<Props> = ({ navOpen, setNavOpen, className }) => {
           <CardContent>
             <div className={classes.currentUserIconWrapper}>
               <AccountIcon account={currentUser} className={classes.menuIcon} />
-              <PermissionsList />
+              <PermissionList account={currentUser} />
             </div>
             <Typography variant="h6">{currentUser.name || ""}</Typography>
             <Typography variant="body2">@{currentUser.id || ""}</Typography>
