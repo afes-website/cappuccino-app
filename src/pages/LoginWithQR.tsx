@@ -76,8 +76,8 @@ const LoginWithQR: React.VFC = () => {
   const [errorText, setErrorText] = useState<string[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const handleScan = (data: string | null) => {
-    if (data === null || lastRead === data || checkStatus === "loading") return;
+  const handleScan = (data: string) => {
+    if (lastRead === data || checkStatus === "loading") return;
     setCheckStatus("loading");
     setLastRead(data);
 

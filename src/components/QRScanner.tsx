@@ -101,12 +101,16 @@ const useStyles = makeStyles((theme) =>
 );
 
 export interface QRScannerProps {
-  onScanFunc: (data: string | null) => void;
+  onScanFunc: (data: string) => void;
   videoStop: boolean;
   color?: StatusColor;
 }
 
-const QRScanner: React.VFC<QRScannerProps> = (props) => {
+const QRScanner: React.VFC<QRScannerProps> = ({
+  onScanFunc,
+  videoStop,
+  color,
+}) => {
   const classes = useStyles();
 
   const [videoDeviceId, setVideoDeviceId] = useState<string>(
@@ -187,27 +191,24 @@ const QRScanner: React.VFC<QRScannerProps> = (props) => {
         )}
         {showQrReader && (
           <QrReader
-            onScan={props.onScanFunc}
+            onScan={(data) => {
+              if (data !== null) onScanFunc(data);
+            }}
             onError={errorHandler}
             onLoad={() => {
               setScannerStatus("waiting");
             }}
-            delay={props.videoStop ? false : 500}
+            delay={videoStop ? false : 500}
             showViewFinder={false}
             facingMode="environment"
             constraints={{ deviceId: videoDeviceId, facingMode: "environment" }}
           />
         )}
         <div className={classes.shadowBox}>
-          <div
-            className={clsx(classes.borderBox, getBorderClassName(props.color))}
-          />
+          <div className={clsx(classes.borderBox, getBorderClassName(color))} />
         </div>
         <div className={classes.loadingProgressWrapper}>
-          <Fade
-            in={props.color === "loading"}
-            timeout={{ enter: 500, exit: 0 }}
-          >
+          <Fade in={color === "loading"} timeout={{ enter: 500, exit: 0 }}>
             <CircularProgress size={64} />
           </Fade>
         </div>

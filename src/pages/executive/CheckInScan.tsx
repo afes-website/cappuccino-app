@@ -152,16 +152,15 @@ const CheckInScan: React.VFC = () => {
     if (resultChipRef.current) resultChipRef.current.close();
   };
 
-  const handleScan = (data: string | null) => {
-    if (data)
-      switch (activeScanner) {
-        case "rsv":
-          handleRsvIdScan(data);
-          break;
-        case "guest":
-          handleGuestIdScan(data);
-          break;
-      }
+  const handleScan = (data: string) => {
+    switch (activeScanner) {
+      case "rsv":
+        handleRsvIdScan(data);
+        break;
+      case "guest":
+        handleGuestIdScan(data);
+        break;
+    }
   };
 
   const handleRsvIdScan = (rsvId: string) => {

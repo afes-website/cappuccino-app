@@ -130,16 +130,14 @@ const GuestInfo: React.VFC = () => {
     if (resultChipRef.current) resultChipRef.current.close();
   }, [mode, setError]);
 
-  const handleScan = (value: string | null) => {
-    if (value) {
-      switch (mode) {
-        case "guest":
-          handleGuestIdScan(value);
-          break;
-        case "rsv":
-          handleRsvIdScan(value);
-          break;
-      }
+  const handleScan = (value: string) => {
+    switch (mode) {
+      case "guest":
+        handleGuestIdScan(value);
+        break;
+      case "rsv":
+        handleRsvIdScan(value);
+        break;
     }
   };
 
