@@ -72,14 +72,12 @@ const LoginWithQR: React.VFC = () => {
     StatusColor | "confirm" | null
   >(null);
   const [user, setUser] = useState<StorageUserInfo | null>(null);
-  const [lastRead, setLastRead] = useState("");
   const [errorText, setErrorText] = useState<string[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleScan = (data: string) => {
-    if (lastRead === data || checkStatus === "loading") return;
+    if (checkStatus === "loading") return;
     setCheckStatus("loading");
-    setLastRead(data);
 
     const obj = (() => {
       try {

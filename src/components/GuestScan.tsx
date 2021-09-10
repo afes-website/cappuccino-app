@@ -90,7 +90,7 @@ const GuestScan: React.VFC<Props> = (props) => {
   })();
 
   const handleGuestIdScan = (guestId: string) => {
-    if (guestId !== latestGuestId && checkStatus !== "loading") {
+    if (checkStatus !== "loading") {
       setCheckStatus("loading");
       setLatestGuestId(guestId);
       props

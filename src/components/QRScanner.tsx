@@ -113,6 +113,7 @@ const QRScanner: React.VFC<QRScannerProps> = ({
 }) => {
   const classes = useStyles();
 
+  const [lastRead, setLastRead] = useState<string | null>(null);
   const [videoDeviceId, setVideoDeviceId] = useState<string>(
     getDeviceIdFromStorage() || ""
   );
@@ -192,7 +193,10 @@ const QRScanner: React.VFC<QRScannerProps> = ({
         {showQrReader && (
           <QrReader
             onScan={(data) => {
-              if (data !== null) onScanFunc(data);
+              if (data !== null && data !== lastRead) {
+                setLastRead(data);
+                onScanFunc(data);
+              }
             }}
             onError={errorHandler}
             onLoad={() => {
