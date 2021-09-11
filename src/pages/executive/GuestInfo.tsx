@@ -28,7 +28,7 @@ import { useTitleSet } from "libs/title";
 import isAxiosError from "libs/isAxiosError";
 import { getStringDateTimeBrief } from "libs/stringDate";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
-import useErrorHandler from "libs/errorHandler";
+import useErrorHandler from "libs/useErrorHandler";
 import { StatusColor } from "types/statusColor";
 import api, {
   ActivityLog,

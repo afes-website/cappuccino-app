@@ -24,7 +24,7 @@ import ResultPopup, { ResultPopupRefs } from "components/ResultPopup";
 import { useTitleSet } from "libs/title";
 import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
 import { useRequirePermission } from "libs/auth/useRequirePermission";
-import useErrorHandler from "libs/errorHandler";
+import useErrorHandler from "libs/useErrorHandler";
 import { getStringDateTimeBrief, getStringTime } from "libs/stringDate";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
 import { StatusColor } from "types/statusColor";
