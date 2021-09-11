@@ -20,7 +20,7 @@ import {
 } from "@material-ui/core";
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
 import AccountIcon from "components/AccountIcon";
-import { PermissionsList } from "components/AccountDrawer";
+import PermissionList from "components/PermissionList";
 import { useTitleSet } from "libs/title";
 import routes from "libs/routes";
 import { Link } from "react-router-dom";
@@ -52,9 +52,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     grid: {
       width: "100%",
-    },
-    disabledIcon: {
-      opacity: theme.palette.action.disabledOpacity,
     },
     listIcon: {
       fontSize: 32,
@@ -88,7 +85,10 @@ const Account: React.VFC = () => {
         />
         <Typography variant="h6">{currentUser?.name ?? ""}</Typography>
         <Typography variant="body2">@{currentUser?.id ?? ""}</Typography>
-        <PermissionsList className={classes.currentUserPerm} />
+        <PermissionList
+          account={currentUser}
+          className={classes.currentUserPerm}
+        />
       </Grid>
 
       {/* ==== account list ==== */}

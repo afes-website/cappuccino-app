@@ -106,11 +106,7 @@ export interface QRScannerProps {
   color?: StatusColor;
 }
 
-const QRScanner: React.VFC<QRScannerProps> = ({
-  onScanFunc,
-  videoStop,
-  color,
-}) => {
+const QRScanner: React.VFC<QRScannerProps> = ({ onScanFunc, color }) => {
   const classes = useStyles();
 
   const [lastRead, setLastRead] = useState<string | null>(null);
@@ -202,7 +198,7 @@ const QRScanner: React.VFC<QRScannerProps> = ({
             onLoad={() => {
               setScannerStatus("waiting");
             }}
-            delay={videoStop ? false : 500}
+            delay={1}
             showViewFinder={false}
             facingMode="environment"
             constraints={{ deviceId: videoDeviceId, facingMode: "environment" }}

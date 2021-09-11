@@ -21,7 +21,7 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import { History, Home, Room } from "@material-ui/icons";
+import { Close, History, Home, Map, Room } from "@material-ui/icons";
 import {
   DarkMode,
   LightMode,
@@ -31,7 +31,7 @@ import {
   Reload,
 } from "components/MaterialSvgIcons";
 import AccountIcon from "components/AccountIcon";
-import { PermissionsList } from "components/AccountDrawer";
+import PermissionList from "components/PermissionList";
 import { useAuthState } from "libs/auth/useAuth";
 import routes from "libs/routes";
 import { useSetThemeMode } from "libs/themeMode";
@@ -46,10 +46,15 @@ const useStyles = makeStyles((theme: Theme) =>
       flexDirection: "column",
       padding: theme.spacing(2),
       paddingBottom: 0,
+      borderRight: `1px solid ${theme.palette.divider}`,
+      transition: "all 0.3s ease",
+      position: "relative",
       "& > * + *": {
         marginTop: theme.spacing(2),
       },
-      borderRight: `1px solid ${theme.palette.divider}`,
+    },
+    navClose: {
+      transform: "translateX(-100%)",
     },
     card: {
       height: "min-content",
@@ -90,10 +95,19 @@ const useStyles = makeStyles((theme: Theme) =>
     snackBar: {
       bottom: theme.spacing(8),
     },
+    closeButton: {
+      marginLeft: "auto",
+    },
   })
 );
 
-const SideNav: React.VFC<{ className?: string }> = ({ className }) => {
+export interface Props {
+  navOpen: boolean;
+  setNavOpen: (value: boolean) => void;
+  className?: string;
+}
+
+const SideNav: React.VFC<Props> = ({ navOpen, setNavOpen, className }) => {
   const classes = useStyles();
   const history = useHistory();
   const { currentUser } = useAuthState();
@@ -115,7 +129,12 @@ const SideNav: React.VFC<{ className?: string }> = ({ className }) => {
   };
 
   return (
-    <Paper elevation={0} className={clsx(classes.root, className)}>
+    <Paper
+      elevation={0}
+      className={clsx(classes.root, className, {
+        [classes.navClose]: !navOpen,
+      })}
+    >
       {/* ==== current user ==== */}
       <Card className={classes.card}>
         <CardActionArea
@@ -130,7 +149,7 @@ const SideNav: React.VFC<{ className?: string }> = ({ className }) => {
           <CardContent>
             <div className={classes.currentUserIconWrapper}>
               <AccountIcon account={currentUser} className={classes.menuIcon} />
-              <PermissionsList />
+              <PermissionList account={currentUser} />
             </div>
             <Typography variant="h6">{currentUser.name || ""}</Typography>
             <Typography variant="body2">@{currentUser.id || ""}</Typography>
@@ -208,6 +227,14 @@ const SideNav: React.VFC<{ className?: string }> = ({ className }) => {
             }}
           >
             <Reload />
+          </IconButton>
+          <IconButton
+            onClick={() => {
+              setNavOpen(false);
+            }}
+            className={classes.closeButton}
+          >
+            <Close />
           </IconButton>
         </Toolbar>
       </div>
@@ -297,6 +324,11 @@ const menuItems: { [key in keyof UserInfo["permissions"]]?: MenuItem[] } = {
           "全展示の滞在状況一覧",
           routes.AllExhStatus.route.create({}),
           <Room key="Status" />,
+        ],
+        [
+          "混雑状況ヒートマップ",
+          routes.HeatMap.route.create({}),
+          <Map key="HeatMap" />,
         ],
       ],
     },
