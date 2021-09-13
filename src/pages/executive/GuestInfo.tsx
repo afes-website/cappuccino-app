@@ -25,7 +25,6 @@ import ErrorAlert from "components/ErrorAlert";
 import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
 import { useRequirePermission } from "libs/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
-import isAxiosError from "libs/isAxiosError";
 import { getStringDateTimeBrief } from "libs/stringDate";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
 import useErrorHandler from "libs/useErrorHandler";
@@ -106,7 +105,7 @@ const GuestInfo: React.VFC = () => {
   const [status, setStatus] = useState<StatusColor | null>(null);
 
   // エラー処理
-  const [errorMessage, setError, setErrorCode] = useErrorHandler();
+  const [errorMessage, setError] = useErrorHandler();
 
   const clearInfo = () => {
     // guest
@@ -179,9 +178,7 @@ const GuestInfo: React.VFC = () => {
         setStatus("success");
       } catch (e) {
         setStatus("error");
-        if (isAxiosError(e) && e.response?.status === 404)
-          setErrorCode("GUEST_NOT_FOUND");
-        else setError(e);
+        setError(e);
       }
     }
   };
@@ -203,9 +200,7 @@ const GuestInfo: React.VFC = () => {
         })
         .catch((e) => {
           setStatus("error");
-          if (isAxiosError(e) && e.response?.status === 404)
-            setErrorCode("RESERVATION_NOT_FOUND");
-          else setError(e);
+          setError(e);
         });
     }
   };
