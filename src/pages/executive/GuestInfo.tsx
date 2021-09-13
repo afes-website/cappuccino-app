@@ -129,80 +129,74 @@ const GuestInfo: React.VFC = () => {
     if (resultChipRef.current) resultChipRef.current.close();
   }, [mode, setError]);
 
-  const handleScan = (value: string | null) => {
-    if (value) {
-      switch (mode) {
-        case "guest":
-          handleGuestIdScan(value);
-          break;
-        case "rsv":
-          handleRsvIdScan(value);
-          break;
-      }
+  const handleScan = (value: string) => {
+    switch (mode) {
+      case "guest":
+        handleGuestIdScan(value);
+        break;
+      case "rsv":
+        handleRsvIdScan(value);
+        break;
     }
   };
 
   const handleGuestIdScan = async (_guestId: string) => {
-    if (_guestId !== guestId) {
-      setGuestId(_guestId);
-      setStatus("loading");
-      try {
-        const getGuestInfo = api(aspida)
-          .guests._id(_guestId)
-          .$get({
-            headers: {
-              Authorization: "bearer " + currentUser?.token,
-            },
-          })
-          .then((_info) => {
-            setGuestInfo(_info);
-          });
-        const getActivityLog = api(aspida)
-          .log.$get({
-            headers: {
-              Authorization: "bearer " + currentUser?.token,
-            },
-            query: { guest_id: _guestId },
-          })
-          .then((_logs) => {
-            setActivityLogs(_logs);
-          });
-        const getExhStatus = api(aspida)
-          .exhibitions.$get()
-          .then((_status) => {
-            setExhStatus(_status);
-          });
-        await getGuestInfo;
-        await getActivityLog;
-        await getExhStatus;
-        setStatus("success");
-      } catch (e) {
-        setStatus("error");
-        setError(e);
-      }
-    }
-  };
-
-  const handleRsvIdScan = (_rsvId: string) => {
-    if (_rsvId !== rsvId) {
-      setRsvId(_rsvId);
-      setStatus("loading");
-      api(aspida)
-        .reservations._id(_rsvId)
+    setGuestId(_guestId);
+    setStatus("loading");
+    try {
+      const getGuestInfo = api(aspida)
+        .guests._id(_guestId)
         .$get({
           headers: {
             Authorization: "bearer " + currentUser?.token,
           },
         })
-        .then((_rsvInfo) => {
-          setStatus("success");
-          setRsvInfo(_rsvInfo);
-        })
-        .catch((e) => {
-          setStatus("error");
-          setError(e);
+        .then((_info) => {
+          setGuestInfo(_info);
         });
+      const getActivityLog = api(aspida)
+        .log.$get({
+          headers: {
+            Authorization: "bearer " + currentUser?.token,
+          },
+          query: { guest_id: _guestId },
+        })
+        .then((_logs) => {
+          setActivityLogs(_logs);
+        });
+      const getExhStatus = api(aspida)
+        .exhibitions.$get()
+        .then((_status) => {
+          setExhStatus(_status);
+        });
+      await getGuestInfo;
+      await getActivityLog;
+      await getExhStatus;
+      setStatus("success");
+    } catch (e) {
+      setStatus("error");
+      setError(e);
     }
+  };
+
+  const handleRsvIdScan = (_rsvId: string) => {
+    setRsvId(_rsvId);
+    setStatus("loading");
+    api(aspida)
+      .reservations._id(_rsvId)
+      .$get({
+        headers: {
+          Authorization: "bearer " + currentUser?.token,
+        },
+      })
+      .then((_rsvInfo) => {
+        setStatus("success");
+        setRsvInfo(_rsvInfo);
+      })
+      .catch((e) => {
+        setStatus("error");
+        setError(e);
+      });
   };
 
   useEffect(() => {

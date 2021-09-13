@@ -9,10 +9,11 @@ import {
   Fade,
   FormGroup,
   FormHelperText,
-  makeStyles,
+  Grid,
   TextField,
   Typography,
 } from "@material-ui/core";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
 import api from "@afes-website/docs";
 import axios from "@aspida/axios";
 import CardList from "components/CardList";
@@ -21,7 +22,6 @@ import { useAuthDispatch } from "libs/auth/useAuth";
 import routes from "libs/routes";
 import isAxiosError from "libs/isAxiosError";
 import { useTitleSet } from "libs/title";
-import { createStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -35,6 +35,18 @@ const useStyles = makeStyles((theme) =>
     },
     terms: {
       width: "100%",
+    },
+    divider: {
+      display: "flex",
+      alignItems: "center",
+      margin: "16px 0",
+      "&::before, &::after": {
+        content: '""',
+        flexGrow: 1,
+        height: 1,
+        background: theme.palette.divider,
+        margin: "0 16px",
+      },
     },
   })
 );
@@ -108,97 +120,121 @@ const Login: React.VFC = () => {
   };
 
   return (
-    <CardList>
-      <PwaAlertCard />
-      <Card>
-        <form onSubmit={login} className={classes.form}>
-          <CardContent>
-            <Typography variant="body2" className={classes.mb}>
-              {revokedId
-                ? `@${revokedId} を使用するにはログインしてください`
-                : "配布されたアカウントを追加"}
-            </Typography>
-            <FormGroup className={classes.mb}>
-              {isError
-                ? errorText.map((error, index) => {
-                    return (
-                      <FormHelperText key={index} error={true}>
-                        {error}
-                      </FormHelperText>
-                    );
-                  })
-                : ""}
-            </FormGroup>
-            <TextField
-              label="ID"
-              value={id}
-              onChange={(e) => {
-                setId(e.target.value);
-              }}
-              className={classes.mb}
-              fullWidth={true}
-              color="secondary"
-              error={isError}
-              inputProps={{
-                autocapitalize: "off",
-              }}
-            />
-            <TextField
-              label="パスワード"
-              type="password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-              fullWidth={true}
-              color="secondary"
-              error={isError}
-            />
-          </CardContent>
-          <CardActions>
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth={true}
-              disabled={!(id && password) || isLoading}
-              type="submit"
-            >
-              {isLoading ? (
-                <Fade
-                  in={isLoading}
-                  style={{ transitionDelay: "300ms" }}
-                  unmountOnExit
+    <Grid container justify="center">
+      <Grid item xs={12} sm={10} md={8}>
+        <CardList>
+          <PwaAlertCard />
+          <Card>
+            <form onSubmit={login} className={classes.form}>
+              <CardContent>
+                <Typography variant="body2" className={classes.mb}>
+                  {revokedId
+                    ? `@${revokedId} を使用するにはログインしてください`
+                    : "配布されたアカウントを追加"}
+                </Typography>
+                <FormGroup className={classes.mb}>
+                  {isError
+                    ? errorText.map((error, index) => {
+                        return (
+                          <FormHelperText key={index} error={true}>
+                            {error}
+                          </FormHelperText>
+                        );
+                      })
+                    : ""}
+                </FormGroup>
+                <TextField
+                  label="ID"
+                  value={id}
+                  onChange={(e) => {
+                    setId(e.target.value);
+                  }}
+                  className={classes.mb}
+                  fullWidth={true}
+                  color="secondary"
+                  error={isError}
+                  inputProps={{
+                    autoCapitalize: "off",
+                  }}
+                />
+                <TextField
+                  label="パスワード"
+                  type="password"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                  }}
+                  fullWidth={true}
+                  color="secondary"
+                  error={isError}
+                />
+              </CardContent>
+              <CardActions>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  fullWidth={true}
+                  disabled={!(id && password) || isLoading}
+                  type="submit"
                 >
-                  <CircularProgress color="inherit" size={24} thickness={5} />
-                </Fade>
-              ) : (
-                "ログイン"
-              )}
+                  {isLoading ? (
+                    <Fade
+                      in={isLoading}
+                      style={{ transitionDelay: "300ms" }}
+                      unmountOnExit
+                    >
+                      <CircularProgress
+                        color="inherit"
+                        size={24}
+                        thickness={5}
+                      />
+                    </Fade>
+                  ) : (
+                    "ログイン"
+                  )}
+                </Button>
+              </CardActions>
+              <div className={classes.divider}>
+                <Typography variant="body2" color="textSecondary">
+                  または
+                </Typography>
+              </div>
+              <CardActions>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  component={Link}
+                  to={routes.LoginWithQR.route.create({})}
+                  fullWidth={true}
+                >
+                  QRコードでログイン
+                </Button>
+              </CardActions>
+            </form>
+          </Card>
+          <div>
+            <Button
+              variant="text"
+              color="inherit"
+              component={Link}
+              to={routes.Terms.route.create({})}
+              className={classes.terms}
+            >
+              利用規約 & プライバシーポリシー
             </Button>
-          </CardActions>
-        </form>
-      </Card>
-      <div>
-        <Button
-          variant="text"
-          color="inherit"
-          component={Link}
-          to={routes.Terms.route.create({})}
-          className={classes.terms}
-        >
-          利用規約 & プライバシーポリシー
-        </Button>
-        <Button
-          variant="text"
-          color="inherit"
-          component="span"
-          className={classes.terms}
-          disabled
-        >
-          {`Version ${process.env.REACT_APP_VERSION}-${process.env.REACT_APP_BUILD_NUMBER}`}
-        </Button>
-      </div>
-    </CardList>
+            <Button
+              variant="text"
+              color="inherit"
+              component="span"
+              className={classes.terms}
+              disabled
+            >
+              {`Version ${process.env.REACT_APP_VERSION}-${process.env.REACT_APP_BUILD_NUMBER}`}
+            </Button>
+          </div>
+        </CardList>
+      </Grid>
+    </Grid>
   );
 };
 

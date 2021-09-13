@@ -101,7 +101,9 @@ const TopBar: React.VFC<Props> = ({
       >
         <Toolbar>
           {(currentUser ||
-            routes.Terms.route.create({}) === history.location.pathname) &&
+            routes.Terms.route.create({}) === history.location.pathname ||
+            routes.LoginWithQR.route.create({}) ===
+              history.location.pathname) &&
             (isNeedBackButton && !hideBackButton ? (
               <IconButton
                 className={classes.menuIcon}

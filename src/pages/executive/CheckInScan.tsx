@@ -151,23 +151,19 @@ const CheckInScan: React.VFC = () => {
     if (resultChipRef.current) resultChipRef.current.close();
   };
 
-  const handleScan = (data: string | null) => {
-    if (data)
-      switch (activeScanner) {
-        case "rsv":
-          handleRsvIdScan(data);
-          break;
-        case "guest":
-          handleGuestIdScan(data);
-          break;
-      }
+  const handleScan = (data: string) => {
+    switch (activeScanner) {
+      case "rsv":
+        handleRsvIdScan(data);
+        break;
+      case "guest":
+        handleGuestIdScan(data);
+        break;
+    }
   };
 
   const handleRsvIdScan = (rsvId: string) => {
-    if (
-      rsvId !== latestRsvId &&
-      (rsvCheckStatus === null || rsvCheckStatus === "error")
-    ) {
+    if (rsvCheckStatus === null || rsvCheckStatus === "error") {
       setLatestRsvId(rsvId);
       checkRsv(rsvId);
     }
@@ -222,11 +218,7 @@ const CheckInScan: React.VFC = () => {
   }, [rsvCheckStatus, latestRsvId, setError]);
 
   const handleGuestIdScan = (guestId: string) => {
-    if (
-      guestId !== latestRsvId &&
-      guestId !== latestGuestId &&
-      (guestCheckStatus === null || guestCheckStatus === "error")
-    ) {
+    if (guestCheckStatus === null || guestCheckStatus === "error") {
       setLatestGuestId(guestId);
       setGuestCheckStatus("loading");
       // guest id 検証 (rsv id は有効性を確認済)

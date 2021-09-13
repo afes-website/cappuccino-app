@@ -20,7 +20,8 @@ const useStyles = makeStyles((theme) =>
       color: "#fff",
     },
     innerIcon: {
-      fontSize: 28,
+      height: "60%",
+      width: "60%",
     },
   })
 );
