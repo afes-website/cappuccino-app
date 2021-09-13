@@ -3,8 +3,8 @@ import isAxiosError from "libs/isAxiosError";
 
 const useErrorHandler = (): [
   readonly string[] | null,
-  (code: string | ErrorCode | null) => void,
-  (e: unknown) => void
+  (e: unknown) => void,
+  (code: string | ErrorCode | null) => void
 ] => {
   const [errorMessage, setErrorMessage] = useState<readonly string[] | null>(
     null
@@ -50,7 +50,7 @@ const useErrorHandler = (): [
     [setErrorCode]
   );
 
-  return [errorMessage, setErrorCode, setError];
+  return [errorMessage, setError, setErrorCode];
 };
 
 const errorCodeList = [

@@ -123,7 +123,7 @@ const CheckInScan: React.VFC = () => {
     null
   );
   // エラー処理
-  const [errorMessage, setErrorCode, setError] = useErrorHandler();
+  const [errorMessage, setError, setErrorCode] = useErrorHandler();
 
   // 全体のチェック結果の更新処理
   useEffect(() => {

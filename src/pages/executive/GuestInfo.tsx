@@ -106,7 +106,7 @@ const GuestInfo: React.VFC = () => {
   const [status, setStatus] = useState<StatusColor | null>(null);
 
   // エラー処理
-  const [errorMessage, setErrorCode, setError] = useErrorHandler();
+  const [errorMessage, setError, setErrorCode] = useErrorHandler();
 
   const clearInfo = () => {
     // guest

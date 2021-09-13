@@ -73,7 +73,7 @@ const GuestScan: React.VFC<Props> = (props) => {
   const [checkStatus, setCheckStatus] = useState<StatusColor | null>(null);
 
   // エラー処理
-  const [errorMessage, , setError] = useErrorHandler();
+  const [errorMessage, setError] = useErrorHandler();
 
   const isExh = props.page.split("/")[0] === "exhibition";
 
