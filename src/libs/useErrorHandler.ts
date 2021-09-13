@@ -20,7 +20,7 @@ const useErrorHandler = (): [
     )
       ? (_code as ErrorCode)
       : "INTERNAL_ERROR";
-    setErrorMessage([...errorMessageList[errorCode]]);
+    setErrorMessage(errorMessageList[errorCode]);
   }, []);
 
   const setError = useCallback(
