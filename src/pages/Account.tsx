@@ -8,7 +8,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Divider,
   Grid,
   List,
   ListItem,
@@ -84,7 +83,9 @@ const Account: React.VFC = () => {
           className={classes.currentUserIcon}
         />
         <Typography variant="h6">{currentUser?.name ?? ""}</Typography>
-        <Typography variant="body2">@{currentUser?.id ?? ""}</Typography>
+        <Typography variant="body2" color="textSecondary">
+          @{currentUser?.id ?? ""}
+        </Typography>
         <PermissionList
           account={currentUser}
           className={classes.currentUserPerm}
@@ -99,30 +100,26 @@ const Account: React.VFC = () => {
             <List disablePadding>
               {Object.values(allUsers)
                 .filter((account) => account.id !== currentUser?.id)
-                .map((account, index, array) => {
+                .map((account) => {
                   return (
-                    <React.Fragment key={account.id}>
-                      <ListItem
-                        button
-                        onClick={() => {
-                          switchCurrentUser(account.id);
-                        }}
-                      >
-                        <ListItemAvatar>
-                          <AccountIcon
-                            account={account}
-                            className={classes.listIcon}
-                          />
-                        </ListItemAvatar>
-                        <ListItemText
-                          primary={account.name}
-                          secondary={"@" + account.id}
+                    <ListItem
+                      button
+                      onClick={() => {
+                        switchCurrentUser(account.id);
+                      }}
+                      key={account.id}
+                    >
+                      <ListItemAvatar>
+                        <AccountIcon
+                          account={account}
+                          className={classes.listIcon}
                         />
-                      </ListItem>
-                      {index !== array.length - 1 && (
-                        <Divider variant="inset" component="li" />
-                      )}
-                    </React.Fragment>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={account.name}
+                        secondary={"@" + account.id}
+                      />
+                    </ListItem>
                   );
                 })}
             </List>

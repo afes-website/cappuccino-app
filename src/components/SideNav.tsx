@@ -64,6 +64,10 @@ const useStyles = makeStyles((theme: Theme) =>
       display: "flex",
       justifyContent: "space-between",
     },
+    currentUserIconCurrent: {
+      background: "#fff",
+      color: theme.palette.primary.main,
+    },
     menuIcon: {
       marginBottom: theme.spacing(1),
       fontSize: "40px",
@@ -74,10 +78,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     menuCurrent: {
       background: `${theme.palette.primary.main} !important`,
-      color: theme.palette.primary.contrastText,
-    },
-    menuCurrentAccountCard: {
-      background: `linear-gradient(120deg, ${theme.palette.afesLight.main}, ${theme.palette.afesBlue.main}) !important`,
       color: theme.palette.primary.contrastText,
     },
     bottomWrapper: {
@@ -142,13 +142,20 @@ const SideNav: React.VFC<Props> = ({ navOpen, setNavOpen, className }) => {
             history.push(routes.Account.route.create({}));
           }}
           className={clsx({
-            [classes.menuCurrentAccountCard]:
+            [classes.menuCurrent]:
               history.location.pathname === routes.Account.route.create({}),
           })}
         >
           <CardContent>
             <div className={classes.currentUserIconWrapper}>
-              <AccountIcon account={currentUser} className={classes.menuIcon} />
+              <AccountIcon
+                account={currentUser}
+                className={clsx(classes.menuIcon, {
+                  [classes.currentUserIconCurrent]:
+                    history.location.pathname ===
+                    routes.Account.route.create({}),
+                })}
+              />
               <PermissionList account={currentUser} />
             </div>
             <Typography variant="h6">{currentUser.name || ""}</Typography>

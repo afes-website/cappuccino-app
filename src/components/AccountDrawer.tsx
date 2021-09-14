@@ -16,7 +16,6 @@ import {
   ListItemAvatar,
   ListItemText,
   makeStyles,
-  Paper,
   Theme,
   Typography,
   useTheme,
@@ -42,8 +41,6 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: "space-between",
     },
     currentUser: {
-      color: theme.palette.primary.contrastText,
-      background: `linear-gradient(120deg, ${theme.palette.afesLight.main}, ${theme.palette.afesBlue.main})`,
       padding: theme.spacing(2),
       paddingTop: `calc(${theme.spacing(2)}px + env(safe-area-inset-top))`,
     },
@@ -53,6 +50,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     listIcon: {
       fontSize: "40px",
+    },
+    actionButtonUpperDivider: {
+      marginBottom: theme.spacing(1),
     },
     actionButton: {
       paddingLeft: theme.spacing(2),
@@ -109,47 +109,44 @@ const AccountDrawer: React.VFC<Props> = ({
     >
       {/* ==== current list ==== */}
       {currentUser && (
-        <Paper className={classes.currentUser} square={true}>
+        <div className={classes.currentUser}>
           <div className={classes.currentUserIconWrapper}>
             <AccountIcon account={currentUser} className={classes.menuIcon} />
             <PermissionList account={currentUser} />
           </div>
           <Typography variant="h6">{currentUser.name}</Typography>
-          <Typography variant="body2">@{currentUser.id}</Typography>
-        </Paper>
+          <Typography variant="body2" color="textSecondary">
+            @{currentUser.id}
+          </Typography>
+        </div>
       )}
 
       {/* ==== account list ==== */}
       <List>
         {Object.values(allUsers)
           .filter((account) => account.id !== currentUserId)
-          .map((account, index, array) => {
+          .map((account) => {
             return (
-              <React.Fragment key={account.id}>
-                <ListItem
-                  button
-                  onClick={() => {
-                    switchCurrentUser(account.id);
-                  }}
-                >
-                  <ListItemAvatar>
-                    <AccountIcon
-                      account={account}
-                      className={classes.listIcon}
-                    />
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={account.name}
-                    secondary={"@" + account.id}
-                  />
-                </ListItem>
-                {index !== array.length - 1 && (
-                  <Divider variant="inset" component="li" />
-                )}
-              </React.Fragment>
+              <ListItem
+                button
+                onClick={() => {
+                  switchCurrentUser(account.id);
+                }}
+                key={account.id}
+              >
+                <ListItemAvatar>
+                  <AccountIcon account={account} className={classes.listIcon} />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={account.name}
+                  secondary={"@" + account.id}
+                />
+              </ListItem>
             );
           })}
       </List>
+
+      <Divider className={classes.actionButtonUpperDivider} />
 
       {/* ==== login / logout ==== */}
       <Button
