@@ -15,9 +15,9 @@ const useErrorHandler = (): [
       setErrorMessage(null);
       return;
     }
-    const errorCode: ErrorCode = (errorCodeList as ReadonlyArray<string>).includes(
-      _code
-    )
+    const errorCode: ErrorCode = (
+      errorCodeList as ReadonlyArray<string>
+    ).includes(_code)
       ? (_code as ErrorCode)
       : "INTERNAL_ERROR";
     setErrorMessage(errorMessageList[errorCode]);

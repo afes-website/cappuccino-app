@@ -4,13 +4,10 @@ import { AspidaClient } from "aspida";
 import { AxiosRequestConfig } from "axios";
 
 const [useAuthState, AuthStateContextProvider] = createCtx<AuthState>();
-const [
-  useAuthDispatch,
-  AuthDispatchContextProvider,
-] = createCtx<AuthDispatch>();
-const [useAspidaClient, AspidaClientContextProvider] = createCtx<
-  AspidaClient<AxiosRequestConfig>
->();
+const [useAuthDispatch, AuthDispatchContextProvider] =
+  createCtx<AuthDispatch>();
+const [useAspidaClient, AspidaClientContextProvider] =
+  createCtx<AspidaClient<AxiosRequestConfig>>();
 
 export {
   useAuthState,

@@ -66,9 +66,10 @@ const LayoutWithProviders: React.VFC<PropsWithChildren<unknown>> = ({
   const theme = useTheme<Theme>();
   const isTablet = useMediaQuery(theme.breakpoints.up("sm"));
 
-  const Layout = useMemo(() => (isTablet ? TabletLayout : MainLayout), [
-    isTablet,
-  ]);
+  const Layout = useMemo(
+    () => (isTablet ? TabletLayout : MainLayout),
+    [isTablet]
+  );
 
   return (
     <Auth>
