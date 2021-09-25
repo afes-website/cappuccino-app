@@ -14,7 +14,8 @@
     "prettier": "prettier src --write",
     "prettier:check": "prettier src --check",
     "eslint": "eslint src --fix",
-    "eslint:check": "eslint src"
+    "eslint:check": "eslint src",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@afes-website/docs": "3.2.0",
@@ -51,7 +52,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-react": "^7.26.0",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "husky": "^7.0.2",
+    "husky": "^7.0.0",
     "lint-staged": "^11.1.2",
     "prettier": "^2.4.1",
     "typescript": "^4.4.3"
@@ -68,16 +69,10 @@
       "last 1 safari version"
     ]
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "prettier --write",
-      "eslint --fix",
-      "git add"
+      "eslint --fix"
     ]
   }
 }
