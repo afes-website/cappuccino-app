@@ -178,6 +178,9 @@ const CheckInScan: React.VFC = () => {
         setLatestRsv(res.reservation);
         if (res.valid) {
           setRsvCheckStatus("success");
+          setTimeout(() => {
+            setActiveScanner("guest");
+          }, 500);
         } else if (res.error_code) {
           setRsvCheckStatus("error");
           setErrorCode(res.error_code);
@@ -197,9 +200,6 @@ const CheckInScan: React.VFC = () => {
         if (resultChipRef.current) resultChipRef.current.close();
         break;
       case "success":
-        setTimeout(() => {
-          setActiveScanner("guest");
-        }, 500);
         if (resultChipRef.current)
           resultChipRef.current.open(
             "success",
