@@ -1,5 +1,6 @@
 import React from "react";
 import { Alert } from "@material-ui/lab";
+import { Typography } from "@material-ui/core";
 
 interface Props {
   errorMessage: readonly string[] | null;
@@ -11,7 +12,9 @@ const ErrorAlert: React.VFC<Props> = ({ errorMessage }) => {
   return (
     <Alert severity="error">
       {errorMessage.map((message, index) => (
-        <p key={index}>{message}</p>
+        <Typography variant="body2" key={index}>
+          {message}
+        </Typography>
       ))}
     </Alert>
   );
