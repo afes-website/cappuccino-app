@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import { IconButton } from "@material-ui/core";
-import { Help } from "@material-ui/icons";
+import { HelpOutline } from "@material-ui/icons";
 import axios from "axios";
 import HelpManualPopUp from "components/HelpManualPopUp";
 
@@ -39,7 +39,7 @@ const HelpManualButton: React.VFC<{ className?: string }> = ({ className }) => {
           setOpen(true);
         }}
       >
-        <Help />
+        <HelpOutline />
       </IconButton>
       <HelpManualPopUp
         markdown={markdown}
