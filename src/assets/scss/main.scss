@@ -14,3 +14,23 @@ body {
 #app {
   height: 100%;
 }
+
+.znc {
+  th {
+    background: rgba(#eff3f8, 0.5);
+  }
+  td {
+    background: none;
+  }
+  th,
+  td {
+    border-color: rgba(#bac6cf, 0.5);
+  }
+  blockquote {
+    color: unset;
+    opacity: 0.8;
+  }
+  details[open] summary {
+    background: rgba(#d5d6d8, 0.3);
+  }
+}
