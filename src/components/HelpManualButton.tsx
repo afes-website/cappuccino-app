@@ -21,7 +21,6 @@ const HelpManualButton: React.VFC<{ className?: string }> = ({ className }) => {
       method: "GET",
     })
       .then((res) => {
-        console.log(res);
         if (typeof res.data === "string") setMarkdown(res.data);
         else setMarkdown(null);
       })
