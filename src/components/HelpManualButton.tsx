@@ -3,11 +3,13 @@ import { useHistory } from "react-router-dom";
 import { IconButton } from "@material-ui/core";
 import { Help } from "@material-ui/icons";
 import axios from "axios";
+import HelpManualPopUp from "components/HelpManualPopUp";
 
 const HelpManualButton: React.VFC<{ className?: string }> = ({ className }) => {
   const history = useHistory();
 
   const [markdown, setMarkdown] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     axios({
@@ -31,9 +33,23 @@ const HelpManualButton: React.VFC<{ className?: string }> = ({ className }) => {
   if (!markdown) return null;
 
   return (
-    <IconButton className={className}>
-      <Help />
-    </IconButton>
+    <>
+      <IconButton
+        className={className}
+        onClick={() => {
+          setOpen(true);
+        }}
+      >
+        <Help />
+      </IconButton>
+      <HelpManualPopUp
+        markdown={markdown}
+        open={open}
+        onClose={() => {
+          setOpen(false);
+        }}
+      />
+    </>
   );
 };
 
