@@ -5,6 +5,8 @@ import {
   containerMessageOptions,
 } from "libs/md-container";
 
+import mdAnchor from "markdown-it-anchor";
+import mdImsize from "@steelydylan/markdown-it-imsize";
 const mdBr = require("markdown-it-br");
 const mdCjkBreaks = require("markdown-it-cjk-breaks");
 const mdContainer = require("markdown-it-container");
@@ -13,7 +15,9 @@ const mdTaskLists = require("markdown-it-task-lists");
 
 const md = markdownIt({ breaks: true, linkify: false });
 
-md.use(mdBr)
+md.use(mdAnchor)
+  .use(mdImsize)
+  .use(mdBr)
   .use(mdCjkBreaks)
   .use(mdContainer, "details", containerDetailsOptions)
   .use(mdContainer, "message", containerMessageOptions)
