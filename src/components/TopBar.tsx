@@ -47,17 +47,11 @@ const useStyles = makeStyles((theme) =>
 
 interface Props {
   title: string;
-  scrollTop: number;
   hideBackButton?: boolean;
   className?: string;
 }
 
-const TopBar: React.VFC<Props> = ({
-  title,
-  scrollTop,
-  hideBackButton,
-  className,
-}) => {
+const TopBar: React.VFC<Props> = ({ title, hideBackButton, className }) => {
   const classes = useStyles();
   const history = useHistory();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -66,6 +60,19 @@ const TopBar: React.VFC<Props> = ({
   );
   const { currentUser } = useAuthState();
   const theme = useTheme<Theme>();
+
+  const [scrollTop, setScrollTop] = useState(0);
+
+  const onScroll = () => {
+    setScrollTop(document.documentElement.scrollTop);
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
   const isApple = useMemo(() => {
     const parser = new UAParser(navigator.userAgent);

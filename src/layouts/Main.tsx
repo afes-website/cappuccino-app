@@ -1,27 +1,23 @@
-import React, { PropsWithChildren, useEffect, useRef, useState } from "react";
-import { createStyles, makeStyles, Paper } from "@material-ui/core";
+import React, { PropsWithChildren } from "react";
+import { createStyles, makeStyles } from "@material-ui/core";
 import TopBar from "components/TopBar";
 import BottomNav from "components/BottomNav";
 import { useTitleContext } from "libs/title";
 import { useAuthState } from "libs/auth/useAuth";
 
-const useStyles = makeStyles((theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
-    root: {
-      height: "var(--100vh, 0px)",
-      width: "100vw",
-      overflowY: "scroll",
-      overscrollBehavior: "none",
-      background: theme.palette.background.default,
-    },
     topBar: {
-      position: "absolute",
+      position: "fixed",
       top: 0,
       left: 0,
       width: "100%",
       zIndex: 600,
     },
     main: {
+      boxSizing: "border-box",
+      height: "100%",
+      minHeight: "var(--100vh)",
       width: "100%",
       paddingTop: "calc(env(safe-area-inset-top) + 56px)",
       paddingBottom: "calc(env(safe-area-inset-bottom) + 56px)",
@@ -41,32 +37,12 @@ const MainLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
   const titleCtx = useTitleContext();
   const { currentUserId } = useAuthState();
 
-  const [scrollTop, setScrollTop] = useState(0);
-  const root = useRef<HTMLDivElement>(null);
-
-  const onScroll = () => {
-    setScrollTop(root.current ? root.current.scrollTop : 0);
-  };
-
-  useEffect(() => {
-    const ref = root.current;
-    if (!ref) return;
-    ref.addEventListener("scroll", onScroll);
-    return () => {
-      ref.removeEventListener("scroll", onScroll);
-    };
-  }, []);
-
   return (
-    <Paper className={classes.root} square={true} ref={root}>
-      <TopBar
-        title={titleCtx.title}
-        scrollTop={scrollTop}
-        className={classes.topBar}
-      />
+    <>
+      <TopBar title={titleCtx.title} className={classes.topBar} />
       <main className={classes.main}>{children}</main>
       {currentUserId && <BottomNav className={classes.bottomNav} />}
-    </Paper>
+    </>
   );
 };
 
