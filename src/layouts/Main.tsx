@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from "react";
-import { createStyles, makeStyles } from "@material-ui/core";
+import { createStyles, makeStyles, Paper } from "@material-ui/core";
 import TopBar from "components/TopBar";
 import BottomNav from "components/BottomNav";
 import { useTitleContext } from "libs/title";
@@ -7,6 +7,9 @@ import { useAuthState } from "libs/auth/useAuth";
 
 const useStyles = makeStyles(() =>
   createStyles({
+    root: {
+      background: "none",
+    },
     topBar: {
       position: "fixed",
       top: 0,
@@ -38,11 +41,11 @@ const MainLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
   const { currentUserId } = useAuthState();
 
   return (
-    <>
+    <Paper square elevation={0} className={classes.root}>
       <TopBar title={titleCtx.title} className={classes.topBar} />
       <main className={classes.main}>{children}</main>
       {currentUserId && <BottomNav className={classes.bottomNav} />}
-    </>
+    </Paper>
   );
 };
 

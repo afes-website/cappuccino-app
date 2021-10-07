@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useState } from "react";
-import { createStyles, Grid, makeStyles } from "@material-ui/core";
+import { createStyles, makeStyles, Paper } from "@material-ui/core";
 import TopBar from "components/TopBar";
 import SideNav from "components/SideNav";
 import { useTitleContext } from "libs/title";
@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) =>
       boxSizing: "border-box",
       paddingTop: "env(safe-area-inset-top)",
       position: "relative",
+      background: "none",
     },
     sideNav: {
       height: "var(--100vh)",
@@ -80,7 +81,7 @@ const TabletLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
   const [navOpen, setNavOpen] = useState(true);
 
   return (
-    <Grid container className={classes.root}>
+    <Paper square elevation={0} className={classes.root}>
       <div
         onClick={() => {
           setNavOpen(true);
@@ -110,7 +111,7 @@ const TabletLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
       >
         {children}
       </main>
-    </Grid>
+    </Paper>
   );
 };
 
