@@ -56,10 +56,23 @@ const SyncBackgroundColor: React.VFC<PropsWithChildren<unknown>> = ({
   return <>{children}</>;
 };
 
+const ScrollTop: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
+  const history = useHistory();
+
+  useEffect(() => {
+    document.documentElement.scrollTo(0, 0);
+  }, [history.location]);
+
+  // eslint-disable-next-line react/jsx-no-useless-fragment
+  return <>{children}</>;
+};
+
 const LayoutWrapper: React.VFC<PropsWithChildren<unknown>> = ({ children }) => (
   <CustomThemeProvider>
     <CustomTitleProvider>
-      <SyncBackgroundColor>{children}</SyncBackgroundColor>
+      <SyncBackgroundColor>
+        <ScrollTop>{children}</ScrollTop>
+      </SyncBackgroundColor>
     </CustomTitleProvider>
   </CustomThemeProvider>
 );
