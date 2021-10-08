@@ -69,6 +69,8 @@ const errorCodeList = [
   "GUEST_ALREADY_EXITED",
   "EXIT_TIME_EXCEEDED",
   "EXHIBITION_NOT_FOUND",
+  // register spare
+  "NO_MEMBER_CHECKED_IN",
   // network error
   "NETWORK_ERROR",
   "SERVER_ERROR",
@@ -113,6 +115,10 @@ const errorMessageList: { [code in ErrorCode]: readonly string[] } = {
   EXIT_TIME_EXCEEDED: ["来場者は既に退場予定時刻を過ぎています。"],
   EXHIBITION_NOT_FOUND: [
     "内部エラーです。至急、総務局にお問い合わせください。（EXHIBITION_NOT_FOUND）",
+  ],
+  NO_MEMBER_CHECKED_IN: [
+    "まだ誰も入場していない予約です。",
+    "正しいチケットか確認し、問題がなければ入場処理を行ってください。",
   ],
   NETWORK_ERROR: [
     "通信エラーが発生しました。通信環境を確認し、はじめからやり直してください。",
