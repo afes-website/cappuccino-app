@@ -58,7 +58,6 @@ const errorCodeList = [
   "INVALID_WRISTBAND_CODE",
   "ALREADY_USED_WRISTBAND",
   "RESERVATION_NOT_FOUND",
-  "INVALID_RESERVATION_INFO",
   "ALL_MEMBER_CHECKED_IN",
   "OUT_OF_RESERVATION_TIME",
   "WRONG_WRISTBAND_COLOR",
@@ -86,9 +85,6 @@ const errorMessageList: { [code in ErrorCode]: readonly string[] } = {
   // reservation
   RESERVATION_NOT_FOUND: [
     "合致する予約情報がありません。マニュアルを参照し、権限の強い人を呼んでください。",
-  ],
-  INVALID_RESERVATION_INFO: [
-    "予約情報に不備があります。権限の強い人を呼んでください。",
   ],
   OUT_OF_RESERVATION_TIME: [
     "入場可能時間外です。マニュアルを参照してください。",
