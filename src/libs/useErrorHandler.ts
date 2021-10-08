@@ -66,7 +66,7 @@ const errorCodeList = [
   "GUEST_NOT_FOUND",
   "GUEST_ALREADY_ENTERED",
   "PEOPLE_LIMIT_EXCEEDED",
-  "GUEST_ALREADY_EXITED",
+  "GUEST_ALREADY_CHECKED_OUT",
   "EXIT_TIME_EXCEEDED",
   "EXHIBITION_NOT_FOUND",
   // register spare
@@ -108,7 +108,7 @@ const errorMessageList: { [code in ErrorCode]: readonly string[] } = {
   GUEST_NOT_FOUND: ["合致する来場者情報がありません。"],
   GUEST_ALREADY_ENTERED: ["すでに入室処理が完了しています。"],
   PEOPLE_LIMIT_EXCEEDED: ["すでに展示の滞在人数の上限に達しています。"],
-  GUEST_ALREADY_EXITED: [
+  GUEST_ALREADY_CHECKED_OUT: [
     "来場者は一度麻布から退場しています。",
     "必要に応じて近くの統制局員・総務局員にお問い合わせください。",
   ],
