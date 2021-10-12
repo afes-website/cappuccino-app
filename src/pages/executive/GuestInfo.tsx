@@ -179,24 +179,23 @@ const GuestInfo: React.VFC = () => {
     }
   };
 
-  const handleRsvIdScan = (_rsvId: string) => {
+  const handleRsvIdScan = async (_rsvId: string) => {
     setRsvId(_rsvId);
     setStatus("loading");
-    api(aspida)
-      .reservations._id(_rsvId)
-      .$get({
-        headers: {
-          Authorization: "bearer " + currentUser?.token,
-        },
-      })
-      .then((_rsvInfo) => {
-        setStatus("success");
-        setRsvInfo(_rsvInfo);
-      })
-      .catch((e) => {
-        setStatus("error");
-        setError(e);
-      });
+    try {
+      const _rsvInfo = await api(aspida)
+        .reservations._id(_rsvId)
+        .$get({
+          headers: {
+            Authorization: "bearer " + currentUser?.token,
+          },
+        });
+      setStatus("success");
+      setRsvInfo(_rsvInfo);
+    } catch (e) {
+      setStatus("error");
+      setError(e);
+    }
   };
 
   useEffect(() => {

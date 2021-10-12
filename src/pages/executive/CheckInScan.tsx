@@ -169,27 +169,22 @@ const CheckInScan: React.VFC = () => {
     }
   };
 
-  const checkRsv = (rsvId: string) => {
+  const checkRsv = async (rsvId: string) => {
     setRsvCheckStatus("loading");
-    api(aspida)
-      .reservations._id(rsvId)
-      .check.$get()
-      .then((res) => {
-        setLatestRsv(res.reservation);
-        if (res.valid) {
-          setRsvCheckStatus("success");
-          setTimeout(() => {
-            setActiveScanner("guest");
-          }, 500);
-        } else if (res.error_code) {
-          setRsvCheckStatus("error");
-          setErrorCode(res.error_code);
-        }
-      })
-      .catch((e) => {
+    try {
+      const res = await api(aspida).reservations._id(rsvId).check.$get();
+      setLatestRsv(res.reservation);
+      if (res.valid) {
+        setRsvCheckStatus("success");
+        setActiveScanner("guest");
+      } else {
         setRsvCheckStatus("error");
-        setError(e);
-      });
+        if (res.error_code) setErrorCode(res.error_code);
+      }
+    } catch (e) {
+      setRsvCheckStatus("error");
+      setError(e);
+    }
   };
 
   useEffect(() => {
