@@ -58,7 +58,6 @@ const errorCodeList = [
   "INVALID_WRISTBAND_CODE",
   "ALREADY_USED_WRISTBAND",
   "RESERVATION_NOT_FOUND",
-  "INVALID_RESERVATION_INFO",
   "ALL_MEMBER_CHECKED_IN",
   "OUT_OF_RESERVATION_TIME",
   "WRONG_WRISTBAND_COLOR",
@@ -66,9 +65,11 @@ const errorCodeList = [
   "GUEST_NOT_FOUND",
   "GUEST_ALREADY_ENTERED",
   "PEOPLE_LIMIT_EXCEEDED",
-  "GUEST_ALREADY_EXITED",
+  "GUEST_ALREADY_CHECKED_OUT",
   "EXIT_TIME_EXCEEDED",
   "EXHIBITION_NOT_FOUND",
+  // register spare
+  "NO_MEMBER_CHECKED_IN",
   // network error
   "NETWORK_ERROR",
   "SERVER_ERROR",
@@ -84,9 +85,6 @@ const errorMessageList: { [code in ErrorCode]: readonly string[] } = {
   // reservation
   RESERVATION_NOT_FOUND: [
     "合致する予約情報がありません。マニュアルを参照し、権限の強い人を呼んでください。",
-  ],
-  INVALID_RESERVATION_INFO: [
-    "予約情報に不備があります。権限の強い人を呼んでください。",
   ],
   OUT_OF_RESERVATION_TIME: [
     "入場可能時間外です。マニュアルを参照してください。",
@@ -106,13 +104,17 @@ const errorMessageList: { [code in ErrorCode]: readonly string[] } = {
   GUEST_NOT_FOUND: ["合致する来場者情報がありません。"],
   GUEST_ALREADY_ENTERED: ["すでに入室処理が完了しています。"],
   PEOPLE_LIMIT_EXCEEDED: ["すでに展示の滞在人数の上限に達しています。"],
-  GUEST_ALREADY_EXITED: [
+  GUEST_ALREADY_CHECKED_OUT: [
     "来場者は一度麻布から退場しています。",
     "必要に応じて近くの統制局員・総務局員にお問い合わせください。",
   ],
   EXIT_TIME_EXCEEDED: ["来場者は既に退場予定時刻を過ぎています。"],
   EXHIBITION_NOT_FOUND: [
     "内部エラーです。至急、総務局にお問い合わせください。（EXHIBITION_NOT_FOUND）",
+  ],
+  NO_MEMBER_CHECKED_IN: [
+    "まだ誰も入場していない予約です。",
+    "正しいチケットか確認し、問題がなければ入場処理を行ってください。",
   ],
   NETWORK_ERROR: [
     "通信エラーが発生しました。通信環境を確認し、はじめからやり直してください。",

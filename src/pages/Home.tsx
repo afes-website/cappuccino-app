@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Typography } from "@material-ui/core";
-import { History, Map, Room } from "@material-ui/icons";
+import { History, Map, NotListedLocation, Room } from "@material-ui/icons";
 import { Login, Logout, QRScannerIcon } from "components/MaterialSvgIcons";
 import CardList from "components/CardList";
 import CardMenu from "components/CardMenu";
@@ -71,8 +71,14 @@ const Home: React.VFC = () => {
                   {
                     primary: "来場者・予約情報照会",
                     secondary: "行動履歴・登録情報を表示",
-                    to: routes.CheckInScan.route.create({}),
+                    to: routes.GuestInfo.route.create({}),
                     icon: <QRScannerIcon />,
+                  },
+                  {
+                    primary: "予備リストバンド登録",
+                    secondary: "紛失者用リストバンドの登録処理",
+                    to: routes.RegisterSpare.route.create({}),
+                    icon: <NotListedLocation />,
                   },
                 ]}
               />

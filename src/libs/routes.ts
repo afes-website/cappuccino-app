@@ -8,6 +8,7 @@ import Forbidden from "pages/Forbidden";
 import Terms from "pages/Terms";
 import CheckInScan from "pages/executive/CheckInScan";
 import CheckOutScan from "pages/executive/CheckOutScan";
+import RegisterSpare from "pages/executive/RegisterSpare";
 import AllExhStatus from "pages/executive/AllExhStatus";
 import GuestInfo from "pages/executive/GuestInfo";
 import HeatMap from "pages/executive/HeatMap";
@@ -24,6 +25,7 @@ const routes = {
   Terms: typedRoute(route("terms"), Terms),
   CheckInScan: typedRoute(route("executive/check-in"), CheckInScan),
   CheckOutScan: typedRoute(route("executive/check-out"), CheckOutScan),
+  RegisterSpare: typedRoute(route("executive/register-spare"), RegisterSpare),
   AllExhStatus: typedRoute(route("executive/status"), AllExhStatus),
   GuestInfo: typedRoute(route("executive/info"), GuestInfo),
   HeatMap: typedRoute(route("executive/heatmap"), HeatMap),
