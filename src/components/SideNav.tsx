@@ -21,7 +21,14 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import { Close, History, Home, Map, Room } from "@material-ui/icons";
+import {
+  Close,
+  History,
+  Home,
+  Map,
+  NotListedLocation,
+  Room,
+} from "@material-ui/icons";
 import {
   DarkMode,
   LightMode,
@@ -355,6 +362,11 @@ const menuItems: { [key in keyof UserInfo["permissions"]]?: MenuItem[] } = {
           "来場者・予約情報照会",
           routes.GuestInfo.route.create({}),
           <QRScannerIcon key="GuestInfo" />,
+        ],
+        [
+          "予備リストバンド登録",
+          routes.RegisterSpare.route.create({}),
+          <NotListedLocation key="RegisterSpare" />,
         ],
       ],
     },
