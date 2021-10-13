@@ -86,7 +86,7 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
           history.push(routes.Login.route.create({}), { id: userId });
           return false;
         }
-        return error;
+        return Promise.reject(error);
       });
       setAspida(aspidaClient(axiosInstance));
     },
