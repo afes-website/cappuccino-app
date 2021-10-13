@@ -50,12 +50,15 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRight: `1px solid ${theme.palette.divider}`,
       transition: "all 0.3s ease",
       position: "relative",
-      "& > * + *": {
-        marginTop: theme.spacing(2),
-      },
     },
     navClose: {
       transform: "translateX(-100%)",
+    },
+    cardList: {
+      marginBottom: theme.spacing(4),
+      "& > * + *": {
+        marginTop: theme.spacing(2),
+      },
     },
     card: {
       width: "100%",
@@ -135,65 +138,69 @@ const SideNav: React.VFC<Props> = ({ navOpen, setNavOpen, className }) => {
         [classes.navClose]: !navOpen,
       })}
     >
-      {/* ==== current user ==== */}
-      <Box>
-        <Card className={classes.card}>
-          <CardActionArea
-            onClick={() => {
-              history.push(routes.Account.route.create({}));
-            }}
-            className={clsx({
-              [classes.menuCurrent]:
-                history.location.pathname === routes.Account.route.create({}),
-            })}
-          >
-            <CardContent>
-              <div className={classes.currentUserIconWrapper}>
-                <AccountIcon
-                  account={currentUser}
-                  className={clsx(classes.menuIcon, {
-                    [classes.currentUserIconCurrent]:
-                      history.location.pathname ===
-                      routes.Account.route.create({}),
-                  })}
-                />
-                <PermissionList account={currentUser} />
-              </div>
-              <Typography variant="h6">{currentUser.name || ""}</Typography>
-              <Typography variant="body2">@{currentUser.id || ""}</Typography>
-            </CardContent>
-          </CardActionArea>
-        </Card>
-      </Box>
-
-      {/* ==== menus ==== */}
-      {get_menus().map(({ label, value }) => (
-        <Box key={label}>
-          {label && <Typography variant="overline">{label}</Typography>}
-          <Card>
-            <List disablePadding>
-              {value.map(([name, route, icon]) => (
-                <ListItem
-                  button
-                  key={name}
-                  to={route}
-                  component={Link}
-                  className={clsx(classes.menuItem, {
-                    [classes.menuCurrent]: history.location.pathname === route,
-                  })}
-                  disableRipple
-                  disableTouchRipple
-                >
-                  <ListItemIcon style={{ color: "inherit" }}>
-                    {icon}
-                  </ListItemIcon>
-                  <ListItemText primary={name} />
-                </ListItem>
-              ))}
-            </List>
+      <div className={classes.cardList}>
+        {/* ==== current user ==== */}
+        <Box>
+          <Card className={classes.card}>
+            <CardActionArea
+              onClick={() => {
+                history.push(routes.Account.route.create({}));
+              }}
+              className={clsx({
+                [classes.menuCurrent]:
+                  history.location.pathname === routes.Account.route.create({}),
+              })}
+            >
+              <CardContent>
+                <div className={classes.currentUserIconWrapper}>
+                  <AccountIcon
+                    account={currentUser}
+                    className={clsx(classes.menuIcon, {
+                      [classes.currentUserIconCurrent]:
+                        history.location.pathname ===
+                        routes.Account.route.create({}),
+                    })}
+                  />
+                  <PermissionList account={currentUser} />
+                </div>
+                <Typography variant="h6">{currentUser.name || ""}</Typography>
+                <Typography variant="body2">@{currentUser.id || ""}</Typography>
+              </CardContent>
+            </CardActionArea>
           </Card>
         </Box>
-      ))}
+
+        {/* ==== menus ==== */}
+        {get_menus().map(({ label, value }) => (
+          <Box key={label}>
+            {label && <Typography variant="overline">{label}</Typography>}
+            <Card>
+              <List disablePadding>
+                {value.map(([name, route, icon]) => (
+                  <ListItem
+                    button
+                    key={name}
+                    to={route}
+                    component={Link}
+                    className={clsx(classes.menuItem, {
+                      [classes.menuCurrent]:
+                        history.location.pathname === route,
+                    })}
+                    disableRipple
+                    disableTouchRipple
+                  >
+                    <ListItemIcon style={{ color: "inherit" }}>
+                      {icon}
+                    </ListItemIcon>
+                    <ListItemText primary={name} />
+                  </ListItem>
+                ))}
+              </List>
+            </Card>
+          </Box>
+        ))}
+      </div>
+
       {/* ==== bottom buttons ==== */}
       <div className={classes.bottomWrapper}>
         <Button
