@@ -169,9 +169,7 @@ const GuestInfo: React.VFC = () => {
         .then((_status) => {
           setExhStatus(_status);
         });
-      await getGuestInfo;
-      await getActivityLog;
-      await getExhStatus;
+      await Promise.all([getGuestInfo, getActivityLog, getExhStatus]);
       setStatus("success");
     } catch (e) {
       setStatus("error");
