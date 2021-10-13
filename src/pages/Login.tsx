@@ -15,12 +15,12 @@ import {
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import api from "@afes-website/docs";
-import axios from "@aspida/axios";
+import aspida from "@aspida/axios";
+import axios from "axios";
 import CardList from "components/CardList";
 import PwaAlertCard from "components/PwaAlertCard";
 import { useAuthDispatch } from "libs/auth/useAuth";
 import routes from "libs/routes";
-import isAxiosError from "libs/isAxiosError";
 import { useTitleSet } from "libs/title";
 
 const useStyles = makeStyles((theme) =>
@@ -83,7 +83,7 @@ const Login: React.VFC = () => {
     setIsError(false);
     setErrorText([]);
     // ログイン失敗として 401 が返ってくるので useAspidaClient しない！
-    api(axios())
+    api(aspida())
       .auth.login.$post({
         body: {
           id: id,
@@ -109,7 +109,7 @@ const Login: React.VFC = () => {
           setErrorText([
             "不明なエラーです。もう一度お試しください。",
             `Message: ${
-              (isAxiosError(e) && e.response?.data.message) || e.message
+              (axios.isAxiosError(e) && e.response?.data.message) || e.message
             }`,
           ]);
       })
