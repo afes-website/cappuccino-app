@@ -1,33 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { IconButton } from "@material-ui/core";
 import { HelpOutline } from "@material-ui/icons";
 import axios from "axios";
 import HelpManualPopUp from "components/HelpManualPopUp";
 
 const HelpManualButton: React.VFC<{ className?: string }> = ({ className }) => {
-  const history = useHistory();
+  const location = useLocation();
 
   const [markdown, setMarkdown] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    axios({
-      url:
-        (history.location.pathname === "/" ? "" : history.location.pathname) +
-        "/index.md",
-      baseURL: process.env.REACT_APP_MANUAL_BASE_URL,
-      responseType: "text",
-      method: "GET",
-    })
-      .then((res) => {
-        if (typeof res.data === "string") setMarkdown(res.data);
-        else setMarkdown(null);
+    ((_pathname: string) => {
+      setMarkdown(null);
+      axios({
+        url: (_pathname === "/" ? "" : _pathname) + "/index.md",
+        baseURL: process.env.REACT_APP_MANUAL_BASE_URL,
+        responseType: "text",
+        method: "GET",
       })
-      .catch(() => {
-        setMarkdown(null);
-      });
-  }, [history.location.pathname]);
+        .then((res) => {
+          if (typeof res.data === "string" && _pathname === location.pathname)
+            setMarkdown(res.data);
+          else setMarkdown(null);
+        })
+        .catch(() => {
+          setMarkdown(null);
+        });
+    })(location.pathname);
+  }, [location.pathname]);
 
   if (!markdown) return null;
 
