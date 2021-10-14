@@ -21,12 +21,13 @@ const HelpManualButton: React.VFC<{ className?: string }> = ({ className }) => {
         method: "GET",
       })
         .then((res) => {
-          if (typeof res.data === "string" && _pathname === location.pathname)
-            setMarkdown(res.data);
-          else setMarkdown(null);
+          if (_pathname === location.pathname) {
+            if (typeof res.data === "string") setMarkdown(res.data);
+            else setMarkdown(null);
+          }
         })
         .catch(() => {
-          setMarkdown(null);
+          if (_pathname === location.pathname) setMarkdown(null);
         });
     })(location.pathname);
   }, [location.pathname]);
