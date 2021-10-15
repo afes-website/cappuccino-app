@@ -7,7 +7,6 @@ import React, {
 import { Chip, Fade, SvgIcon } from "@material-ui/core";
 import { CheckCircleOutline, ErrorOutline } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
-import { successAudio, errorAudio } from "libs/audio";
 import { StatusColor } from "types/statusColor";
 import clsx from "clsx";
 
@@ -74,16 +73,6 @@ const ResultChipRenderFunction: React.ForwardRefRenderFunction<
         setMessage(message);
         setDuration(duration || null);
         setChipStatus("triggered");
-        switch (color) {
-          case "success":
-            successAudio.currentTime = 0;
-            successAudio.play();
-            break;
-          case "error":
-            errorAudio.currentTime = 0;
-            errorAudio.play();
-            break;
-        }
 
         if (timeoutId) {
           window.clearTimeout(timeoutId);
