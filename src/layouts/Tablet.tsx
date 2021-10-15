@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) =>
       transform: "translateX(-150px)",
     },
     openButton: {
-      position: "absolute",
+      position: "fixed",
       background: theme.palette.background.default,
       color: theme.palette.text.secondary,
       boxShadow: theme.shadows[2],
