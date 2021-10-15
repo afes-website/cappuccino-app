@@ -17,7 +17,6 @@ import {
   StorageUserInfo,
   StorageUsers,
 } from "libs/auth/@types";
-import isAxiosError from "libs/isAxiosError";
 import routes from "libs/routes";
 import api from "@afes-website/docs";
 import axios, { AxiosRequestConfig } from "axios";
@@ -78,7 +77,7 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
     (userId: string | null) => {
       const axiosInstance = axios.create();
       axiosInstance.interceptors.response.use(undefined, (error: unknown) => {
-        if (isAxiosError(error) && error.response?.status === 401) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
           if (userId)
             setAllUsers((prev) => {
               const { [userId]: _, ...next } = prev;
@@ -87,7 +86,7 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
           history.push(routes.Login.route.create({}), { id: userId });
           return false;
         }
-        return error;
+        return Promise.reject(error);
       });
       setAspida(aspidaClient(axiosInstance));
     },
@@ -127,7 +126,7 @@ const AuthContext: React.VFC<PropsWithChildren<AuthContextProps>> = ({
         });
         return { ...user, token: data.token };
       } catch (e) {
-        if (isAxiosError(e) && e.response?.status === 401) return null;
+        if (axios.isAxiosError(e) && e.response?.status === 401) return null;
         else return data;
       }
     },

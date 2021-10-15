@@ -4,12 +4,12 @@ import { Button, Card, CardContent, Grid, Typography } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import api from "@afes-website/docs";
-import axios from "@aspida/axios";
+import aspida from "@aspida/axios";
+import axios from "axios";
 import AccountIcon from "components/AccountIcon";
 import CardList from "components/CardList";
 import ErrorDialog from "components/ErrorDialog";
 import QRScanner from "components/QRScanner";
-import isAxiosError from "libs/isAxiosError";
 import { useTitleSet } from "libs/title";
 import { StorageUserInfo } from "libs/auth/@types";
 import { useAuthDispatch, useAuthState } from "libs/auth/useAuth";
@@ -118,10 +118,10 @@ const LoginWithQR: React.VFC = () => {
     const id = obj.id;
     const pw = obj.pw;
     if (typeof id === "string" && typeof pw === "string") {
-      api(axios())
+      api(aspida())
         .auth.login.$post({ body: { id: id, password: pw } })
         .then((res) => {
-          api(axios())
+          api(aspida())
             .auth.me.$get({
               headers: {
                 Authorization: "bearer " + res.token,
@@ -136,7 +136,8 @@ const LoginWithQR: React.VFC = () => {
               setDialogOpen(true);
               setErrorText([
                 "情報を取得できませんでした。",
-                (isAxiosError(e) && e.response?.data.message) || e.message,
+                (axios.isAxiosError(e) && e.response?.data.message) ||
+                  e.message,
               ]);
             });
         })
@@ -157,7 +158,7 @@ const LoginWithQR: React.VFC = () => {
             setErrorText([
               "不明なエラーです。もう一度お試しください。",
               `Message: ${
-                (isAxiosError(e) && e.response?.data.message) || e.message
+                (axios.isAxiosError(e) && e.response?.data.message) || e.message
               }`,
             ]);
         });

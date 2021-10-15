@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import isAxiosError from "libs/isAxiosError";
+import axios from "axios";
 
 const useErrorHandler = (): [
   readonly string[] | null,
@@ -29,7 +29,7 @@ const useErrorHandler = (): [
         setErrorCode(null);
         return;
       }
-      if (isAxiosError(e)) {
+      if (axios.isAxiosError(e)) {
         const errorCode: unknown = e.response?.data.error_code;
         if (typeof errorCode === "string" && errorCode !== "") {
           setErrorCode(errorCode);

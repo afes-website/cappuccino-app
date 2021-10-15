@@ -64,7 +64,7 @@ interface Props {
   page: Page;
 }
 
-const GuestScan: React.VFC<Props> = (props) => {
+const GuestScan: React.VFC<Props> = ({ handleScan, page }) => {
   const classes = useStyles();
   const resultChipRef = useRef<ResultChipRefs>(null);
 
@@ -75,10 +75,10 @@ const GuestScan: React.VFC<Props> = (props) => {
   // エラー処理
   const [errorMessage, setError] = useErrorHandler();
 
-  const isExh = props.page.split("/")[0] === "exhibition";
+  const isExh = page.split("/")[0] === "exhibition";
 
   const actionName = ((): string => {
-    switch (props.page) {
+    switch (page) {
       case "exhibition/enter":
         return "入室";
       case "exhibition/exit":
@@ -88,19 +88,17 @@ const GuestScan: React.VFC<Props> = (props) => {
     }
   })();
 
-  const handleGuestIdScan = (guestId: string) => {
+  const handleGuestIdScan = async (guestId: string) => {
     if (checkStatus !== "loading") {
       setCheckStatus("loading");
       setLatestGuestId(guestId);
-      props
-        .handleScan(guestId)
-        .then(() => {
-          setCheckStatus("success");
-        })
-        .catch((e) => {
-          setCheckStatus("error");
-          setError(e);
-        });
+      try {
+        await handleScan(guestId);
+        setCheckStatus("success");
+      } catch (e) {
+        setCheckStatus("error");
+        setError(e);
+      }
     }
   };
 
