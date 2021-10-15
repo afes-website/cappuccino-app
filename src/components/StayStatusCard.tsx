@@ -33,11 +33,12 @@ const StatusCard: React.VFC<
   PropsWithChildren<{
     title?: string;
     paragraph?: string;
+    hideStudent?: boolean;
     // useCallback を通すこと！
     getStatus: () => Promise<Status>;
     showCountLimit: boolean;
   }>
-> = ({ children, getStatus, ...props }) => {
+> = ({ children, getStatus, hideStudent, ...props }) => {
   const { currentUser } = useAuthState();
   const classes = useStyles();
   const aspida = useAspidaClient();
@@ -82,6 +83,7 @@ const StatusCard: React.VFC<
           statusCount={status?.count || null}
           limit={(props.showCountLimit && status?.capacity) || null}
           terms={terms || null}
+          hideStudent={hideStudent}
         />
       </CardContent>
     </Card>
@@ -102,7 +104,7 @@ export const GeneralStatusCard: React.VFC<PropsWithChildren<unknown>> = ({
   );
 
   return (
-    <StatusCard getStatus={getStatus} showCountLimit={false}>
+    <StatusCard getStatus={getStatus} showCountLimit={false} hideStudent>
       {children}
     </StatusCard>
   );

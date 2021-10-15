@@ -56,12 +56,14 @@ export interface StayStatusCardProps {
   statusCount: ExhibitionStatus["count"] | null;
   limit: number | null;
   terms: Terms | null;
+  hideStudent?: boolean;
 }
 
 const StayStatus: React.VFC<StayStatusCardProps> = ({
   statusCount,
   limit,
   terms,
+  hideStudent,
 }) => {
   const classes = useStyles();
   const wristBandPaletteColor = useWristBandPaletteColor();
@@ -70,7 +72,8 @@ const StayStatus: React.VFC<StayStatusCardProps> = ({
   const entries =
     statusCount && terms
       ? Object.entries(statusCount).filter(
-          ([termId]) => terms[termId].guest_type !== "StudentGray"
+          ([termId]) =>
+            !hideStudent || terms[termId].guest_type !== "StudentGray"
         )
       : [];
 
@@ -79,9 +82,7 @@ const StayStatus: React.VFC<StayStatusCardProps> = ({
     .reduce((prev, curr) => prev + curr, 0);
 
   const statusCountArray: [string, number][] = terms
-    ? entries
-        .filter(([termId]) => terms[termId].guest_type !== "StudentGray")
-        .sort(([a], [b]) => compareTerm(a, b, terms))
+    ? entries.sort(([a], [b]) => compareTerm(a, b, terms))
     : [];
 
   return (
