@@ -80,6 +80,12 @@ const Home: React.VFC = () => {
                     to: routes.RegisterSpare.route.create({}),
                     icon: <NotListedLocation />,
                   },
+                  {
+                    primary: "予約QRテスター",
+                    secondary: "予約QRコードの形式と内容を確認",
+                    to: routes.RsvQRTester.route.create({}),
+                    icon: <QRScannerIcon />,
+                  },
                 ]}
               />
             </Card>

@@ -11,6 +11,7 @@ import CheckOutScan from "pages/executive/CheckOutScan";
 import RegisterSpare from "pages/executive/RegisterSpare";
 import AllExhStatus from "pages/executive/AllExhStatus";
 import GuestInfo from "pages/executive/GuestInfo";
+import RsvQRTester from "pages/executive/RsvQRTester";
 import HeatMap from "pages/executive/HeatMap";
 import EnterScan from "pages/exhibition/EnterScan";
 import ExitScan from "pages/exhibition/ExitScan";
@@ -28,6 +29,7 @@ const routes = {
   RegisterSpare: typedRoute(route("executive/register-spare"), RegisterSpare),
   AllExhStatus: typedRoute(route("executive/status"), AllExhStatus),
   GuestInfo: typedRoute(route("executive/info"), GuestInfo),
+  RsvQRTester: typedRoute(route("executive/rsv-qr"), RsvQRTester),
   HeatMap: typedRoute(route("executive/heatmap"), HeatMap),
   EnterScan: typedRoute(route("exhibition/enter"), EnterScan),
   ExitScan: typedRoute(route("exhibition/exit"), ExitScan),
