@@ -68,6 +68,7 @@ const errorCodeList = [
   "GUEST_ALREADY_CHECKED_OUT",
   "EXIT_TIME_EXCEEDED",
   "EXHIBITION_NOT_FOUND",
+  "CHECK_OUT_PROHIBITED",
   // register spare
   "NO_MEMBER_CHECKED_IN",
   // network error
@@ -112,6 +113,11 @@ const errorMessageList: { [code in ErrorCode]: readonly string[] } = {
   EXHIBITION_NOT_FOUND: [
     "内部エラーです。至急、総務局にお問い合わせください。（EXHIBITION_NOT_FOUND）",
   ],
+  CHECK_OUT_PROHIBITED: [
+    "このリストバンドは退場できません。",
+    "退場処理しようとしているリストバンドの種類を確認してください。",
+  ],
+  // register spare
   NO_MEMBER_CHECKED_IN: [
     "まだ誰も入場していない予約です。",
     "正しいチケットか確認し、問題がなければ入場処理を行ってください。",
