@@ -72,7 +72,7 @@ const StayStatus: React.VFC<StayStatusCardProps> = ({
   const entries =
     statusCount && terms
       ? Object.entries(statusCount).filter(
-          ([termId]) => !hideStudent || terms[termId].guest_class !== "Student"
+          ([termId]) => !hideStudent || terms[termId].class !== "Student"
         )
       : [];
 
@@ -124,7 +124,7 @@ const StayStatus: React.VFC<StayStatusCardProps> = ({
                 )}
                 <Typography key={`termTime-${index}`} variant="body2">
                   {termId in terms
-                    ? terms[termId].guest_class === "Student"
+                    ? terms[termId].class === "Student"
                       ? `生徒`
                       : `${getStringTime(
                           terms[termId].enter_scheduled_time
