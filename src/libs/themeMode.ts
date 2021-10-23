@@ -40,9 +40,10 @@ export const useThemeMode = (): [Theme, () => void] => {
         : "light")
   );
 
-  const theme: Theme = useMemo(() => createMuiTheme(themeOptions[mode]), [
-    mode,
-  ]);
+  const theme: Theme = useMemo(
+    () => createMuiTheme(themeOptions[mode]),
+    [mode]
+  );
 
   const toggleThemeMode = () => {
     const _mode = mode === "light" ? "dark" : "light";

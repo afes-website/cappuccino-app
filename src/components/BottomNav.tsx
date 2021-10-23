@@ -9,7 +9,7 @@ import {
 } from "@material-ui/core";
 import routes from "libs/routes";
 import { Link, useHistory } from "react-router-dom";
-import { Home } from "@material-ui/icons";
+import { Home, Map, Room } from "@material-ui/icons";
 import { Login, Logout, QRScannerIcon } from "components/MaterialSvgIcons";
 import { useAuthState } from "libs/auth/useAuth";
 import { UserInfo } from "@afes-website/docs";
@@ -92,8 +92,8 @@ const menuItems: { [key in keyof UserInfo["permissions"]]?: MenuItem[] } = {
     ["退室処理", routes.ExitScan.route.create({}), <Logout key="Exit" />],
   ],
   executive: [
-    ["入場処理", routes.CheckInScan.route.create({}), <Login key="Enter" />],
-    ["退場処理", routes.CheckOutScan.route.create({}), <Logout key="Exit" />],
+    ["滞在状況", routes.AllExhStatus.route.create({}), <Room key="Status" />],
+    ["混雑状況", routes.HeatMap.route.create({}), <Map key="HeatMap" />],
     [
       "情報照会",
       routes.GuestInfo.route.create({}),

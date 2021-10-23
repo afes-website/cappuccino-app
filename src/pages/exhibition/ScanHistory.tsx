@@ -3,21 +3,20 @@ import {
   CircularProgress,
   List,
   ListItem,
-  ListItemText,
   ListItemIcon,
+  ListItemText,
+  Theme,
   Typography,
   useTheme,
-  Theme,
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Login, Logout } from "components/MaterialSvgIcons";
-import { useAuthState } from "libs/auth/useAuth";
+import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
 import { useRequirePermission } from "libs/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
 import { getStringDateTime } from "libs/stringDate";
 import api, { ActivityLog } from "@afes-website/docs";
-import aspida from "@aspida/axios";
 import moment, { Moment } from "moment";
 import ReloadButton from "components/ReloadButton";
 
@@ -53,6 +52,7 @@ const ScanHistory: React.VFC = () => {
   useRequirePermission("exhibition");
 
   const classes = useStyles();
+  const aspida = useAspidaClient();
   const { currentUser } = useAuthState();
   const wristBandPaletteColor = useWristBandPaletteColor();
   const theme = useTheme<Theme>();
@@ -62,7 +62,7 @@ const ScanHistory: React.VFC = () => {
 
   const load = useCallback(
     () =>
-      api(aspida())
+      api(aspida)
         .log.$get({
           headers: {
             Authorization: "bearer " + currentUser?.token,
@@ -75,7 +75,7 @@ const ScanHistory: React.VFC = () => {
           setLogs(res);
           setLastUpdated(moment());
         }),
-    [currentUser]
+    [aspida, currentUser?.id, currentUser?.token]
   );
 
   useEffect(() => {

@@ -12,7 +12,6 @@ import {
   Tabs,
   Typography,
 } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { AccessTime, Face } from "@material-ui/icons";
 import { ReservationTicket } from "components/MaterialSvgIcons";
@@ -22,13 +21,13 @@ import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import DirectInputFab from "components/DirectInputFab";
 import DirectInputModal from "components/DirectInputModal";
-import { useAuthState } from "libs/auth/useAuth";
+import ErrorAlert from "components/ErrorAlert";
+import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
 import { useRequirePermission } from "libs/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
-import isAxiosError from "libs/isAxiosError";
 import { getStringDateTimeBrief } from "libs/stringDate";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
-import useErrorHandler from "libs/errorHandler";
+import useErrorHandler from "libs/useErrorHandler";
 import { StatusColor } from "types/statusColor";
 import api, {
   ActivityLog,
@@ -36,7 +35,6 @@ import api, {
   Guest,
   Reservation,
 } from "@afes-website/docs";
-import aspida from "@aspida/axios";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>
@@ -80,6 +78,7 @@ const GuestInfo: React.VFC = () => {
   useRequirePermission(["executive", "reservation"]);
 
   const classes = useStyles();
+  const aspida = useAspidaClient();
   const { currentUser } = useAuthState();
   const resultChipRef = useRef<ResultChipRefs>(null);
 
@@ -106,7 +105,7 @@ const GuestInfo: React.VFC = () => {
   const [status, setStatus] = useState<StatusColor | null>(null);
 
   // エラー処理
-  const [errorMessage, errorDialog, setErrorCode, setError] = useErrorHandler();
+  const [errorMessage, setError] = useErrorHandler();
 
   const clearInfo = () => {
     // guest
@@ -130,83 +129,70 @@ const GuestInfo: React.VFC = () => {
     if (resultChipRef.current) resultChipRef.current.close();
   }, [mode, setError]);
 
-  const handleScan = (value: string | null) => {
-    if (value) {
-      switch (mode) {
-        case "guest":
-          handleGuestIdScan(value);
-          break;
-        case "rsv":
-          handleRsvIdScan(value);
-          break;
-      }
+  const handleScan = (value: string) => {
+    switch (mode) {
+      case "guest":
+        handleGuestIdScan(value);
+        break;
+      case "rsv":
+        handleRsvIdScan(value);
+        break;
     }
   };
 
   const handleGuestIdScan = async (_guestId: string) => {
-    if (_guestId !== guestId) {
-      setGuestId(_guestId);
-      setStatus("loading");
-      try {
-        const getGuestInfo = api(aspida())
-          .guests._id(_guestId)
-          .$get({
-            headers: {
-              Authorization: "bearer " + currentUser?.token,
-            },
-          })
-          .then((_info) => {
-            setGuestInfo(_info);
-          });
-        const getActivityLog = api(aspida())
-          .log.$get({
-            headers: {
-              Authorization: "bearer " + currentUser?.token,
-            },
-            query: { guest_id: _guestId },
-          })
-          .then((_logs) => {
-            setActivityLogs(_logs);
-          });
-        const getExhStatus = api(aspida())
-          .exhibitions.$get()
-          .then((_status) => {
-            setExhStatus(_status);
-          });
-        await getGuestInfo;
-        await getActivityLog;
-        await getExhStatus;
-        setStatus("success");
-      } catch (e) {
-        setStatus("error");
-        if (isAxiosError(e) && e.response?.status === 404)
-          setErrorCode("GUEST_NOT_FOUND");
-        else setError(e);
-      }
-    }
-  };
-
-  const handleRsvIdScan = (_rsvId: string) => {
-    if (_rsvId !== rsvId) {
-      setRsvId(_rsvId);
-      setStatus("loading");
-      api(aspida())
-        .reservations._id(_rsvId)
+    setGuestId(_guestId);
+    setStatus("loading");
+    try {
+      const getGuestInfo = api(aspida)
+        .guests._id(_guestId)
         .$get({
           headers: {
             Authorization: "bearer " + currentUser?.token,
           },
         })
-        .then((_rsvInfo) => {
-          setStatus("success");
-          setRsvInfo(_rsvInfo);
-        })
-        .catch((e) => {
-          setStatus("error");
-          if (isAxiosError(e) && e.response?.status === 404)
-            setErrorCode("RESERVATION_NOT_FOUND");
-          else setError(e);
+        .then((_info) => {
+          setGuestInfo(_info);
         });
+      const getActivityLog = api(aspida)
+        .log.$get({
+          headers: {
+            Authorization: "bearer " + currentUser?.token,
+          },
+          query: { guest_id: _guestId },
+        })
+        .then((_logs) => {
+          setActivityLogs(_logs);
+        });
+      const getExhStatus = api(aspida)
+        .exhibitions.$get()
+        .then((_status) => {
+          setExhStatus(_status);
+        });
+      await Promise.all([getGuestInfo, getActivityLog, getExhStatus]);
+      setStatus("success");
+    } catch (e) {
+      setStatus("error");
+      setError(e);
+    }
+  };
+
+  const handleRsvIdScan = async (_rsvId: string) => {
+    setRsvId(_rsvId);
+    setStatus("loading");
+    try {
+      const _rsvInfo = await api(aspida)
+        .reservations._id(_rsvId)
+        .$get({
+          headers: {
+            Authorization: "bearer " + currentUser?.token,
+          },
+        });
+      setStatus("success");
+      setRsvInfo(_rsvInfo);
+    } catch (e) {
+      setStatus("error");
+      setError(e);
     }
   };
 
@@ -220,7 +206,7 @@ const GuestInfo: React.VFC = () => {
         if (resultChipRef.current) resultChipRef.current.close();
         break;
       case "success":
-        if (resultChipRef.current)
+        if (resultChipRef.current && id[mode])
           resultChipRef.current.open(
             "success",
             `取得成功 / ${name[mode]} ID: ${id[mode]}`,
@@ -228,7 +214,7 @@ const GuestInfo: React.VFC = () => {
           );
         break;
       case "error":
-        if (resultChipRef.current)
+        if (resultChipRef.current && id[mode])
           resultChipRef.current.open(
             "error",
             `取得失敗 / ${name[mode]} ID: ${id[mode]}`
@@ -277,19 +263,9 @@ const GuestInfo: React.VFC = () => {
                 />
               )}
             </Card>
-            {status == "error" && (
+            {errorMessage && (
               <Card>
-                <Alert severity="error">
-                  {errorDialog.open ? (
-                    errorDialog.message.map((msg) => (
-                      <span key={msg} className={classes.alertMessage}>
-                        {msg}
-                      </span>
-                    ))
-                  ) : (
-                    <span className={classes.alertMessage}>{errorMessage}</span>
-                  )}
-                </Alert>
+                <ErrorAlert errorMessage={errorMessage} />
               </Card>
             )}
           </CardList>

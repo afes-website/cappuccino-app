@@ -4,24 +4,20 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Divider,
-  Typography,
-} from "@material-ui/core";
+import { Card, CardContent, Typography } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
 import StayStatus from "components/StayStatus";
-import { useAuthState } from "libs/auth/useAuth";
-import routes from "libs/routes";
+import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
 import api, { ExhibitionStatus, Terms } from "@afes-website/docs";
-import aspida from "@aspida/axios";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
+    cardContent: {
+      // override
+      "&:last-child": {
+        paddingBottom: 16,
+      },
+    },
     title: {
       marginBottom: theme.spacing(1.5),
     },
@@ -35,15 +31,17 @@ type Status = Pick<ExhibitionStatus, "count" | "capacity">;
 
 const StatusCard: React.VFC<
   PropsWithChildren<{
-    title: string;
-    paragraph: string;
+    title?: string;
+    paragraph?: string;
+    hideStudent?: boolean;
     // useCallback を通すこと！
     getStatus: () => Promise<Status>;
     showCountLimit: boolean;
   }>
-> = ({ children, getStatus, ...props }) => {
+> = ({ children, getStatus, hideStudent, ...props }) => {
   const { currentUser } = useAuthState();
   const classes = useStyles();
+  const aspida = useAspidaClient();
 
   const [status, setStatus] = useState<Status | null>(null);
   const [terms, setTerms] = useState<Terms | null>(null);
@@ -52,7 +50,7 @@ const StatusCard: React.VFC<
     getStatus().then((status) => {
       setStatus(status);
     });
-    api(aspida())
+    api(aspida)
       .terms.$get({
         headers: {
           Authorization: "bearer " + currentUser?.token,
@@ -61,105 +59,74 @@ const StatusCard: React.VFC<
       .then((terms) => {
         setTerms(terms);
       });
-  }, [currentUser?.token, getStatus]);
+  }, [aspida, currentUser?.token, getStatus]);
 
   return (
     <Card>
-      <CardContent>
-        <Typography variant="h5" component="h2" className={classes.title}>
-          {props.title}
-        </Typography>
-        <Typography
-          variant="body2"
-          paragraph={true}
-          className={classes.paragraph}
-        >
-          {props.paragraph}
-        </Typography>
+      {children}
+      <CardContent className={classes.cardContent}>
+        {props.title && (
+          <Typography variant="h5" component="h2" className={classes.title}>
+            {props.title}
+          </Typography>
+        )}
+        {props.paragraph && (
+          <Typography
+            variant="body2"
+            paragraph={true}
+            className={classes.paragraph}
+          >
+            {props.paragraph}
+          </Typography>
+        )}
         <StayStatus
           statusCount={status?.count || null}
           limit={(props.showCountLimit && status?.capacity) || null}
           terms={terms || null}
+          hideStudent={hideStudent}
         />
       </CardContent>
-      {children}
     </Card>
   );
 };
 
-const useHomeCardStyles = makeStyles((theme) =>
-  createStyles({
-    title: {
-      marginBottom: theme.spacing(1.5),
-    },
-    paragraph: {
-      marginBottom: theme.spacing(2),
-    },
-    actionsWrapper: {
-      position: "relative",
-      display: "flex",
-      justifyContent: "space-around",
-      padding: theme.spacing(0.5),
-    },
-    // divider: {
-    //   position: "absolute",
-    //   top: 0,
-    //   left: "50%",
-    // },
-  })
-);
-
-export const GeneralStatusCard: React.VFC = () => {
-  const classes = useHomeCardStyles();
+export const GeneralStatusCard: React.VFC<PropsWithChildren<unknown>> = ({
+  children,
+}) => {
+  const aspida = useAspidaClient();
 
   const getStatus = useCallback(
     () =>
-      api(aspida())
+      api(aspida)
         .exhibitions.$get()
         .then((status) => status.all),
-    []
+    [aspida]
   );
 
   return (
-    <StatusCard
-      title="校内の滞在状況"
-      paragraph="校内の来場者の滞在状況です。"
-      getStatus={getStatus}
-      showCountLimit={false}
-    >
-      <>
-        <Divider />
-        <CardActions className={classes.actionsWrapper} disableSpacing>
-          <Button
-            color="secondary"
-            component={Link}
-            to={routes.AllExhStatus.route.create({})}
-          >
-            全展示の滞在状況一覧
-          </Button>
-        </CardActions>
-      </>
+    <StatusCard getStatus={getStatus} showCountLimit={false} hideStudent>
+      {children}
     </StatusCard>
   );
 };
 
-export const ExhStatusCard: React.VFC = () => {
+export const ExhStatusCard: React.VFC<PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   const { currentUser } = useAuthState();
+  const aspida = useAspidaClient();
 
   const getStatus = useCallback(
     () =>
-      api(aspida())
+      api(aspida)
         .exhibitions._id(currentUser?.id || "")
         .$get(),
-    [currentUser]
+    [aspida, currentUser?.id]
   );
 
   return (
-    <StatusCard
-      title="展示内の滞在状況"
-      paragraph="展示内の来場者の滞在状況です。"
-      getStatus={getStatus}
-      showCountLimit={true}
-    />
+    <StatusCard getStatus={getStatus} showCountLimit={true}>
+      {children}
+    </StatusCard>
   );
 };

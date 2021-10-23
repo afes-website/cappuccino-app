@@ -21,7 +21,14 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import { History, Home, Room } from "@material-ui/icons";
+import {
+  Close,
+  History,
+  Home,
+  Map,
+  NotListedLocation,
+  Room,
+} from "@material-ui/icons";
 import {
   DarkMode,
   LightMode,
@@ -31,7 +38,7 @@ import {
   Reload,
 } from "components/MaterialSvgIcons";
 import AccountIcon from "components/AccountIcon";
-import { PermissionsList } from "components/AccountDrawer";
+import PermissionList from "components/PermissionList";
 import { useAuthState } from "libs/auth/useAuth";
 import routes from "libs/routes";
 import { useSetThemeMode } from "libs/themeMode";
@@ -44,20 +51,32 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       display: "flex",
       flexDirection: "column",
+      overflowY: "scroll",
       padding: theme.spacing(2),
       paddingBottom: 0,
+      borderRight: `1px solid ${theme.palette.divider}`,
+      transition: "all 0.3s ease",
+      position: "relative",
+    },
+    navClose: {
+      transform: "translateX(-100%)",
+    },
+    cardList: {
+      marginBottom: theme.spacing(4),
       "& > * + *": {
         marginTop: theme.spacing(2),
       },
-      borderRight: `1px solid ${theme.palette.divider}`,
     },
     card: {
-      height: "min-content",
       width: "100%",
     },
     currentUserIconWrapper: {
       display: "flex",
       justifyContent: "space-between",
+    },
+    currentUserIconCurrent: {
+      background: "#fff",
+      color: theme.palette.primary.main,
     },
     menuIcon: {
       marginBottom: theme.spacing(1),
@@ -69,10 +88,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     menuCurrent: {
       background: `${theme.palette.primary.main} !important`,
-      color: theme.palette.primary.contrastText,
-    },
-    menuCurrentAccountCard: {
-      background: `linear-gradient(120deg, ${theme.palette.afesLight.main}, ${theme.palette.afesBlue.main}) !important`,
       color: theme.palette.primary.contrastText,
     },
     bottomWrapper: {
@@ -90,10 +105,19 @@ const useStyles = makeStyles((theme: Theme) =>
     snackBar: {
       bottom: theme.spacing(8),
     },
+    closeButton: {
+      marginLeft: "auto",
+    },
   })
 );
 
-const SideNav: React.VFC<{ className?: string }> = ({ className }) => {
+export interface Props {
+  navOpen: boolean;
+  setNavOpen: (value: boolean) => void;
+  className?: string;
+}
+
+const SideNav: React.VFC<Props> = ({ navOpen, setNavOpen, className }) => {
   const classes = useStyles();
   const history = useHistory();
   const { currentUser } = useAuthState();
@@ -115,57 +139,75 @@ const SideNav: React.VFC<{ className?: string }> = ({ className }) => {
   };
 
   return (
-    <Paper elevation={0} className={clsx(classes.root, className)}>
-      {/* ==== current user ==== */}
-      <Card className={classes.card}>
-        <CardActionArea
-          onClick={() => {
-            history.push(routes.Account.route.create({}));
-          }}
-          className={clsx({
-            [classes.menuCurrentAccountCard]:
-              history.location.pathname === routes.Account.route.create({}),
-          })}
-        >
-          <CardContent>
-            <div className={classes.currentUserIconWrapper}>
-              <AccountIcon account={currentUser} className={classes.menuIcon} />
-              <PermissionsList />
-            </div>
-            <Typography variant="h6">{currentUser.name || ""}</Typography>
-            <Typography variant="body2">@{currentUser.id || ""}</Typography>
-          </CardContent>
-        </CardActionArea>
-      </Card>
-
-      {/* ==== menus ==== */}
-      {get_menus().map(({ label, value }) => (
-        <Box key={label}>
-          {label && <Typography variant="overline">{label}</Typography>}
-          <Card>
-            <List disablePadding>
-              {value.map(([name, route, icon]) => (
-                <ListItem
-                  button
-                  key={name}
-                  to={route}
-                  component={Link}
-                  className={clsx(classes.menuItem, {
-                    [classes.menuCurrent]: history.location.pathname === route,
-                  })}
-                  disableRipple
-                  disableTouchRipple
-                >
-                  <ListItemIcon style={{ color: "inherit" }}>
-                    {icon}
-                  </ListItemIcon>
-                  <ListItemText primary={name} />
-                </ListItem>
-              ))}
-            </List>
+    <Paper
+      elevation={0}
+      className={clsx(classes.root, className, {
+        [classes.navClose]: !navOpen,
+      })}
+    >
+      <div className={classes.cardList}>
+        {/* ==== current user ==== */}
+        <Box>
+          <Card className={classes.card}>
+            <CardActionArea
+              onClick={() => {
+                history.push(routes.Account.route.create({}));
+              }}
+              className={clsx({
+                [classes.menuCurrent]:
+                  history.location.pathname === routes.Account.route.create({}),
+              })}
+            >
+              <CardContent>
+                <div className={classes.currentUserIconWrapper}>
+                  <AccountIcon
+                    account={currentUser}
+                    className={clsx(classes.menuIcon, {
+                      [classes.currentUserIconCurrent]:
+                        history.location.pathname ===
+                        routes.Account.route.create({}),
+                    })}
+                  />
+                  <PermissionList account={currentUser} />
+                </div>
+                <Typography variant="h6">{currentUser.name || ""}</Typography>
+                <Typography variant="body2">@{currentUser.id || ""}</Typography>
+              </CardContent>
+            </CardActionArea>
           </Card>
         </Box>
-      ))}
+
+        {/* ==== menus ==== */}
+        {get_menus().map(({ label, value }) => (
+          <Box key={label}>
+            {label && <Typography variant="overline">{label}</Typography>}
+            <Card>
+              <List disablePadding>
+                {value.map(([name, route, icon]) => (
+                  <ListItem
+                    button
+                    key={name}
+                    to={route}
+                    component={Link}
+                    className={clsx(classes.menuItem, {
+                      [classes.menuCurrent]:
+                        history.location.pathname === route,
+                    })}
+                    disableRipple
+                    disableTouchRipple
+                  >
+                    <ListItemIcon style={{ color: "inherit" }}>
+                      {icon}
+                    </ListItemIcon>
+                    <ListItemText primary={name} />
+                  </ListItem>
+                ))}
+              </List>
+            </Card>
+          </Box>
+        ))}
+      </div>
+
       {/* ==== bottom buttons ==== */}
       <div className={classes.bottomWrapper}>
         <Button
@@ -208,6 +250,14 @@ const SideNav: React.VFC<{ className?: string }> = ({ className }) => {
             }}
           >
             <Reload />
+          </IconButton>
+          <IconButton
+            onClick={() => {
+              setNavOpen(false);
+            }}
+            className={classes.closeButton}
+          >
+            <Close />
           </IconButton>
         </Toolbar>
       </div>
@@ -298,6 +348,11 @@ const menuItems: { [key in keyof UserInfo["permissions"]]?: MenuItem[] } = {
           routes.AllExhStatus.route.create({}),
           <Room key="Status" />,
         ],
+        [
+          "混雑状況ヒートマップ",
+          routes.HeatMap.route.create({}),
+          <Map key="HeatMap" />,
+        ],
       ],
     },
     {
@@ -307,6 +362,11 @@ const menuItems: { [key in keyof UserInfo["permissions"]]?: MenuItem[] } = {
           "来場者・予約情報照会",
           routes.GuestInfo.route.create({}),
           <QRScannerIcon key="GuestInfo" />,
+        ],
+        [
+          "予備リストバンド登録",
+          routes.RegisterSpare.route.create({}),
+          <NotListedLocation key="RegisterSpare" />,
         ],
       ],
     },

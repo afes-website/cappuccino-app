@@ -8,7 +8,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Divider,
   Grid,
   List,
   ListItem,
@@ -20,7 +19,7 @@ import {
 } from "@material-ui/core";
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
 import AccountIcon from "components/AccountIcon";
-import { PermissionsList } from "components/AccountDrawer";
+import PermissionList from "components/PermissionList";
 import { useTitleSet } from "libs/title";
 import routes from "libs/routes";
 import { Link } from "react-router-dom";
@@ -53,9 +52,6 @@ const useStyles = makeStyles((theme: Theme) =>
     grid: {
       width: "100%",
     },
-    disabledIcon: {
-      opacity: theme.palette.action.disabledOpacity,
-    },
     listIcon: {
       fontSize: 32,
     },
@@ -87,8 +83,13 @@ const Account: React.VFC = () => {
           className={classes.currentUserIcon}
         />
         <Typography variant="h6">{currentUser?.name ?? ""}</Typography>
-        <Typography variant="body2">@{currentUser?.id ?? ""}</Typography>
-        <PermissionsList className={classes.currentUserPerm} />
+        <Typography variant="body2" color="textSecondary">
+          @{currentUser?.id ?? ""}
+        </Typography>
+        <PermissionList
+          account={currentUser}
+          className={classes.currentUserPerm}
+        />
       </Grid>
 
       {/* ==== account list ==== */}
@@ -99,30 +100,26 @@ const Account: React.VFC = () => {
             <List disablePadding>
               {Object.values(allUsers)
                 .filter((account) => account.id !== currentUser?.id)
-                .map((account, index, array) => {
+                .map((account) => {
                   return (
-                    <React.Fragment key={account.id}>
-                      <ListItem
-                        button
-                        onClick={() => {
-                          switchCurrentUser(account.id);
-                        }}
-                      >
-                        <ListItemAvatar>
-                          <AccountIcon
-                            account={account}
-                            className={classes.listIcon}
-                          />
-                        </ListItemAvatar>
-                        <ListItemText
-                          primary={account.name}
-                          secondary={"@" + account.id}
+                    <ListItem
+                      button
+                      onClick={() => {
+                        switchCurrentUser(account.id);
+                      }}
+                      key={account.id}
+                    >
+                      <ListItemAvatar>
+                        <AccountIcon
+                          account={account}
+                          className={classes.listIcon}
                         />
-                      </ListItem>
-                      {index !== array.length - 1 && (
-                        <Divider variant="inset" component="li" />
-                      )}
-                    </React.Fragment>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={account.name}
+                        secondary={"@" + account.id}
+                      />
+                    </ListItem>
                   );
                 })}
             </List>

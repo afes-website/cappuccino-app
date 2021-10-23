@@ -16,7 +16,6 @@ import {
   ListItemAvatar,
   ListItemText,
   makeStyles,
-  Paper,
   Theme,
   Typography,
   useTheme,
@@ -27,11 +26,10 @@ import {
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
 import { DarkMode, LightMode, Reload } from "components/MaterialSvgIcons";
 import AccountIcon from "components/AccountIcon";
-import PermissionIcon from "components/PermissionIcon";
+import PermissionList from "components/PermissionList";
 import { useAuthDispatch, useAuthState } from "libs/auth/useAuth";
 import { useSetThemeMode } from "libs/themeMode";
 import { Alert } from "@material-ui/lab";
-import clsx from "clsx";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,16 +41,8 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: "space-between",
     },
     currentUser: {
-      color: theme.palette.primary.contrastText,
-      background: `linear-gradient(120deg, ${theme.palette.afesLight.main}, ${theme.palette.afesBlue.main})`,
       padding: theme.spacing(2),
       paddingTop: `calc(${theme.spacing(2)}px + env(safe-area-inset-top))`,
-    },
-    currentUserPerm: {
-      marginTop: theme.spacing(0.5),
-    },
-    disabledIcon: {
-      opacity: theme.palette.action.disabledOpacity,
     },
     menuIcon: {
       marginBottom: theme.spacing(1),
@@ -60,6 +50,9 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     listIcon: {
       fontSize: "40px",
+    },
+    actionButtonUpperDivider: {
+      marginBottom: theme.spacing(1),
     },
     actionButton: {
       paddingLeft: theme.spacing(2),
@@ -78,13 +71,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     snackBar: {
       bottom: "calc(64px + env(safe-area-inset-bottom))",
-    },
-    permissionsList: {
-      display: "flex",
-      height: "min-content",
-      "& > * + *": {
-        marginLeft: theme.spacing(0.5),
-      },
     },
   })
 );
@@ -123,47 +109,44 @@ const AccountDrawer: React.VFC<Props> = ({
     >
       {/* ==== current list ==== */}
       {currentUser && (
-        <Paper className={classes.currentUser} square={true}>
+        <div className={classes.currentUser}>
           <div className={classes.currentUserIconWrapper}>
             <AccountIcon account={currentUser} className={classes.menuIcon} />
-            <PermissionsList />
+            <PermissionList account={currentUser} />
           </div>
           <Typography variant="h6">{currentUser.name}</Typography>
-          <Typography variant="body2">@{currentUser.id}</Typography>
-        </Paper>
+          <Typography variant="body2" color="textSecondary">
+            @{currentUser.id}
+          </Typography>
+        </div>
       )}
 
       {/* ==== account list ==== */}
       <List>
         {Object.values(allUsers)
           .filter((account) => account.id !== currentUserId)
-          .map((account, index, array) => {
+          .map((account) => {
             return (
-              <React.Fragment key={account.id}>
-                <ListItem
-                  button
-                  onClick={() => {
-                    switchCurrentUser(account.id);
-                  }}
-                >
-                  <ListItemAvatar>
-                    <AccountIcon
-                      account={account}
-                      className={classes.listIcon}
-                    />
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={account.name}
-                    secondary={"@" + account.id}
-                  />
-                </ListItem>
-                {index !== array.length - 1 && (
-                  <Divider variant="inset" component="li" />
-                )}
-              </React.Fragment>
+              <ListItem
+                button
+                onClick={() => {
+                  switchCurrentUser(account.id);
+                }}
+                key={account.id}
+              >
+                <ListItemAvatar>
+                  <AccountIcon account={account} className={classes.listIcon} />
+                </ListItemAvatar>
+                <ListItemText
+                  primary={account.name}
+                  secondary={"@" + account.id}
+                />
+              </ListItem>
             );
           })}
       </List>
+
+      <Divider className={classes.actionButtonUpperDivider} />
 
       {/* ==== login / logout ==== */}
       <Button
@@ -290,27 +273,6 @@ const AccountDrawer: React.VFC<Props> = ({
         </Alert>
       </Snackbar>
     </Drawer>
-  );
-};
-
-export const PermissionsList: React.VFC<{ className?: string }> = ({
-  className,
-}) => {
-  const classes = useStyles();
-  const { currentUser } = useAuthState();
-
-  if (!currentUser) return null;
-  return (
-    <div className={clsx(classes.permissionsList, className)}>
-      {Object.entries(currentUser.permissions).map(([name, val]) => (
-        <PermissionIcon
-          permName={name}
-          key={name}
-          fontSize="small"
-          className={clsx({ [classes.disabledIcon]: !val })}
-        />
-      ))}
-    </div>
   );
 };
 

@@ -1,40 +1,11 @@
 import { GuestType } from "@afes-website/docs";
 import { Theme, useTheme, PaletteType } from "@material-ui/core";
 import { PaletteColor } from "@material-ui/core/styles/createPalette";
+import { blue, red, yellow, purple, grey } from "@material-ui/core/colors";
 import {
-  blue,
-  red,
-  yellow,
-  green,
-  purple,
-  orange,
-  grey,
-} from "@material-ui/core/colors";
-
-const white = "#ffffff";
-const black = "#000000";
-
-const generateLightPaletteColor = (color: {
-  300: string;
-  500: string;
-  700: string;
-}): PaletteColor => ({
-  light: color[300],
-  main: color[500],
-  dark: color[700],
-  contrastText: white,
-});
-
-const generateDarkPaletteColor = (color: {
-  100: string;
-  200: string;
-  300: string;
-}): PaletteColor => ({
-  light: color[100],
-  main: color[200],
-  dark: color[300],
-  contrastText: black,
-});
+  generateLightPaletteColor,
+  generateDarkPaletteColor,
+} from "libs/paletteColor";
 
 export const wristBandPaletteColor = (
   prefix: GuestType,
@@ -52,18 +23,14 @@ export const wristBandPaletteColor = (
     case "GuestYellow":
     case "TestYellow":
       return generatePaletteColor(yellow);
-    case "GuestGreen":
-      return generatePaletteColor(green);
-    case "GuestPurple":
+    case "ParentPurple":
       return generatePaletteColor(purple);
-    case "GuestOrange":
-      return generatePaletteColor(orange);
     case "GuestWhite":
       return {
         light: grey[50],
         main: grey[100],
         dark: grey[200],
-        contrastText: black,
+        contrastText: "#000000",
       };
     case "StudentGray":
       return generatePaletteColor(grey);

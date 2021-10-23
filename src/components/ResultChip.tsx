@@ -53,6 +53,7 @@ const ResultChipRenderFunction: React.ForwardRefRenderFunction<
   ResultChipProps
 > = (props, ref) => {
   const classes = useStyles();
+
   const [chipStatus, setChipStatus] = useState<
     "triggered" | "opened" | "closed"
   >("closed");
@@ -71,8 +72,8 @@ const ResultChipRenderFunction: React.ForwardRefRenderFunction<
         setColor(color);
         setMessage(message);
         setDuration(duration || null);
-
         setChipStatus("triggered");
+
         if (timeoutId) {
           window.clearTimeout(timeoutId);
           setTimeoutId(null);

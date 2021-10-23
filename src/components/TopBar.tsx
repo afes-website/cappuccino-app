@@ -14,6 +14,7 @@ import { ArrowBack, ArrowBackIos } from "@material-ui/icons";
 import { useHistory } from "react-router-dom";
 import AccountIcon from "components/AccountIcon";
 import AccountDrawer from "components/AccountDrawer";
+import HelpManualButton from "components/HelpManualButton";
 import { useAuthState } from "libs/auth/useAuth";
 import routes from "libs/routes";
 import clsx from "clsx";
@@ -29,12 +30,19 @@ const useStyles = makeStyles((theme) =>
       paddingTop: "env(safe-area-inset-top)",
       color: theme.palette.text.primary,
     },
-    menuIcon: {
+    menuIconLeft: {
       position: "absolute",
       height: 48,
       width: 48,
       top: 4,
       left: 10,
+    },
+    menuIconRight: {
+      position: "absolute",
+      height: 48,
+      width: 48,
+      top: 4,
+      right: 10,
     },
     accountButton: {
       padding: 6.5,
@@ -47,11 +55,11 @@ const useStyles = makeStyles((theme) =>
 
 interface Props {
   title: string;
-  scrollTop: number;
+  hideBackButton?: boolean;
   className?: string;
 }
 
-const TopBar: React.VFC<Props> = ({ title, scrollTop, className }) => {
+const TopBar: React.VFC<Props> = ({ title, hideBackButton, className }) => {
   const classes = useStyles();
   const history = useHistory();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -60,6 +68,19 @@ const TopBar: React.VFC<Props> = ({ title, scrollTop, className }) => {
   );
   const { currentUser } = useAuthState();
   const theme = useTheme<Theme>();
+
+  const [scrollTop, setScrollTop] = useState(0);
+
+  const onScroll = () => {
+    setScrollTop(document.documentElement.scrollTop);
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
   const isApple = useMemo(() => {
     const parser = new UAParser(navigator.userAgent);
@@ -95,10 +116,12 @@ const TopBar: React.VFC<Props> = ({ title, scrollTop, className }) => {
       >
         <Toolbar>
           {(currentUser ||
-            routes.Terms.route.create({}) === history.location.pathname) &&
-            (isNeedBackButton ? (
+            routes.Terms.route.create({}) === history.location.pathname ||
+            routes.LoginWithQR.route.create({}) ===
+              history.location.pathname) &&
+            (isNeedBackButton && !hideBackButton ? (
               <IconButton
-                className={classes.menuIcon}
+                className={classes.menuIconLeft}
                 color="inherit"
                 onClick={() => {
                   history.goBack();
@@ -109,7 +132,7 @@ const TopBar: React.VFC<Props> = ({ title, scrollTop, className }) => {
             ) : (
               !isTablet && (
                 <IconButton
-                  className={clsx(classes.menuIcon, classes.accountButton)}
+                  className={clsx(classes.menuIconLeft, classes.accountButton)}
                   color="inherit"
                   onClick={() => {
                     setIsDrawerOpen(true);
@@ -122,6 +145,7 @@ const TopBar: React.VFC<Props> = ({ title, scrollTop, className }) => {
           <Typography variant="h6" align="center" className={classes.title}>
             {title}
           </Typography>
+          <HelpManualButton className={classes.menuIconRight} />
         </Toolbar>
       </AppBar>
       <AccountDrawer

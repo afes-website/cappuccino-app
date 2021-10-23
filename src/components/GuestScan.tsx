@@ -9,7 +9,6 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
 import { CheckCircle, Face } from "@material-ui/icons";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
 import CardList from "components/CardList";
@@ -17,9 +16,9 @@ import QRScanner from "components/QRScanner";
 import DirectInputModal from "components/DirectInputModal";
 import DirectInputFab from "components/DirectInputFab";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
-import ErrorDialog from "components/ErrorDialog";
 import ExhInfoCard from "components/ExhInfoCard";
-import useErrorHandler from "libs/errorHandler";
+import ErrorAlert from "components/ErrorAlert";
+import useErrorHandler from "libs/useErrorHandler";
 import { StatusColor } from "types/statusColor";
 import clsx from "clsx";
 import { Guest } from "@afes-website/docs";
@@ -65,7 +64,7 @@ interface Props {
   page: Page;
 }
 
-const GuestScan: React.VFC<Props> = (props) => {
+const GuestScan: React.VFC<Props> = ({ handleScan, page }) => {
   const classes = useStyles();
   const resultChipRef = useRef<ResultChipRefs>(null);
 
@@ -74,12 +73,12 @@ const GuestScan: React.VFC<Props> = (props) => {
   const [checkStatus, setCheckStatus] = useState<StatusColor | null>(null);
 
   // エラー処理
-  const [errorMessage, errorDialog, , setError] = useErrorHandler();
+  const [errorMessage, setError] = useErrorHandler();
 
-  const isExh = props.page.split("/")[0] === "exhibition";
+  const isExh = page.split("/")[0] === "exhibition";
 
   const actionName = ((): string => {
-    switch (props.page) {
+    switch (page) {
       case "exhibition/enter":
         return "入室";
       case "exhibition/exit":
@@ -89,19 +88,17 @@ const GuestScan: React.VFC<Props> = (props) => {
     }
   })();
 
-  const handleGuestIdScan = (guestId: string | null) => {
-    if (guestId && guestId !== latestGuestId && checkStatus !== "loading") {
+  const handleGuestIdScan = async (guestId: string) => {
+    if (checkStatus !== "loading") {
       setCheckStatus("loading");
       setLatestGuestId(guestId);
-      props
-        .handleScan(guestId)
-        .then(() => {
-          setCheckStatus("success");
-        })
-        .catch((e) => {
-          setCheckStatus("error");
-          setError(e);
-        });
+      try {
+        await handleScan(guestId);
+        setCheckStatus("success");
+      } catch (e) {
+        setCheckStatus("error");
+        setError(e);
+      }
     }
   };
 
@@ -160,7 +157,7 @@ const GuestScan: React.VFC<Props> = (props) => {
             {errorMessage && (
               <Card>
                 <CardContent className={classes.noPadding}>
-                  <Alert severity="error">{errorMessage}</Alert>
+                  <ErrorAlert errorMessage={errorMessage} />
                 </CardContent>
               </Card>
             )}
@@ -216,16 +213,6 @@ const GuestScan: React.VFC<Props> = (props) => {
         onIdChange={handleGuestIdScan}
         currentId={latestGuestId}
         type="guest"
-      />
-
-      {/* エラーダイアログ */}
-      <ErrorDialog
-        open={errorDialog.open}
-        title={errorDialog.title}
-        message={errorDialog.message}
-        onClose={() => {
-          errorDialog.setOpen(false);
-        }}
       />
     </div>
   );
