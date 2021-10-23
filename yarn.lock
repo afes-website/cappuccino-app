@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@afes-website/docs@>3.3.0-alpha.0":
+"@afes-website/docs@^3.3.0":
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/@afes-website/docs/-/docs-3.3.1.tgz#7a3a5f187e2bbe0e8119f54a6dc7458edacf77e3"
   integrity sha512-FmcyOlYPvRiDM9CDwAay5O+SC5XWmjAw5l8jctjohTkMMtwNib9Xr8/Gxu7WLXxuvsfuH1YrfOaRmRjM4owHTw==
