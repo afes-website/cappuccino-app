@@ -1,15 +1,7 @@
 import { GuestType } from "@afes-website/docs";
 import { Theme, useTheme, PaletteType } from "@material-ui/core";
 import { PaletteColor } from "@material-ui/core/styles/createPalette";
-import {
-  blue,
-  red,
-  yellow,
-  green,
-  purple,
-  orange,
-  grey,
-} from "@material-ui/core/colors";
+import { blue, red, yellow, purple, grey } from "@material-ui/core/colors";
 import {
   generateLightPaletteColor,
   generateDarkPaletteColor,
@@ -31,12 +23,8 @@ export const wristBandPaletteColor = (
     case "GuestYellow":
     case "TestYellow":
       return generatePaletteColor(yellow);
-    case "GuestGreen":
-      return generatePaletteColor(green);
-    case "GuestPurple":
+    case "ParentPurple":
       return generatePaletteColor(purple);
-    case "GuestOrange":
-      return generatePaletteColor(orange);
     case "GuestWhite":
       return {
         light: grey[50],
