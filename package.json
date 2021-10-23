@@ -18,7 +18,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "@afes-website/docs": ">3.3.0-alpha.0",
+    "@afes-website/docs": "^3.3.0",
     "@aspida/axios": "^1.6.3",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
