@@ -3,11 +3,11 @@ import { Theme, useTheme, PaletteType } from "@material-ui/core";
 import { PaletteColor } from "@material-ui/core/styles/createPalette";
 import {
   blue,
-  red,
   yellow,
   purple,
   grey,
   green,
+  pink,
 } from "@material-ui/core/colors";
 import {
   generateLightPaletteColor,
@@ -26,7 +26,7 @@ export const wristBandPaletteColor = (
       return generatePaletteColor(blue);
     case "GuestRed":
     case "TestRed":
-      return generatePaletteColor(red);
+      return generatePaletteColor(pink);
     case "GuestYellow":
     case "TestYellow":
       return generatePaletteColor(yellow);
