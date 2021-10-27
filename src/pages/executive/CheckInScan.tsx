@@ -31,6 +31,7 @@ import { StatusColor } from "types/statusColor";
 import api, { Reservation, Term } from "@afes-website/docs";
 import clsx from "clsx";
 import ErrorAlert from "components/ErrorAlert";
+import { isReservation } from "libs/isReservation";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -154,7 +155,7 @@ const CheckInScan: React.VFC = () => {
   const handleScan = (data: string) => {
     switch (activeScanner) {
       case "rsv":
-        handleRsvIdScan(data);
+        handleRsvScan(data);
         break;
       case "guest":
         handleGuestIdScan(data);
@@ -162,15 +163,26 @@ const CheckInScan: React.VFC = () => {
     }
   };
 
-  const handleRsvIdScan = (rsvId: string) => {
+  const handleRsvScan = (rsvJson: string) => {
     if (rsvCheckStatus === null || rsvCheckStatus === "error") {
-      setLatestRsvId(rsvId);
-      checkRsv(rsvId);
+      setRsvCheckStatus("loading");
+      try {
+        const _rsv = JSON.parse(rsvJson);
+        if (isReservation(_rsv)) {
+          setLatestRsvId(_rsv.id);
+          checkRsv(_rsv.id);
+        } else {
+          throw new Error("The given json is not valid Reservation");
+        }
+      } catch {
+        setLatestRsvId("");
+        setRsvCheckStatus("error");
+        setErrorCode("QR_SYNTAX_ERROR");
+      }
     }
   };
 
   const checkRsv = async (rsvId: string) => {
-    setRsvCheckStatus("loading");
     try {
       const res = await api(aspida).reservations._id(rsvId).check.$get();
       setLatestRsv(res.reservation);
@@ -444,7 +456,7 @@ const CheckInScan: React.VFC = () => {
       <DirectInputModal
         open={opensRsvInputModal}
         setOpen={setOpensRsvInputModal}
-        onIdChange={handleRsvIdScan}
+        onIdChange={handleRsvScan}
         currentId={latestRsvId}
         type="rsv"
       />

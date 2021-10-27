@@ -76,6 +76,7 @@ const errorCodeList = [
   "SERVER_ERROR",
   // internal error
   "INTERNAL_ERROR",
+  "QR_SYNTAX_ERROR",
 ] as const;
 
 type ErrorCode = typeof errorCodeList[number];
@@ -132,4 +133,5 @@ const errorMessageList: { [code in ErrorCode]: readonly string[] } = {
   INTERNAL_ERROR: [
     "内部エラーが発生しました。至急、総務局にお問い合わせください。",
   ],
+  QR_SYNTAX_ERROR: ["QRコードの形式が間違っています。"],
 } as const;
