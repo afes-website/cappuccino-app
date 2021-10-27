@@ -12860,6 +12860,11 @@ typesafe-react-router@^2.3.0:
   dependencies:
     query-string "^5.1.1"
 
+typescanner@^0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/typescanner/-/typescanner-0.3.4.tgz#e44e22d39c3690c160b96eef3d862e92ae8f36a8"
+  integrity sha512-ajz1hrLoV7A7ypL2JCG2Hb7sedtEqobKAvTN7G/W1628yWo5OMEw2wIhImH+wvMIz6czh6n8K2QOD7Hdp1RAMw==
+
 typescript@^4.4.3:
   version "4.4.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.4.3.tgz#bdc5407caa2b109efd4f82fe130656f977a29324"
