@@ -118,7 +118,7 @@ const AllExhStatus: React.VFC = () => {
 
   const maxLimit = Object.values(status.exhibition)
     .map((exh) => exh.capacity)
-    .reduce((a, b) => Math.max(a, b));
+    .reduce((a, b) => Math.max(a, b), 0);
 
   const onSortKeyChange = (e: React.MouseEvent<HTMLButtonElement>) => {
     const val: string = e.currentTarget.value;
