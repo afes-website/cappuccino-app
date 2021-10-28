@@ -36,6 +36,7 @@ import api, {
   Reservation,
 } from "@afes-website/docs";
 import clsx from "clsx";
+import useReset from "libs/useReset";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -107,6 +108,8 @@ const GuestInfo: React.VFC = () => {
   // エラー処理
   const [errorMessage, setError] = useErrorHandler();
 
+  const [resetKey, reset] = useReset();
+
   const clearInfo = () => {
     // guest
     setGuestInfo(null);
@@ -122,12 +125,13 @@ const GuestInfo: React.VFC = () => {
     setGuestId("");
     setRsvId("");
     clearInfo();
+    reset();
 
     // error
     setStatus(null);
     setError(null);
     if (resultChipRef.current) resultChipRef.current.close();
-  }, [mode, setError]);
+  }, [mode, reset, setError]);
 
   const handleScan = (value: string) => {
     switch (mode) {
@@ -255,6 +259,7 @@ const GuestInfo: React.VFC = () => {
                 onScanFunc={handleScan}
                 videoStop={false}
                 color={status || undefined}
+                resetKey={resetKey}
               />
               {status && (
                 <ResultChip
