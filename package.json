@@ -44,6 +44,7 @@
     "recharts": "^2.1.4",
     "sass": "^1.42.1",
     "typesafe-react-router": "^2.3.0",
+    "typescanner": "^0.3.4",
     "ua-parser-js": "^0.7.28",
     "zenn-content-css": "^0.1.98"
   },

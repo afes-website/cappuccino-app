@@ -36,6 +36,7 @@ import api, {
   Reservation,
 } from "@afes-website/docs";
 import clsx from "clsx";
+import { isReservation } from "libs/isReservation";
 import useReset from "libs/useReset";
 
 const useStyles = makeStyles((theme) =>
@@ -106,7 +107,7 @@ const GuestInfo: React.VFC = () => {
   const [status, setStatus] = useState<StatusColor | null>(null);
 
   // エラー処理
-  const [errorMessage, setError] = useErrorHandler();
+  const [errorMessage, setError, setErrorCode] = useErrorHandler();
 
   const [resetKey, reset] = useReset();
 
@@ -181,22 +182,34 @@ const GuestInfo: React.VFC = () => {
     }
   };
 
-  const handleRsvIdScan = async (_rsvId: string) => {
-    setRsvId(_rsvId);
+  const handleRsvIdScan = async (_rsvJson: string) => {
     setStatus("loading");
     try {
-      const _rsvInfo = await api(aspida)
-        .reservations._id(_rsvId)
-        .$get({
-          headers: {
-            Authorization: "bearer " + currentUser?.token,
-          },
-        });
-      setStatus("success");
-      setRsvInfo(_rsvInfo);
-    } catch (e) {
+      const _rsv = JSON.parse(_rsvJson);
+      if (isReservation(_rsv)) {
+        setRsvId(_rsv.id);
+        try {
+          const _rsvInfo = await api(aspida)
+            .reservations._id(_rsv.id)
+            .$get({
+              headers: {
+                Authorization: "bearer " + currentUser?.token,
+              },
+            });
+          setStatus("success");
+          setRsvInfo(_rsvInfo);
+        } catch (e) {
+          setStatus("error");
+          setError(e);
+        }
+      } else {
+        throw new Error("The given json is not valid Reservation");
+      }
+    } catch {
+      setRsvId("");
       setStatus("error");
-      setError(e);
+      setErrorCode("QR_SYNTAX_ERROR");
+      return;
     }
   };
 
