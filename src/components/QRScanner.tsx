@@ -104,9 +104,14 @@ export interface QRScannerProps {
   onScanFunc: (data: string) => void;
   videoStop: boolean;
   color?: StatusColor;
+  resetKey?: number;
 }
 
-const QRScanner: React.VFC<QRScannerProps> = ({ onScanFunc, color }) => {
+const QRScanner: React.VFC<QRScannerProps> = ({
+  onScanFunc,
+  color,
+  resetKey,
+}) => {
   const classes = useStyles();
 
   const [lastRead, setLastRead] = useState<string | null>(null);
@@ -129,6 +134,10 @@ const QRScanner: React.VFC<QRScannerProps> = ({ onScanFunc, color }) => {
       setScannerStatus("loading");
     }
   }, [showQrReader]);
+
+  useEffect(() => {
+    setLastRead(null);
+  }, [resetKey]);
 
   const getBorderClassName = (color: StatusColor | undefined): string => {
     switch (color) {

@@ -27,6 +27,7 @@ import { useRequirePermission } from "libs/auth/useRequirePermission";
 import useErrorHandler from "libs/useErrorHandler";
 import { getStringDateTimeBrief, getStringTime } from "libs/stringDate";
 import { useWristBandPaletteColor } from "libs/wristBandColor";
+import useReset from "libs/useReset";
 import { StatusColor } from "types/statusColor";
 import api, { Reservation, Term } from "@afes-website/docs";
 import clsx from "clsx";
@@ -124,6 +125,8 @@ const CheckInScan: React.VFC = () => {
   );
   // エラー処理
   const [errorMessage, setError, setErrorCode] = useErrorHandler();
+  // QR Scanner Reset
+  const [resetKey, reset] = useReset();
 
   // 全体のチェック結果の更新処理
   useEffect(() => {
@@ -148,6 +151,7 @@ const CheckInScan: React.VFC = () => {
     setError(null);
     setRsvCheckStatus(null);
     setGuestCheckStatus(null);
+    reset();
     if (resultChipRef.current) resultChipRef.current.close();
   };
 
@@ -290,6 +294,7 @@ const CheckInScan: React.VFC = () => {
                       activeScanner
                     ] ?? undefined
                   }
+                  resetKey={resetKey}
                 />
                 {/* Result Chip */}
                 <ResultChip
