@@ -188,7 +188,13 @@ const CheckInScan: React.VFC = () => {
 
   const checkRsv = async (rsvId: string) => {
     try {
-      const res = await api(aspida).reservations._id(rsvId).check.$get();
+      const res = await api(aspida)
+        .reservations._id(rsvId)
+        .check.$get({
+          headers: {
+            Authorization: "bearer " + currentUser?.token,
+          },
+        });
       setLatestRsv(res.reservation);
       if (res.valid) {
         setRsvCheckStatus("success");
