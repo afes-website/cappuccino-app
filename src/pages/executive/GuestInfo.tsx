@@ -189,13 +189,7 @@ const GuestInfo: React.VFC = () => {
       if (isReservation(_rsv)) {
         setRsvId(_rsv.id);
         try {
-          const _rsvInfo = await api(aspida)
-            .reservations._id(_rsv.id)
-            .$get({
-              headers: {
-                Authorization: "bearer " + currentUser?.token,
-              },
-            });
+          const _rsvInfo = await api(aspida).reservations._id(_rsv.id).$get();
           setStatus("success");
           setRsvInfo(_rsvInfo);
         } catch (e) {
