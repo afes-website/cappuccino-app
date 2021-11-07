@@ -117,11 +117,6 @@ const CheckInScan: React.VFC = () => {
   const [guestCheckStatus, setGuestCheckStatus] = useState<StatusColor | null>(
     null
   );
-  // 予約IDチェック・ゲストIDチェックをマージした全体のチェック結果
-  // useEffect で自動更新
-  const [totalCheckStatus, setTotalCheckStatus] = useState<StatusColor | null>(
-    null
-  );
   // エラー処理
   const [errorMessage, setError, setErrorCode] = useErrorHandler();
   // QR Scanner Reset
@@ -139,16 +134,15 @@ const CheckInScan: React.VFC = () => {
     init: initCheckRsv,
   } = useCheckRsv(setError, setErrorCode, setRsvCheckStatus);
 
-  // 全体のチェック結果の更新処理
-  useEffect(() => {
+  const totalCheckStatus: StatusColor | null = (() => {
     if (rsvCheckStatus === "success" && guestCheckStatus === "success")
-      setTotalCheckStatus("success");
+      return "success";
     else if (rsvCheckStatus === "loading" || guestCheckStatus === "loading")
-      setTotalCheckStatus("loading");
+      return "loading";
     else if (rsvCheckStatus === "error" || guestCheckStatus === "error")
-      setTotalCheckStatus("error");
-    else setTotalCheckStatus(null);
-  }, [rsvCheckStatus, guestCheckStatus]);
+      return "error";
+    else return null;
+  })();
 
   // 全リセット
   const clearAll = () => {
