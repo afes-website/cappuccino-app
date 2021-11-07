@@ -20,7 +20,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { AccessTime, Face } from "@material-ui/icons";
+import { AccessTime, Face, People, Person } from "@material-ui/icons";
 import ActivityLogTimeline from "components/ActivityLogTimeline";
 import CardList from "components/CardList";
 import DirectInputFab from "components/DirectInputFab";
@@ -461,28 +461,56 @@ const PrivateInfoList: React.VFC<{
         <ListItemText primary={rsvId} secondary="予約 ID" />
       </ListItem>
       {info && (
-        <ListItem>
-          <ListItemIcon>
-            <AccessTime />
-          </ListItemIcon>
-          <ListItemText
-            primary={
-              <>
-                <span
-                  className={classes.termColorBadge}
-                  style={{
-                    background: wristBandPaletteColor(info.term.guest_type)
-                      .main,
-                  }}
-                />
-                {`${getStringDateTimeBrief(
-                  info.term.enter_scheduled_time
-                )} - ${getStringDateTimeBrief(info.term.exit_scheduled_time)}`}
-              </>
-            }
-            secondary="予約時間帯"
-          />
-        </ListItem>
+        <>
+          <ListItem>
+            <ListItemIcon>
+              <AccessTime />
+            </ListItemIcon>
+            <ListItemText
+              primary={
+                <>
+                  <span
+                    className={classes.termColorBadge}
+                    style={{
+                      background: wristBandPaletteColor(info.term.guest_type)
+                        .main,
+                    }}
+                  />
+                  {`${getStringDateTimeBrief(
+                    info.term.enter_scheduled_time
+                  )} - ${getStringDateTimeBrief(
+                    info.term.exit_scheduled_time
+                  )}`}
+                </>
+              }
+              secondary="予約時間帯"
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              {info.member_all === 1 ? <Person /> : <People />}
+            </ListItemIcon>
+            <ListItemText
+              primary={
+                info.member_all === 1
+                  ? "一般枠（中学生以上 1 名）"
+                  : "児童枠（小学生とその保護者 計 2 名）"
+              }
+              secondary="予約枠"
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <Face />
+            </ListItemIcon>
+            <ListItemText
+              primary={`${info.member_checked_in} 人（あと ${
+                info.member_all - info.member_checked_in
+              } 人入場可能）`}
+              secondary="入場済み人数"
+            />
+          </ListItem>
+        </>
       )}
     </List>
   );
