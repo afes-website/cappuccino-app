@@ -33,7 +33,7 @@ import api, { Term } from "@afes-website/docs";
 import clsx from "clsx";
 import ErrorAlert from "components/ErrorAlert";
 import useCheckRsv from "hooks/useCheckRsv";
-import useHandleRsvScan from "hooks/auth/useHandleRsvScan";
+import useHandleRsvScan from "hooks/useHandleRsvScan";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
