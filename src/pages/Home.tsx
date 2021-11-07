@@ -38,6 +38,12 @@ const Home: React.VFC = () => {
                     to: routes.CheckOutScan.route.create({}),
                     icon: <Logout />,
                   },
+                  {
+                    primary: "入場待機列 予約確認スキャン",
+                    secondary: "来場者の予約を事前に確認",
+                    to: routes.GuestInfo.route.create({}),
+                    icon: <QRScannerIcon />,
+                  },
                 ]}
               />
             </Card>
