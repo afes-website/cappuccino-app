@@ -29,10 +29,11 @@ import { getStringDateTimeBrief, getStringTime } from "libs/stringDate";
 import useWristBandPaletteColor from "hooks/useWristBandColor";
 import useReset from "hooks/useReset";
 import { StatusColor } from "types/statusColor";
-import api, { Reservation, Term } from "@afes-website/docs";
+import api, { Term } from "@afes-website/docs";
 import clsx from "clsx";
 import ErrorAlert from "components/ErrorAlert";
 import { isReservation } from "libs/isReservation";
+import useCheckRsv from "hooks/useCheckRsv";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -103,7 +104,6 @@ const CheckInScan: React.VFC = () => {
 
   // 最後に読み込んだ予約ID・ゲストID
   const [latestRsvId, setLatestRsvId] = useState("");
-  const [latestRsv, setLatestRsv] = useState<Reservation | null>(null);
   const [latestGuestId, setLatestGuestId] = useState("");
   // 入場済みゲストID
   const [checkedInGuestIds, setCheckedInGuestIds] = useState<string[]>([]);
@@ -129,6 +129,12 @@ const CheckInScan: React.VFC = () => {
   // QR Scanner Reset
   const [resetKey, reset] = useReset();
 
+  const {
+    latestRsv,
+    checkRsv,
+    init: initCheckRsv,
+  } = useCheckRsv(setError, setErrorCode, setRsvCheckStatus);
+
   // 全体のチェック結果の更新処理
   useEffect(() => {
     if (rsvCheckStatus === "success" && guestCheckStatus === "success")
@@ -143,7 +149,6 @@ const CheckInScan: React.VFC = () => {
   // 全リセット
   const clearAll = () => {
     setLatestRsvId("");
-    setLatestRsv(null);
     setLatestGuestId("");
     setCheckedInGuestIds([]);
     setOpensRsvInputModal(false);
@@ -152,6 +157,7 @@ const CheckInScan: React.VFC = () => {
     setError(null);
     setRsvCheckStatus(null);
     setGuestCheckStatus(null);
+    initCheckRsv();
     reset();
     if (resultChipRef.current) resultChipRef.current.close();
   };
@@ -174,7 +180,9 @@ const CheckInScan: React.VFC = () => {
         const _rsv = JSON.parse(rsvJson);
         if (isReservation(_rsv)) {
           setLatestRsvId(_rsv.id);
-          checkRsv(_rsv.id);
+          checkRsv(_rsv.id, () => {
+            setActiveScanner("guest");
+          });
         } else {
           throw new Error("The given json is not valid Reservation");
         }
@@ -186,34 +194,11 @@ const CheckInScan: React.VFC = () => {
     }
   };
 
-  const checkRsv = async (rsvId: string) => {
-    try {
-      const res = await api(aspida)
-        .reservations._id(rsvId)
-        .check.$get({
-          headers: {
-            Authorization: "bearer " + currentUser?.token,
-          },
-        });
-      setLatestRsv(res.reservation);
-      if (res.valid) {
-        setRsvCheckStatus("success");
-        setActiveScanner("guest");
-      } else {
-        setRsvCheckStatus("error");
-        if (res.error_code) setErrorCode(res.error_code);
-      }
-    } catch (e) {
-      setRsvCheckStatus("error");
-      setError(e);
-    }
-  };
-
   useEffect(() => {
     switch (rsvCheckStatus) {
       case "loading":
         setError(null);
-        setLatestRsv(null);
+        initCheckRsv();
         if (resultChipRef.current) resultChipRef.current.close();
         break;
       case "success":
@@ -232,7 +217,7 @@ const CheckInScan: React.VFC = () => {
           );
         break;
     }
-  }, [rsvCheckStatus, latestRsvId, setError]);
+  }, [rsvCheckStatus, latestRsvId, setError, initCheckRsv]);
 
   const handleGuestIdScan = (guestId: string) => {
     if (guestCheckStatus === null || guestCheckStatus === "error") {
@@ -261,7 +246,9 @@ const CheckInScan: React.VFC = () => {
 
   const handleSuccess = () => {
     if (latestRsv && latestRsv.member_checked_in + 1 < latestRsv.member_all) {
-      checkRsv(latestRsvId);
+      checkRsv(latestRsvId, () => {
+        setActiveScanner("guest");
+      });
       setGuestCheckStatus(null);
       setCheckedInGuestIds((prev) => [latestGuestId, ...prev]);
       setLatestGuestId("");

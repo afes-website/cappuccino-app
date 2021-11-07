@@ -1,10 +1,13 @@
 import { useCallback, useState } from "react";
 import axios from "axios";
 
+export type SetError = (e: unknown) => void;
+export type SetErrorCode = (code: string | ErrorCode | null) => void;
+
 const useErrorHandler = (): [
   readonly string[] | null,
-  (e: unknown) => void,
-  (code: string | ErrorCode | null) => void
+  SetError,
+  SetErrorCode
 ] => {
   const [errorMessage, setErrorMessage] = useState<readonly string[] | null>(
     null
