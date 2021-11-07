@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
+import api, { AllStatus, ExhibitionStatus, Terms } from "@afes-website/docs";
+import moment, { Moment } from "moment";
 import {
   Avatar,
   Button,
@@ -15,13 +17,11 @@ import {
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import ReloadButton from "components/ReloadButton";
-import useWristBandPaletteColor from "hooks/useWristBandColor";
 import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 import { useRequirePermission } from "hooks/auth/useRequirePermission";
-import { useTitleSet } from "libs/title";
+import useWristBandPaletteColor from "hooks/useWristBandColor";
 import { compareTerm } from "libs/compare";
-import api, { AllStatus, ExhibitionStatus, Terms } from "@afes-website/docs";
-import moment, { Moment } from "moment";
+import { useTitleSet } from "libs/title";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

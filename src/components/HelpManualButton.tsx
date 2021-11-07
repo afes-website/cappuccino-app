@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import axios from "axios";
 import { IconButton } from "@material-ui/core";
 import { HelpOutline } from "@material-ui/icons";
-import axios from "axios";
 import HelpManualPopUp from "components/HelpManualPopUp";
 
 const HelpManualButton: React.VFC<{ className?: string }> = ({ className }) => {

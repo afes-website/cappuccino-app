@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+import mdImsize from "@steelydylan/markdown-it-imsize";
 import markdownIt from "markdown-it";
+import mdAnchor from "markdown-it-anchor";
 import {
   containerDetailsOptions,
   containerMessageOptions,
 } from "libs/md-container";
 
-import mdAnchor from "markdown-it-anchor";
-import mdImsize from "@steelydylan/markdown-it-imsize";
 const mdBr = require("markdown-it-br");
 const mdCjkBreaks = require("markdown-it-cjk-breaks");
 const mdContainer = require("markdown-it-container");

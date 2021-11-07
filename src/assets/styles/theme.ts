@@ -1,9 +1,9 @@
 import { Theme, createMuiTheme } from "@material-ui/core";
-import { afesBlue, afesDark, afesLight } from "assets/styles/origPalette";
 import { PaletteOptions } from "@material-ui/core/styles/createPalette";
-import { ComponentsProps } from "@material-ui/core/styles/props";
-import { Overrides } from "@material-ui/core/styles/overrides";
 import { TypographyOptions } from "@material-ui/core/styles/createTypography";
+import { Overrides } from "@material-ui/core/styles/overrides";
+import { ComponentsProps } from "@material-ui/core/styles/props";
+import { afesBlue, afesDark, afesLight } from "assets/styles/origPalette";
 
 const lightPalette: PaletteOptions = {
   primary: afesDark,

@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "App";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
-import "assets/scss/main.scss";
+import App from "App";
 import Axios from "axios";
+import "assets/scss/main.scss";
 
 Axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
 

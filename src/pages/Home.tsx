@@ -1,16 +1,16 @@
 import React from "react";
 import { Card, Typography } from "@material-ui/core";
 import { History, Map, NotListedLocation, Room } from "@material-ui/icons";
-import { Login, Logout, QRScannerIcon } from "components/MaterialSvgIcons";
 import CardList from "components/CardList";
 import CardMenu from "components/CardMenu";
-import PwaAlertCard from "components/PwaAlertCard";
 import ExhInfoCard from "components/ExhInfoCard";
-import { GeneralStatusCard, ExhStatusCard } from "components/StayStatusCard";
-import routes from "libs/routes";
-import { useTitleSet } from "libs/title";
+import { Login, Logout, QRScannerIcon } from "components/MaterialSvgIcons";
+import PwaAlertCard from "components/PwaAlertCard";
+import { ExhStatusCard, GeneralStatusCard } from "components/StayStatusCard";
 import { useAuthState } from "hooks/auth/useAuth";
 import { verifyPermission } from "hooks/auth/useRequirePermission";
+import routes from "libs/routes";
+import { useTitleSet } from "libs/title";
 
 const Home: React.VFC = () => {
   useTitleSet("CAPPUCCINO");

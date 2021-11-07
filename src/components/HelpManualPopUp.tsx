@@ -1,16 +1,16 @@
 import React from "react";
+import "zenn-content-css";
 import {
-  createStyles,
   Dialog,
   DialogContent,
   DialogTitle,
   IconButton,
-  makeStyles,
   Theme,
+  createStyles,
+  makeStyles,
 } from "@material-ui/core";
 import { Close } from "@material-ui/icons";
 import markdownToHtml from "libs/markdown";
-import "zenn-content-css";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

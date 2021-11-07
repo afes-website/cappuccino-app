@@ -1,35 +1,35 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import routes from "libs/routes";
 import {
   Button,
-  createStyles,
   Dialog,
-  DialogTitle,
+  DialogActions,
   DialogContent,
   DialogContentText,
-  DialogActions,
+  DialogTitle,
   Divider,
   Drawer,
+  IconButton,
   List,
   ListItem,
   ListItemAvatar,
   ListItemText,
-  makeStyles,
-  Theme,
-  Typography,
-  useTheme,
-  IconButton,
-  Toolbar,
   Snackbar,
+  Theme,
+  Toolbar,
+  Typography,
+  createStyles,
+  makeStyles,
+  useTheme,
 } from "@material-ui/core";
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
-import { DarkMode, LightMode, Reload } from "components/MaterialSvgIcons";
+import { Alert } from "@material-ui/lab";
 import AccountIcon from "components/AccountIcon";
+import { DarkMode, LightMode, Reload } from "components/MaterialSvgIcons";
 import PermissionList from "components/PermissionList";
 import { useAuthDispatch, useAuthState } from "hooks/auth/useAuth";
+import routes from "libs/routes";
 import { useSetThemeMode } from "libs/themeMode";
-import { Alert } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

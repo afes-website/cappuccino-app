@@ -1,7 +1,7 @@
 import React from "react";
-import { useTitleSet } from "libs/title";
 import { Divider, Link, Typography } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
+import { useTitleSet } from "libs/title";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

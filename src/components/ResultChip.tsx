@@ -4,11 +4,11 @@ import React, {
   useImperativeHandle,
   useState,
 } from "react";
-import { Chip, Fade, SvgIcon } from "@material-ui/core";
-import { CheckCircleOutline, ErrorOutline } from "@material-ui/icons";
-import { makeStyles, createStyles } from "@material-ui/core/styles";
-import { StatusColor } from "types/statusColor";
 import clsx from "clsx";
+import { Chip, Fade, SvgIcon } from "@material-ui/core";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
+import { CheckCircleOutline, ErrorOutline } from "@material-ui/icons";
+import { StatusColor } from "types/statusColor";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

@@ -1,4 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
+import api, {
+  ActivityLog,
+  AllStatus,
+  Guest,
+  Reservation,
+} from "@afes-website/docs";
+import clsx from "clsx";
 import {
   Card,
   CardContent,
@@ -14,30 +21,23 @@ import {
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { AccessTime, Face } from "@material-ui/icons";
-import { ReservationTicket } from "components/MaterialSvgIcons";
 import ActivityLogTimeline from "components/ActivityLogTimeline";
 import CardList from "components/CardList";
-import QRScanner from "components/QRScanner";
-import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import DirectInputFab from "components/DirectInputFab";
 import DirectInputModal from "components/DirectInputModal";
 import ErrorAlert from "components/ErrorAlert";
+import { ReservationTicket } from "components/MaterialSvgIcons";
+import QRScanner from "components/QRScanner";
+import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 import { useRequirePermission } from "hooks/auth/useRequirePermission";
-import { useTitleSet } from "libs/title";
-import { getStringDateTimeBrief } from "libs/stringDate";
-import useWristBandPaletteColor from "hooks/useWristBandColor";
 import useErrorHandler from "hooks/useErrorHandler";
-import { StatusColor } from "types/statusColor";
-import api, {
-  ActivityLog,
-  AllStatus,
-  Guest,
-  Reservation,
-} from "@afes-website/docs";
-import clsx from "clsx";
-import { isReservation } from "libs/isReservation";
 import useReset from "hooks/useReset";
+import useWristBandPaletteColor from "hooks/useWristBandColor";
+import { isReservation } from "libs/isReservation";
+import { getStringDateTimeBrief } from "libs/stringDate";
+import { useTitleSet } from "libs/title";
+import { StatusColor } from "types/statusColor";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

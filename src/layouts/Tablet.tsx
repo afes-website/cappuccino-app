@@ -1,10 +1,10 @@
 import React, { PropsWithChildren, useState } from "react";
-import { createStyles, makeStyles, Paper } from "@material-ui/core";
-import TopBar from "components/TopBar";
-import SideNav from "components/SideNav";
-import { useTitleContext } from "libs/title";
 import clsx from "clsx";
+import { Paper, createStyles, makeStyles } from "@material-ui/core";
 import { Menu } from "@material-ui/icons";
+import SideNav from "components/SideNav";
+import TopBar from "components/TopBar";
+import { useTitleContext } from "libs/title";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

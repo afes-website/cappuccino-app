@@ -1,10 +1,11 @@
 import React, {
-  useState,
-  useEffect,
-  useImperativeHandle,
   forwardRef,
   useCallback,
+  useEffect,
+  useImperativeHandle,
+  useState,
 } from "react";
+import clsx from "clsx";
 import {
   CircularProgress,
   Dialog,
@@ -13,10 +14,9 @@ import {
   Slide,
   SlideProps,
 } from "@material-ui/core";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { CheckCircleOutline, ErrorOutline } from "@material-ui/icons";
-import { makeStyles, createStyles } from "@material-ui/core/styles";
 import { StatusColor } from "types/statusColor";
-import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
