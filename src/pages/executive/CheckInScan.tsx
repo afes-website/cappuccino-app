@@ -107,8 +107,7 @@ const CheckInScan: React.VFC = () => {
   // 入場済みゲストID
   const [checkedInGuestIds, setCheckedInGuestIds] = useState<string[]>([]);
   // 直接入力モーダルの開閉状態
-  const [opensRsvInputModal, setOpensRsvInputModal] = useState(false);
-  const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
+  const [directInputModalOpen, setDirectInputModalOpen] = useState(false);
   // ステップ管理
   const [activeScanner, setActiveScanner] = useState<"rsv" | "guest">("rsv");
   // 予約ID・ゲストIDそれぞれのチェック結果
@@ -155,8 +154,7 @@ const CheckInScan: React.VFC = () => {
   const clearAll = () => {
     setLatestGuestId("");
     setCheckedInGuestIds([]);
-    setOpensRsvInputModal(false);
-    setOpensGuestInputModal(false);
+    setDirectInputModalOpen(false);
     setActiveScanner("rsv");
     setError(null);
     setRsvCheckStatus(null);
@@ -429,9 +427,7 @@ const CheckInScan: React.VFC = () => {
       {/* 直接入力ボタン */}
       <DirectInputFab
         onClick={() => {
-          ({ rsv: setOpensRsvInputModal, guest: setOpensGuestInputModal }[
-            activeScanner
-          ](true));
+          setDirectInputModalOpen(true);
         }}
         disabled={
           { rsv: rsvCheckStatus, guest: guestCheckStatus }[activeScanner] ===
@@ -441,18 +437,13 @@ const CheckInScan: React.VFC = () => {
 
       {/* 直接入力モーダル */}
       <DirectInputModal
-        open={opensRsvInputModal}
-        setOpen={setOpensRsvInputModal}
-        onIdChange={handleRsvScan}
-        currentId={latestRsvId}
-        type="rsv"
-      />
-      <DirectInputModal
-        open={opensGuestInputModal}
-        setOpen={setOpensGuestInputModal}
-        onIdChange={handleGuestIdScan}
-        currentId={latestGuestId}
-        type="guest"
+        open={directInputModalOpen}
+        setOpen={setDirectInputModalOpen}
+        onIdChange={
+          { rsv: handleRsvScan, guest: handleGuestIdScan }[activeScanner]
+        }
+        currentId={{ rsv: latestRsvId, guest: latestGuestId }[activeScanner]}
+        type={activeScanner}
       />
     </div>
   );
