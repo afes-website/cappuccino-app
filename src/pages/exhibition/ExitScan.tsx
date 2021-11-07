@@ -1,9 +1,9 @@
 import React from "react";
-import { useTitleSet } from "libs/title";
-import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
-import { useRequirePermission } from "hooks/auth/useRequirePermission";
 import api from "@afes-website/docs";
 import GuestScan from "components/GuestScan";
+import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
+import { useRequirePermission } from "hooks/auth/useRequirePermission";
+import { useTitleSet } from "libs/title";
 
 const ExitScan: React.VFC = () => {
   useTitleSet("展示教室 退室スキャン");

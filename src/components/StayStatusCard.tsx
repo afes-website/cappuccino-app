@@ -4,11 +4,11 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import api, { ExhibitionStatus, Terms } from "@afes-website/docs";
 import { Card, CardContent, Typography } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import StayStatus from "components/StayStatus";
 import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
-import api, { ExhibitionStatus, Terms } from "@afes-website/docs";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

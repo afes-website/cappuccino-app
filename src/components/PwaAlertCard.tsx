@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Card, createStyles, IconButton, makeStyles } from "@material-ui/core";
-import { Alert, AlertTitle } from "@material-ui/lab";
+import { IosShare } from "./MaterialSvgIcons";
+import UAParser from "ua-parser-js";
+import { Card, IconButton, createStyles, makeStyles } from "@material-ui/core";
 import {
   AddBoxOutlined,
   AddToHomeScreen,
@@ -9,8 +10,7 @@ import {
   Launch,
   MoreVert,
 } from "@material-ui/icons";
-import { IosShare } from "./MaterialSvgIcons";
-import UAParser from "ua-parser-js";
+import { Alert, AlertTitle } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

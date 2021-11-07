@@ -1,25 +1,25 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useHistory } from "react-router-dom";
+import chroma from "chroma-js";
+import clsx from "clsx";
+import UAParser from "ua-parser-js";
 import {
   AppBar,
-  createStyles,
   IconButton,
-  makeStyles,
   Theme,
   Toolbar,
   Typography,
+  createStyles,
+  makeStyles,
   useMediaQuery,
   useTheme,
 } from "@material-ui/core";
 import { ArrowBack, ArrowBackIos } from "@material-ui/icons";
-import { useHistory } from "react-router-dom";
-import AccountIcon from "components/AccountIcon";
 import AccountDrawer from "components/AccountDrawer";
+import AccountIcon from "components/AccountIcon";
 import HelpManualButton from "components/HelpManualButton";
 import { useAuthState } from "hooks/auth/useAuth";
 import routes from "libs/routes";
-import clsx from "clsx";
-import chroma from "chroma-js";
-import UAParser from "ua-parser-js";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

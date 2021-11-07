@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+
 /**
  * zenn-dev/zenn-editor
  * https://github.com/zenn-dev/zenn-editor
  *
  * LICENSE: MIT
  */
-
 import { escapeHtml } from "markdown-it/lib/common/utils";
 import type Token from "markdown-it/lib/token";
 

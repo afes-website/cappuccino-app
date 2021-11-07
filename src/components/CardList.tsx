@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from "react";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

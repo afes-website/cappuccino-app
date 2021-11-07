@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Reload } from "./MaterialSvgIcons";
 import {
   Button,
   Dialog,
@@ -9,10 +10,9 @@ import {
   MenuItem,
   Select,
 } from "@material-ui/core";
-import { useDeviceId } from "libs/videoDeviceId";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Alert } from "@material-ui/lab";
-import { Reload } from "./MaterialSvgIcons";
+import { useDeviceId } from "libs/videoDeviceId";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

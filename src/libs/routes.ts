@@ -1,20 +1,20 @@
-import { typedRoute } from "components/TypesafeRouter";
 import { route } from "typesafe-react-router";
+import Account from "pages/Account";
+import Forbidden from "pages/Forbidden";
 import Home from "pages/Home";
 import Login from "pages/Login";
 import LoginWithQR from "pages/LoginWithQR";
-import Account from "pages/Account";
-import Forbidden from "pages/Forbidden";
 import Terms from "pages/Terms";
+import AllExhStatus from "pages/executive/AllExhStatus";
 import CheckInScan from "pages/executive/CheckInScan";
 import CheckOutScan from "pages/executive/CheckOutScan";
-import RegisterSpare from "pages/executive/RegisterSpare";
-import AllExhStatus from "pages/executive/AllExhStatus";
 import GuestInfo from "pages/executive/GuestInfo";
 import HeatMap from "pages/executive/HeatMap";
+import RegisterSpare from "pages/executive/RegisterSpare";
 import EnterScan from "pages/exhibition/EnterScan";
 import ExitScan from "pages/exhibition/ExitScan";
 import ScanHistory from "pages/exhibition/ScanHistory";
+import { typedRoute } from "components/TypesafeRouter";
 
 const routes = {
   Home: typedRoute(route(""), Home),

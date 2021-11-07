@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import api from "@afes-website/docs";
+import clsx from "clsx";
 import {
   Button,
   Card,
@@ -10,23 +12,21 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@material-ui/core";
-import { CheckCircle, Face, Replay } from "@material-ui/icons";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { ReservationTicket } from "components/MaterialSvgIcons";
+import { CheckCircle, Face, Replay } from "@material-ui/icons";
 import CardList from "components/CardList";
-import QRScanner from "components/QRScanner";
-import DirectInputModal from "components/DirectInputModal";
 import DirectInputFab from "components/DirectInputFab";
+import DirectInputModal from "components/DirectInputModal";
+import ErrorAlert from "components/ErrorAlert";
+import { ReservationTicket } from "components/MaterialSvgIcons";
+import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import ResultPopup, { ResultPopupRefs } from "components/ResultPopup";
-import { useTitleSet } from "libs/title";
 import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 import { useRequirePermission } from "hooks/auth/useRequirePermission";
 import useErrorHandler from "hooks/useErrorHandler";
+import { useTitleSet } from "libs/title";
 import { StatusColor } from "types/statusColor";
-import api from "@afes-website/docs";
-import clsx from "clsx";
-import ErrorAlert from "components/ErrorAlert";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

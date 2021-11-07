@@ -1,7 +1,7 @@
-import { Route, Router, Switch } from "react-router-dom";
-import { Route as TypedRoute, PathPart } from "typesafe-react-router";
 import React, { PropsWithChildren } from "react";
+import { Route, Router, Switch } from "react-router-dom";
 import { History } from "history";
+import { PathPart, Route as TypedRoute } from "typesafe-react-router";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type PathPartArray = Array<PathPart<any>>;

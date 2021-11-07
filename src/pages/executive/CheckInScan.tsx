@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import api, { Term } from "@afes-website/docs";
+import clsx from "clsx";
 import {
   Button,
   Card,
@@ -12,28 +14,26 @@ import {
   ListItemText,
   Typography,
 } from "@material-ui/core";
-import { CheckCircle, Face, Replay } from "@material-ui/icons";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { ReservationTicket } from "components/MaterialSvgIcons";
+import { CheckCircle, Face, Replay } from "@material-ui/icons";
 import CardList from "components/CardList";
-import QRScanner from "components/QRScanner";
-import DirectInputModal from "components/DirectInputModal";
 import DirectInputFab from "components/DirectInputFab";
+import DirectInputModal from "components/DirectInputModal";
+import ErrorAlert from "components/ErrorAlert";
+import { ReservationTicket } from "components/MaterialSvgIcons";
+import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import ResultPopup, { ResultPopupRefs } from "components/ResultPopup";
-import { useTitleSet } from "libs/title";
 import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 import { useRequirePermission } from "hooks/auth/useRequirePermission";
-import useErrorHandler from "hooks/useErrorHandler";
-import { getStringDateTimeBrief, getStringTime } from "libs/stringDate";
-import useWristBandPaletteColor from "hooks/useWristBandColor";
-import useReset from "hooks/useReset";
-import { StatusColor } from "types/statusColor";
-import api, { Term } from "@afes-website/docs";
-import clsx from "clsx";
-import ErrorAlert from "components/ErrorAlert";
 import useCheckRsv from "hooks/useCheckRsv";
+import useErrorHandler from "hooks/useErrorHandler";
 import useHandleRsvScan from "hooks/useHandleRsvScan";
+import useReset from "hooks/useReset";
+import useWristBandPaletteColor from "hooks/useWristBandColor";
+import { getStringDateTimeBrief, getStringTime } from "libs/stringDate";
+import { useTitleSet } from "libs/title";
+import { StatusColor } from "types/statusColor";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

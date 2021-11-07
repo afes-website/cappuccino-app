@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
+import { Theme, createMuiTheme } from "@material-ui/core";
 import createCtx from "libs/createCtx";
 import { themeOptions } from "assets/styles/theme";
-import { createMuiTheme, Theme } from "@material-ui/core";
 
 export type UseSetThemeMode = "light" | "dark";
 

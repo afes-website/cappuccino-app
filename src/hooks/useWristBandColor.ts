@@ -1,17 +1,17 @@
 import { GuestType } from "@afes-website/docs";
-import { Theme, useTheme, PaletteType } from "@material-ui/core";
-import { PaletteColor } from "@material-ui/core/styles/createPalette";
+import { PaletteType, Theme, useTheme } from "@material-ui/core";
 import {
   blue,
-  yellow,
-  purple,
-  grey,
   green,
+  grey,
   pink,
+  purple,
+  yellow,
 } from "@material-ui/core/colors";
+import { PaletteColor } from "@material-ui/core/styles/createPalette";
 import {
-  generateLightPaletteColor,
   generateDarkPaletteColor,
+  generateLightPaletteColor,
 } from "libs/paletteColor";
 
 const wristBandPaletteColor = (
