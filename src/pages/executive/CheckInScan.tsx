@@ -102,24 +102,17 @@ const CheckInScan: React.VFC = () => {
 
   // ==== state ====
 
-  // 最後に読み込んだ予約ID・ゲストID
   const [latestGuestId, setLatestGuestId] = useState("");
-  // 入場済みゲストID
   const [checkedInGuestIds, setCheckedInGuestIds] = useState<string[]>([]);
-  // 直接入力モーダルの開閉状態
   const [directInputModalOpen, setDirectInputModalOpen] = useState(false);
-  // ステップ管理
   const [activeScanner, setActiveScanner] = useState<"rsv" | "guest">("rsv");
-  // 予約ID・ゲストIDそれぞれのチェック結果
   const [rsvCheckStatus, setRsvCheckStatus] = useState<StatusColor | null>(
     null
   );
   const [guestCheckStatus, setGuestCheckStatus] = useState<StatusColor | null>(
     null
   );
-  // エラー処理
   const [errorMessage, setError, setErrorCode] = useErrorHandler();
-  // QR Scanner Reset
   const [resetKey, reset] = useReset();
 
   const {
