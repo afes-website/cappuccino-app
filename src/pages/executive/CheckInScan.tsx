@@ -118,6 +118,7 @@ const CheckInScan: React.VFC = () => {
   const {
     latestRsvId,
     handleRsvScan,
+    handleRsvIdDirectInput,
     init: initHandleRsvScan,
   } = useHandleRsvScan(setErrorCode, setRsvCheckStatus);
 
@@ -164,6 +165,22 @@ const CheckInScan: React.VFC = () => {
         break;
       case "guest":
         handleGuestIdScan(data);
+        break;
+    }
+  };
+
+  const handleDirectInput = (id: string) => {
+    switch (activeScanner) {
+      case "rsv":
+        if (rsvCheckStatus === null || rsvCheckStatus === "error")
+          handleRsvIdDirectInput(id, (rsvId) => {
+            checkRsv(rsvId, () => {
+              setActiveScanner("guest");
+            });
+          });
+        break;
+      case "guest":
+        handleGuestIdScan(id);
         break;
     }
   };
@@ -426,9 +443,7 @@ const CheckInScan: React.VFC = () => {
       <DirectInputModal
         open={directInputModalOpen}
         setOpen={setDirectInputModalOpen}
-        onIdChange={
-          { rsv: handleRsvScan, guest: handleGuestIdScan }[activeScanner]
-        }
+        onIdChange={handleDirectInput}
         currentId={{ rsv: latestRsvId, guest: latestGuestId }[activeScanner]}
         type={activeScanner}
       />
