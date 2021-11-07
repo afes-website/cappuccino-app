@@ -6,10 +6,14 @@ import { StatusColor } from "types/statusColor";
 interface ReturnType {
   latestRsvId: string;
   handleRsvScan: (rsvJson: string, onSuccess?: (rsvId: string) => void) => void;
+  handleRsvIdDirectInput: (
+    rsvId: string,
+    onSuccess?: (rsvId: string) => void
+  ) => void;
   init: () => void;
 }
 
-const useHandleRsvScan = (
+const useHandleRsvInput = (
   setErrorCode: SetErrorCode,
   setCheckStatus: Dispatch<SetStateAction<StatusColor | null>>
 ): ReturnType => {
@@ -35,11 +39,21 @@ const useHandleRsvScan = (
     [setCheckStatus, setErrorCode]
   );
 
+  const handleRsvIdDirectInput: ReturnType["handleRsvIdDirectInput"] =
+    useCallback(
+      (rsvId, onSuccess) => {
+        setCheckStatus("loading");
+        setLatestRsvId(rsvId);
+        if (onSuccess !== undefined) onSuccess(rsvId);
+      },
+      [setCheckStatus]
+    );
+
   const init = useCallback(() => {
     setLatestRsvId("");
   }, []);
 
-  return { latestRsvId, handleRsvScan, init };
+  return { latestRsvId, handleRsvScan, handleRsvIdDirectInput, init };
 };
 
-export default useHandleRsvScan;
+export default useHandleRsvInput;
