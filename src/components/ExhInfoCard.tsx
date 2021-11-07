@@ -3,7 +3,7 @@ import { Card, Typography } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import api, { ExhibitionStatus } from "@afes-website/docs";
-import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
+import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

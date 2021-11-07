@@ -9,8 +9,8 @@ import ExhInfoCard from "components/ExhInfoCard";
 import { GeneralStatusCard, ExhStatusCard } from "components/StayStatusCard";
 import routes from "libs/routes";
 import { useTitleSet } from "libs/title";
-import { useAuthState } from "libs/auth/useAuth";
-import { verifyPermission } from "libs/auth/useRequirePermission";
+import { useAuthState } from "hooks/auth/useAuth";
+import { verifyPermission } from "hooks/auth/useRequirePermission";
 
 const Home: React.VFC = () => {
   useTitleSet("CAPPUCCINO");

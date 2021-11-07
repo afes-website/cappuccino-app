@@ -9,8 +9,8 @@ import {
   PersonRoom,
   PersonTeacher,
 } from "components/MaterialSvgIcons";
-import { StorageUserInfo } from "libs/auth/@types";
-import useExhibitionImageUrl from "libs/useExhibitionImageUrl";
+import { StorageUserInfo } from "hooks/auth/@types";
+import useExhibitionImageUrl from "hooks/useExhibitionImageUrl";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>

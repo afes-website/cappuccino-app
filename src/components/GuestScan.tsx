@@ -18,7 +18,7 @@ import DirectInputFab from "components/DirectInputFab";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import ExhInfoCard from "components/ExhInfoCard";
 import ErrorAlert from "components/ErrorAlert";
-import useErrorHandler from "libs/useErrorHandler";
+import useErrorHandler from "hooks/useErrorHandler";
 import { StatusColor } from "types/statusColor";
 import clsx from "clsx";
 import { Guest } from "@afes-website/docs";

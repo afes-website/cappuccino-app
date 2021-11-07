@@ -39,7 +39,7 @@ import {
 } from "components/MaterialSvgIcons";
 import AccountIcon from "components/AccountIcon";
 import PermissionList from "components/PermissionList";
-import { useAuthState } from "libs/auth/useAuth";
+import { useAuthState } from "hooks/auth/useAuth";
 import routes from "libs/routes";
 import { useSetThemeMode } from "libs/themeMode";
 import { UserInfo } from "@afes-website/docs";

@@ -3,19 +3,19 @@ import createCtx from "libs/createCtx";
 import { themeOptions } from "assets/styles/theme";
 import { createMuiTheme, Theme } from "@material-ui/core";
 
-export type ThemeMode = "light" | "dark";
+export type UseSetThemeMode = "light" | "dark";
 
 /* ======== Local Storage ======== */
 
 const storage_key_mode = "theme_mode";
 
-const getThemeModeFromLocalStorage = (): ThemeMode | undefined => {
+const getThemeModeFromLocalStorage = (): UseSetThemeMode | undefined => {
   const _mode = localStorage.getItem(storage_key_mode);
   if (_mode === "light" || _mode === "dark") return _mode;
   return undefined;
 };
 
-const setThemeModeToLocalStorage = (mode: ThemeMode): void => {
+const setThemeModeToLocalStorage = (mode: UseSetThemeMode): void => {
   localStorage.setItem(storage_key_mode, mode);
 };
 
@@ -25,15 +25,10 @@ export const [useThemeContext, ThemeContextProvider] = createCtx<{
   toggleThemeMode: () => void;
 }>();
 
-export const ThemeCtx = {
-  useThemeContext,
-  ThemeContextProvider,
-};
-
 /* ======== Hooks ======== */
 
 export const useThemeMode = (): [Theme, () => void] => {
-  const [mode, setMode] = useState<ThemeMode>(
+  const [mode, setMode] = useState<UseSetThemeMode>(
     getThemeModeFromLocalStorage() ||
       (window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
@@ -58,5 +53,3 @@ export const useSetThemeMode = (): (() => void) => {
   const Theme = useThemeContext();
   return Theme.toggleThemeMode;
 };
-
-export default { useSetThemeMode, ThemeCtx };

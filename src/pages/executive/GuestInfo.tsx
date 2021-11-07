@@ -22,12 +22,12 @@ import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import DirectInputFab from "components/DirectInputFab";
 import DirectInputModal from "components/DirectInputModal";
 import ErrorAlert from "components/ErrorAlert";
-import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
-import { useRequirePermission } from "libs/auth/useRequirePermission";
+import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
+import { useRequirePermission } from "hooks/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
 import { getStringDateTimeBrief } from "libs/stringDate";
-import { useWristBandPaletteColor } from "libs/wristBandColor";
-import useErrorHandler from "libs/useErrorHandler";
+import useWristBandPaletteColor from "hooks/useWristBandColor";
+import useErrorHandler from "hooks/useErrorHandler";
 import { StatusColor } from "types/statusColor";
 import api, {
   ActivityLog,
@@ -37,7 +37,7 @@ import api, {
 } from "@afes-website/docs";
 import clsx from "clsx";
 import { isReservation } from "libs/isReservation";
-import useReset from "libs/useReset";
+import useReset from "hooks/useReset";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

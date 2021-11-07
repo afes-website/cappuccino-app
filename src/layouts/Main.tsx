@@ -3,7 +3,7 @@ import { createStyles, makeStyles, Paper } from "@material-ui/core";
 import TopBar from "components/TopBar";
 import BottomNav from "components/BottomNav";
 import { useTitleContext } from "libs/title";
-import { useAuthState } from "libs/auth/useAuth";
+import { useAuthState } from "hooks/auth/useAuth";
 
 const useStyles = makeStyles(() =>
   createStyles({

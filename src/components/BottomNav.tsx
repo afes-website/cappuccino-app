@@ -11,7 +11,7 @@ import routes from "libs/routes";
 import { Link, useHistory } from "react-router-dom";
 import { Home, Map, Room } from "@material-ui/icons";
 import { Login, Logout, QRScannerIcon } from "components/MaterialSvgIcons";
-import { useAuthState } from "libs/auth/useAuth";
+import { useAuthState } from "hooks/auth/useAuth";
 import { UserInfo } from "@afes-website/docs";
 import clsx from "clsx";
 

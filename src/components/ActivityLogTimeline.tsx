@@ -11,7 +11,7 @@ import {
 } from "@material-ui/lab";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Login, Logout } from "components/MaterialSvgIcons";
-import { useAspidaClient } from "libs/auth/useAuth";
+import { useAspidaClient } from "hooks/auth/useAuth";
 import { getStringTime } from "libs/stringDate";
 import api, { ActivityLog, AllStatus, Guest } from "@afes-website/docs";
 import moment from "moment";

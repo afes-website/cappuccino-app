@@ -10,13 +10,13 @@ import {
   AuthDispatchContextProvider,
   AuthStateContextProvider,
   AspidaClientContextProvider,
-} from "libs/auth/useAuth";
+} from "hooks/auth/useAuth";
 import {
   AuthDispatch,
   AuthState,
   StorageUserInfo,
   StorageUsers,
-} from "libs/auth/@types";
+} from "hooks/auth/@types";
 import routes from "libs/routes";
 import api from "@afes-website/docs";
 import axios, { AxiosRequestConfig } from "axios";
