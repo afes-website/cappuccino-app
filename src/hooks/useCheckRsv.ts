@@ -6,7 +6,7 @@ import { StatusColor } from "types/statusColor";
 
 interface ReturnType {
   latestRsv: Reservation | null;
-  checkRsv: (rsvId: string, onSuccess: () => void) => Promise<void>;
+  checkRsv: (rsvId: string, onSuccess?: () => void) => Promise<void>;
   init: () => void;
 }
 
@@ -33,7 +33,7 @@ const useCheckRsv = (
         setLatestRsv(res.reservation);
         if (res.valid) {
           setCheckStatus("success");
-          onSuccess();
+          if (onSuccess !== undefined) onSuccess();
         } else {
           setCheckStatus("error");
           if (res.error_code) setErrorCode(res.error_code);

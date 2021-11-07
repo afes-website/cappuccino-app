@@ -32,8 +32,8 @@ import { StatusColor } from "types/statusColor";
 import api, { Term } from "@afes-website/docs";
 import clsx from "clsx";
 import ErrorAlert from "components/ErrorAlert";
-import { isReservation } from "libs/isReservation";
 import useCheckRsv from "hooks/useCheckRsv";
+import useHandleRsvScan from "hooks/auth/useHandleRsvScan";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -103,7 +103,6 @@ const CheckInScan: React.VFC = () => {
   // ==== state ====
 
   // 最後に読み込んだ予約ID・ゲストID
-  const [latestRsvId, setLatestRsvId] = useState("");
   const [latestGuestId, setLatestGuestId] = useState("");
   // 入場済みゲストID
   const [checkedInGuestIds, setCheckedInGuestIds] = useState<string[]>([]);
@@ -130,6 +129,12 @@ const CheckInScan: React.VFC = () => {
   const [resetKey, reset] = useReset();
 
   const {
+    latestRsvId,
+    handleRsvScan,
+    init: initHandleRsvScan,
+  } = useHandleRsvScan(setErrorCode, setRsvCheckStatus);
+
+  const {
     latestRsv,
     checkRsv,
     init: initCheckRsv,
@@ -148,7 +153,6 @@ const CheckInScan: React.VFC = () => {
 
   // 全リセット
   const clearAll = () => {
-    setLatestRsvId("");
     setLatestGuestId("");
     setCheckedInGuestIds([]);
     setOpensRsvInputModal(false);
@@ -157,6 +161,7 @@ const CheckInScan: React.VFC = () => {
     setError(null);
     setRsvCheckStatus(null);
     setGuestCheckStatus(null);
+    initHandleRsvScan();
     initCheckRsv();
     reset();
     if (resultChipRef.current) resultChipRef.current.close();
@@ -165,32 +170,16 @@ const CheckInScan: React.VFC = () => {
   const handleScan = (data: string) => {
     switch (activeScanner) {
       case "rsv":
-        handleRsvScan(data);
+        if (rsvCheckStatus === null || rsvCheckStatus === "error")
+          handleRsvScan(data, (rsvId) => {
+            checkRsv(rsvId, () => {
+              setActiveScanner("guest");
+            });
+          });
         break;
       case "guest":
         handleGuestIdScan(data);
         break;
-    }
-  };
-
-  const handleRsvScan = (rsvJson: string) => {
-    if (rsvCheckStatus === null || rsvCheckStatus === "error") {
-      setRsvCheckStatus("loading");
-      try {
-        const _rsv = JSON.parse(rsvJson);
-        if (isReservation(_rsv)) {
-          setLatestRsvId(_rsv.id);
-          checkRsv(_rsv.id, () => {
-            setActiveScanner("guest");
-          });
-        } else {
-          throw new Error("The given json is not valid Reservation");
-        }
-      } catch {
-        setLatestRsvId("");
-        setRsvCheckStatus("error");
-        setErrorCode("QR_SYNTAX_ERROR");
-      }
     }
   };
 
