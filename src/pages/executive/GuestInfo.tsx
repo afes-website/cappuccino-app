@@ -74,6 +74,9 @@ const useStyles = makeStyles((theme) =>
       marginBottom: -1,
       marginRight: theme.spacing(0.75),
     },
+    tabDisabled: {
+      textDecoration: "line-through",
+    },
   })
 );
 
@@ -249,11 +252,13 @@ const GuestInfo: React.VFC = () => {
             label="予約 登録情報一覧"
             value="rsv"
             disabled={!currentUser?.permissions.reservation}
+            classes={{ disabled: classes.tabDisabled }}
           />
           <Tab
             label="来場者 行動履歴一覧"
             value="guest"
             disabled={!currentUser?.permissions.executive}
+            classes={{ disabled: classes.tabDisabled }}
           />
         </Tabs>
       </Paper>
