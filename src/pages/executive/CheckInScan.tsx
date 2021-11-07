@@ -28,7 +28,7 @@ import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 import { useRequirePermission } from "hooks/auth/useRequirePermission";
 import useCheckRsv from "hooks/useCheckRsv";
 import useErrorHandler from "hooks/useErrorHandler";
-import useHandleRsvScan from "hooks/useHandleRsvScan";
+import useHandleRsvInput from "hooks/useHandleRsvInput";
 import useReset from "hooks/useReset";
 import useWristBandPaletteColor from "hooks/useWristBandColor";
 import { getStringDateTimeBrief, getStringTime } from "libs/stringDate";
@@ -120,7 +120,7 @@ const CheckInScan: React.VFC = () => {
     handleRsvScan,
     handleRsvIdDirectInput,
     init: initHandleRsvScan,
-  } = useHandleRsvScan(setErrorCode, setRsvCheckStatus);
+  } = useHandleRsvInput(setErrorCode, setRsvCheckStatus);
 
   const {
     latestRsv,

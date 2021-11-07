@@ -13,7 +13,7 @@ interface ReturnType {
   init: () => void;
 }
 
-const useHandleRsvScan = (
+const useHandleRsvInput = (
   setErrorCode: SetErrorCode,
   setCheckStatus: Dispatch<SetStateAction<StatusColor | null>>
 ): ReturnType => {
@@ -56,4 +56,4 @@ const useHandleRsvScan = (
   return { latestRsvId, handleRsvScan, handleRsvIdDirectInput, init };
 };
 
-export default useHandleRsvScan;
+export default useHandleRsvInput;
