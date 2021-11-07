@@ -21,6 +21,7 @@ import {
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { AccessTime, Face, People, Person } from "@material-ui/icons";
+import { Alert } from "@material-ui/lab";
 import ActivityLogTimeline from "components/ActivityLogTimeline";
 import CardList from "components/CardList";
 import DirectInputFab from "components/DirectInputFab";
@@ -376,27 +377,36 @@ const GuestInfo: React.VFC = () => {
               </>
             )}
             {mode === "rsv" && (
-              <Card>
-                <CardContent
-                  className={clsx({
-                    [classes.cardTitle]: rsvId,
-                  })}
-                >
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    gutterBottom={true}
+              <>
+                {status === "success" && rsvInfo && (
+                  <Card>
+                    <Alert severity="success">{`あと ${
+                      rsvInfo.member_all - rsvInfo.member_checked_in
+                    } 人入場可能`}</Alert>
+                  </Card>
+                )}
+                <Card>
+                  <CardContent
+                    className={clsx({
+                      [classes.cardTitle]: rsvId,
+                    })}
                   >
-                    予約情報
-                  </Typography>
-                  {!rsvId && (
-                    <Typography variant="caption" align="center">
-                      まだ予約QRコードをスキャンしていません。
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      gutterBottom={true}
+                    >
+                      予約情報
                     </Typography>
-                  )}
-                </CardContent>
-                {rsvId && <PrivateInfoList rsvId={rsvId} info={rsvInfo} />}
-              </Card>
+                    {!rsvId && (
+                      <Typography variant="caption" align="center">
+                        まだ予約QRコードをスキャンしていません。
+                      </Typography>
+                    )}
+                  </CardContent>
+                  {rsvId && <PrivateInfoList rsvId={rsvId} info={rsvInfo} />}
+                </Card>
+              </>
             )}
             <Typography
               variant="body2"
