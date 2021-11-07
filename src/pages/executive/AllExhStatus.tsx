@@ -15,9 +15,9 @@ import {
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import ReloadButton from "components/ReloadButton";
-import { useWristBandPaletteColor } from "libs/wristBandColor";
-import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
-import { useRequirePermission } from "libs/auth/useRequirePermission";
+import useWristBandPaletteColor from "hooks/useWristBandColor";
+import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
+import { useRequirePermission } from "hooks/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
 import { compareTerm } from "libs/compare";
 import api, { AllStatus, ExhibitionStatus, Terms } from "@afes-website/docs";

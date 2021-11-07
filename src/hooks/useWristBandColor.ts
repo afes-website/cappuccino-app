@@ -14,7 +14,7 @@ import {
   generateDarkPaletteColor,
 } from "libs/paletteColor";
 
-export const wristBandPaletteColor = (
+const wristBandPaletteColor = (
   prefix: GuestType,
   type: PaletteType
 ): PaletteColor => {
@@ -46,9 +46,11 @@ export const wristBandPaletteColor = (
   }
 };
 
-export const useWristBandPaletteColor = (): ((
+const useWristBandPaletteColor = (): ((
   guestType: GuestType
 ) => PaletteColor) => {
   const theme = useTheme<Theme>();
   return (guestType) => wristBandPaletteColor(guestType, theme.palette.type);
 };
+
+export default useWristBandPaletteColor;

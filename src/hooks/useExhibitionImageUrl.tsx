@@ -1,6 +1,6 @@
 import { useState } from "react";
 import api from "@afes-website/docs";
-import { useAspidaClient } from "libs/auth/useAuth";
+import { useAspidaClient } from "hooks/auth/useAuth";
 
 let imageIds: { [exhId: string]: string } | null = null;
 let imageIdsFetchPromise: Promise<unknown> | null = null;

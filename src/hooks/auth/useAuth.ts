@@ -1,5 +1,5 @@
 import createCtx from "libs/createCtx";
-import { AuthDispatch, AuthState } from "libs/auth/@types";
+import { AuthDispatch, AuthState } from "hooks/auth/@types";
 import { AspidaClient } from "aspida";
 import { AxiosRequestConfig } from "axios";
 

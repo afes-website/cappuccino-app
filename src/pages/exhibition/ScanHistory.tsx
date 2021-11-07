@@ -11,10 +11,10 @@ import {
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Login, Logout } from "components/MaterialSvgIcons";
-import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
-import { useRequirePermission } from "libs/auth/useRequirePermission";
+import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
+import { useRequirePermission } from "hooks/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
-import { useWristBandPaletteColor } from "libs/wristBandColor";
+import useWristBandPaletteColor from "hooks/useWristBandColor";
 import { getStringDateTime } from "libs/stringDate";
 import api, { ActivityLog } from "@afes-website/docs";
 import moment, { Moment } from "moment";

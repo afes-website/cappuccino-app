@@ -3,7 +3,7 @@ import { Divider, Theme, Typography, useTheme } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { PieChart, Pie, Cell } from "recharts";
 import { Skeleton } from "@material-ui/lab";
-import { useWristBandPaletteColor } from "libs/wristBandColor";
+import useWristBandPaletteColor from "hooks/useWristBandColor";
 import { getStringTime } from "libs/stringDate";
 import { compareTerm } from "libs/compare";
 import { ExhibitionStatus, Terms } from "@afes-website/docs";

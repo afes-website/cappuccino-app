@@ -7,7 +7,7 @@ import React, {
 import { Card, CardContent, Typography } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import StayStatus from "components/StayStatus";
-import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
+import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 import api, { ExhibitionStatus, Terms } from "@afes-website/docs";
 
 const useStyles = makeStyles((theme) =>

@@ -1,7 +1,7 @@
 import React from "react";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import PermissionIcon from "components/PermissionIcon";
-import { StorageUserInfo } from "libs/auth/@types";
+import { StorageUserInfo } from "hooks/auth/@types";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>

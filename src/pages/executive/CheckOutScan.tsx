@@ -1,7 +1,7 @@
 import React from "react";
 import { useTitleSet } from "libs/title";
-import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
-import { useRequirePermission } from "libs/auth/useRequirePermission";
+import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
+import { useRequirePermission } from "hooks/auth/useRequirePermission";
 import api from "@afes-website/docs";
 import GuestScan from "components/GuestScan";
 

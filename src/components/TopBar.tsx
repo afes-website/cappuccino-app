@@ -15,7 +15,7 @@ import { useHistory } from "react-router-dom";
 import AccountIcon from "components/AccountIcon";
 import AccountDrawer from "components/AccountDrawer";
 import HelpManualButton from "components/HelpManualButton";
-import { useAuthState } from "libs/auth/useAuth";
+import { useAuthState } from "hooks/auth/useAuth";
 import routes from "libs/routes";
 import clsx from "clsx";
 import chroma from "chroma-js";

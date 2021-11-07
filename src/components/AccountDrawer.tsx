@@ -27,7 +27,7 @@ import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
 import { DarkMode, LightMode, Reload } from "components/MaterialSvgIcons";
 import AccountIcon from "components/AccountIcon";
 import PermissionList from "components/PermissionList";
-import { useAuthDispatch, useAuthState } from "libs/auth/useAuth";
+import { useAuthDispatch, useAuthState } from "hooks/auth/useAuth";
 import { useSetThemeMode } from "libs/themeMode";
 import { Alert } from "@material-ui/lab";
 

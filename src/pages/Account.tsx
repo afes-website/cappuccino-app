@@ -23,7 +23,7 @@ import PermissionList from "components/PermissionList";
 import { useTitleSet } from "libs/title";
 import routes from "libs/routes";
 import { Link } from "react-router-dom";
-import { useAuthDispatch, useAuthState } from "libs/auth/useAuth";
+import { useAuthDispatch, useAuthState } from "hooks/auth/useAuth";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

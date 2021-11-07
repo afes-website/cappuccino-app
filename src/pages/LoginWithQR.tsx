@@ -11,8 +11,8 @@ import CardList from "components/CardList";
 import ErrorDialog from "components/ErrorDialog";
 import QRScanner from "components/QRScanner";
 import { useTitleSet } from "libs/title";
-import { StorageUserInfo } from "libs/auth/@types";
-import { useAuthDispatch, useAuthState } from "libs/auth/useAuth";
+import { StorageUserInfo } from "hooks/auth/@types";
+import { useAuthDispatch, useAuthState } from "hooks/auth/useAuth";
 import routes from "libs/routes";
 import { StatusColor } from "types/statusColor";
 
