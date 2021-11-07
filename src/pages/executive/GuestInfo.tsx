@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme) =>
 );
 
 const GuestInfo: React.VFC = () => {
-  useTitleSet("来場者・予約情報照会");
+  useTitleSet("予約・来場者情報照会");
   useRequirePermission(["executive", "reservation"]);
 
   const classes = useStyles();
@@ -88,8 +88,8 @@ const GuestInfo: React.VFC = () => {
 
   const wristBandPaletteColor = useWristBandPaletteColor();
 
-  const [mode, setMode] = useState<"guest" | "rsv">(
-    currentUser?.permissions.executive ? "guest" : "rsv"
+  const [mode, setMode] = useState<"rsv" | "guest">(
+    currentUser?.permissions.reservation ? "rsv" : "guest"
   );
 
   // guest
@@ -122,13 +122,13 @@ const GuestInfo: React.VFC = () => {
   } = useCheckRsv(setError, setErrorCode, setStatus);
 
   const clearInfo = useCallback(() => {
+    // rsv
+    initHandleRsvScan();
+    initCheckRsv();
     // guest
     setGuestInfo(null);
     setActivityLogs(null);
     setExhStatus(null);
-    // rsv
-    initHandleRsvScan();
-    initCheckRsv();
   }, [initCheckRsv, initHandleRsvScan]);
 
   // モード切り替え時の初期化
@@ -146,13 +146,13 @@ const GuestInfo: React.VFC = () => {
   const handleScan = (value: string) => {
     clearInfo();
     switch (mode) {
-      case "guest":
-        handleGuestIdScan(value);
-        break;
       case "rsv":
         handleRsvScan(value, (rsvId) => {
           checkRsv(rsvId);
         });
+        break;
+      case "guest":
+        handleGuestIdScan(value);
         break;
     }
   };
@@ -160,13 +160,13 @@ const GuestInfo: React.VFC = () => {
   const handleDirectInput = (id: string) => {
     clearInfo();
     switch (mode) {
-      case "guest":
-        handleGuestIdScan(id);
-        break;
       case "rsv":
         handleRsvIdDirectInput(id, (rsvId) => {
           checkRsv(rsvId);
         });
+        break;
+      case "guest":
+        handleGuestIdScan(id);
         break;
     }
   };
@@ -209,8 +209,8 @@ const GuestInfo: React.VFC = () => {
   };
 
   useEffect(() => {
-    const name = { guest: "ゲスト", rsv: "予約" };
-    const id = { guest: guestId, rsv: rsvId };
+    const name = { rsv: "予約", guest: "ゲスト" };
+    const id = { rsv: rsvId, guest: guestId };
     switch (status) {
       case "loading":
         setError(null);
@@ -239,22 +239,21 @@ const GuestInfo: React.VFC = () => {
       <Paper square className={classes.tabs}>
         <Tabs
           value={mode}
-          onChange={(e, newValue: "guest" | "rsv") => {
+          onChange={(e, newValue: "rsv" | "guest") => {
             setMode(newValue);
           }}
           variant="fullWidth"
           color="secondary"
         >
           <Tab
-            label="来場者 行動履歴一覧"
-            value="guest"
-            disabled={!currentUser?.permissions.executive}
-          />
-
-          <Tab
             label="予約 登録情報一覧"
             value="rsv"
             disabled={!currentUser?.permissions.reservation}
+          />
+          <Tab
+            label="来場者 行動履歴一覧"
+            value="guest"
+            disabled={!currentUser?.permissions.executive}
           />
         </Tabs>
       </Paper>
@@ -284,6 +283,38 @@ const GuestInfo: React.VFC = () => {
         </Grid>
         <Grid xs={12} md={6}>
           <CardList>
+            {mode === "rsv" && (
+              <>
+                {status === "success" && rsvInfo && (
+                  <Card>
+                    <Alert severity="success">{`あと ${
+                      rsvInfo.member_all - rsvInfo.member_checked_in
+                    } 人入場可能`}</Alert>
+                  </Card>
+                )}
+                <Card>
+                  <CardContent
+                    className={clsx({
+                      [classes.cardTitle]: rsvId,
+                    })}
+                  >
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      gutterBottom={true}
+                    >
+                      予約情報
+                    </Typography>
+                    {!rsvId && (
+                      <Typography variant="caption" align="center">
+                        まだ予約QRコードをスキャンしていません。
+                      </Typography>
+                    )}
+                  </CardContent>
+                  {rsvId && <PrivateInfoList rsvId={rsvId} info={rsvInfo} />}
+                </Card>
+              </>
+            )}
             {mode === "guest" && (
               <>
                 <Card>
@@ -376,38 +407,6 @@ const GuestInfo: React.VFC = () => {
                 </Card>
               </>
             )}
-            {mode === "rsv" && (
-              <>
-                {status === "success" && rsvInfo && (
-                  <Card>
-                    <Alert severity="success">{`あと ${
-                      rsvInfo.member_all - rsvInfo.member_checked_in
-                    } 人入場可能`}</Alert>
-                  </Card>
-                )}
-                <Card>
-                  <CardContent
-                    className={clsx({
-                      [classes.cardTitle]: rsvId,
-                    })}
-                  >
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      gutterBottom={true}
-                    >
-                      予約情報
-                    </Typography>
-                    {!rsvId && (
-                      <Typography variant="caption" align="center">
-                        まだ予約QRコードをスキャンしていません。
-                      </Typography>
-                    )}
-                  </CardContent>
-                  {rsvId && <PrivateInfoList rsvId={rsvId} info={rsvInfo} />}
-                </Card>
-              </>
-            )}
             <Typography
               variant="body2"
               color="textSecondary"
@@ -433,7 +432,7 @@ const GuestInfo: React.VFC = () => {
         open={directInputModalOpen}
         setOpen={setDirectInputModalOpen}
         onIdChange={handleDirectInput}
-        currentId={{ guest: guestId, rsv: rsvId }[mode]}
+        currentId={{ rsv: rsvId, guest: guestId }[mode]}
         type={mode}
       />
     </>
