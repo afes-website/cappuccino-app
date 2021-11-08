@@ -167,8 +167,6 @@ const GuestScan: React.VFC<Props> = ({ handleScan, page }) => {
 
         <Grid item xs={12} md={6}>
           <CardList>
-            {/* Exhibition Status */}
-            {isExh && <ExhStatusCard />}
             {/* ID List */}
             <Card>
               <CardContent className={classes.noPadding}>
@@ -195,7 +193,7 @@ const GuestScan: React.VFC<Props> = ({ handleScan, page }) => {
                 </List>
               </CardContent>
             </Card>
-
+            {isExh && <ExhStatusCard />}
             {isExh && <ExhInfoCard />}
           </CardList>
         </Grid>
