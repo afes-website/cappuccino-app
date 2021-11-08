@@ -16,7 +16,7 @@ const useStyles = makeStyles({
     fontWeight: 700,
     fontSize: 20,
     position: "relative",
-    transition: "background 1s",
+    transition: "background 0.5s",
   },
   ticketLogo: {
     position: "absolute",
