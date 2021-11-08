@@ -32,7 +32,6 @@ import useErrorHandler from "hooks/useErrorHandler";
 import useHandleRsvInput from "hooks/useHandleRsvInput";
 import useReset from "hooks/useReset";
 import useWristBandPaletteColor from "hooks/useWristBandColor";
-import { getStringDateTimeBrief, getStringTime } from "libs/stringDate";
 import { useTitleSet } from "libs/title";
 import { StatusColor } from "types/statusColor";
 
@@ -73,7 +72,8 @@ const useStyles = makeStyles((theme) =>
     previousGuestInfoTitle: {
       paddingBottom: 0,
     },
-    countLimit: {
+    largeNumber: {
+      fontSize: 24,
       marginLeft: 4,
     },
     limitOver: {
@@ -339,17 +339,7 @@ const CheckInScan: React.VFC = () => {
                     </ListItemIcon>
                     <ListItemText
                       primary={latestRsvId ? latestRsvId : "-"}
-                      secondary={
-                        <>
-                          予約 ID
-                          {latestRsv && (
-                            <>
-                              {" • "}
-                              <ReservationTermInfo term={latestRsv.term} />
-                            </>
-                          )}
-                        </>
-                      }
+                      secondary="予約 ID"
                     />
                   </ListItem>
                   <ListItem disabled={activeScanner !== "guest"}>
@@ -358,27 +348,39 @@ const CheckInScan: React.VFC = () => {
                     </ListItemIcon>
                     <ListItemText
                       primary={latestGuestId ? latestGuestId : "-"}
-                      secondary="ゲスト ID (リストバンド ID)"
+                      secondary="リストバンド ID"
                     />
                     {latestRsv && (
                       <ListItemSecondaryAction>
                         <Typography
                           display="inline"
-                          className={clsx({
-                            [classes.limitOver]:
-                              latestRsv.member_checked_in >=
-                              latestRsv.member_all,
-                          })}
+                          className={clsx(
+                            {
+                              [classes.limitOver]:
+                                latestRsv.member_checked_in >=
+                                latestRsv.member_all,
+                            },
+                            classes.largeNumber
+                          )}
                         >
-                          {`${latestRsv.member_checked_in + 1}人目`}
+                          {`${
+                            latestRsv.term.class === "Parent"
+                              ? 1
+                              : latestRsv.member_checked_in + 1
+                          } `}
                         </Typography>
+                        <Typography display="inline">人目</Typography>
                         <Typography
                           display="inline"
-                          variant="caption"
-                          className={classes.countLimit}
+                          className={classes.largeNumber}
                         >
-                          {`/${latestRsv.member_all}人`}
+                          {`/ ${
+                            latestRsv.term.class === "Parent"
+                              ? 1
+                              : latestRsv.member_all
+                          } `}
                         </Typography>
+                        <Typography display="inline">人</Typography>
                       </ListItemSecondaryAction>
                     )}
                   </ListItem>
@@ -454,18 +456,6 @@ const CheckInScan: React.VFC = () => {
         type={activeScanner}
       />
     </div>
-  );
-};
-
-const ReservationTermInfo: React.VFC<{ term: Term }> = (props) => {
-  const wristBandColor = useWristBandPaletteColor();
-  return (
-    <span style={{ color: wristBandColor(props.term.guest_type).main }}>
-      {props.term.guest_type + " "}
-      {`(${getStringDateTimeBrief(props.term.enter_scheduled_time)}
-      -
-      ${getStringTime(props.term.exit_scheduled_time)})`}
-    </span>
   );
 };
 
