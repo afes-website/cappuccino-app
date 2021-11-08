@@ -22,6 +22,7 @@ import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import useErrorHandler from "hooks/useErrorHandler";
 import { StatusColor } from "types/statusColor";
+import { ExhStatusCard } from "components/StayStatusCard";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -166,6 +167,8 @@ const GuestScan: React.VFC<Props> = ({ handleScan, page }) => {
 
         <Grid item xs={12} md={6}>
           <CardList>
+            {/* Exhibition Status */}
+            {isExh && <ExhStatusCard />}
             {/* ID List */}
             <Card>
               <CardContent className={classes.noPadding}>
