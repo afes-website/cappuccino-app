@@ -3,7 +3,6 @@ import { Card, Typography } from "@material-ui/core";
 import { History, Map, NotListedLocation, Room } from "@material-ui/icons";
 import CardList from "components/CardList";
 import CardMenu from "components/CardMenu";
-import ExhInfoCard from "components/ExhInfoCard";
 import { Login, Logout, QRScannerIcon } from "components/MaterialSvgIcons";
 import PwaAlertCard from "components/PwaAlertCard";
 import { ExhStatusCard, GeneralStatusCard } from "components/StayStatusCard";
@@ -94,7 +93,6 @@ const Home: React.VFC = () => {
       )}
       {verifyPermission("exhibition", currentUser) && (
         <>
-          <ExhInfoCard />
           <div>
             <Typography variant="overline">展示内の滞在状況</Typography>
             <ExhStatusCard />

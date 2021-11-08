@@ -17,9 +17,9 @@ import CardList from "components/CardList";
 import DirectInputFab from "components/DirectInputFab";
 import DirectInputModal from "components/DirectInputModal";
 import ErrorAlert from "components/ErrorAlert";
-import ExhInfoCard from "components/ExhInfoCard";
 import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
+import { ExhStatusCard } from "components/StayStatusCard";
 import useErrorHandler from "hooks/useErrorHandler";
 import { StatusColor } from "types/statusColor";
 
@@ -192,8 +192,7 @@ const GuestScan: React.VFC<Props> = ({ handleScan, page }) => {
                 </List>
               </CardContent>
             </Card>
-
-            {isExh && <ExhInfoCard />}
+            {isExh && <ExhStatusCard />}
           </CardList>
         </Grid>
       </Grid>
