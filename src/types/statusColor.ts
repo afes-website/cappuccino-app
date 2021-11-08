@@ -1,1 +1,1 @@
-export type StatusColor = "success" | "error" | "loading";
+export type StatusColor = "success" | "warning" | "error" | "loading";
