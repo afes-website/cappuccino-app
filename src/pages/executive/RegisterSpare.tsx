@@ -25,6 +25,7 @@ import ResultPopup, { ResultPopupRefs } from "components/ResultPopup";
 import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 import { useRequirePermission } from "hooks/auth/useRequirePermission";
 import useErrorHandler from "hooks/useErrorHandler";
+import useHandleRsvInput from "hooks/useHandleRsvInput";
 import { useTitleSet } from "libs/title";
 import { StatusColor } from "types/statusColor";
 
@@ -95,11 +96,9 @@ const RegisterSpare: React.VFC = () => {
   // ==== state ====
 
   // 最後に読み込んだ予約ID・ゲストID
-  const [latestRsvId, setLatestRsvId] = useState("");
   const [latestGuestId, setLatestGuestId] = useState("");
   // 直接入力モーダルの開閉状態
-  const [opensRsvInputModal, setOpensRsvInputModal] = useState(false);
-  const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
+  const [directInputModalOpen, setDirectInputModalOpen] = useState(false);
   // ステップ管理
   const [activeScanner, setActiveScanner] = useState<"rsv" | "guest">("rsv");
   // 予約ID・ゲストIDそれぞれのチェック結果
@@ -111,7 +110,14 @@ const RegisterSpare: React.VFC = () => {
   // useEffect で自動更新
   const [totalStatus, setTotalStatus] = useState<StatusColor | null>(null);
   // エラー処理
-  const [errorMessage, setError] = useErrorHandler();
+  const [errorMessage, setError, setErrorCode] = useErrorHandler();
+
+  const {
+    latestRsvId,
+    handleRsvScan,
+    handleRsvIdDirectInput,
+    init: initHandleRsvScan,
+  } = useHandleRsvInput(setErrorCode, setRsvScanStatus);
 
   // 全体のチェック結果の更新処理
   useEffect(() => {
@@ -126,21 +132,20 @@ const RegisterSpare: React.VFC = () => {
 
   // 全リセット
   const clearAll = () => {
-    setLatestRsvId("");
     setLatestGuestId("");
-    setOpensRsvInputModal(false);
-    setOpensGuestInputModal(false);
+    setDirectInputModalOpen(false);
     setActiveScanner("rsv");
     setError(null);
     setRsvScanStatus(null);
     setRegisterStatus(null);
+    initHandleRsvScan();
     if (resultChipRef.current) resultChipRef.current.close();
   };
 
   const handleScan = (data: string) => {
     switch (activeScanner) {
       case "rsv":
-        handleRsvIdScan(data);
+        handleRsvScan(data);
         break;
       case "guest":
         handleGuestIdScan(data);
@@ -148,13 +153,15 @@ const RegisterSpare: React.VFC = () => {
     }
   };
 
-  const handleRsvIdScan = (rsvId: string) => {
-    if (rsvScanStatus === null || rsvScanStatus === "error") {
-      setLatestRsvId(rsvId);
-      setRsvScanStatus("success");
-      setTimeout(() => {
-        setActiveScanner("guest");
-      }, 500);
+  const handleDirectInput = (id: string) => {
+    switch (activeScanner) {
+      case "rsv":
+        if (rsvScanStatus === null || rsvScanStatus === "error")
+          handleRsvIdDirectInput(id);
+        break;
+      case "guest":
+        handleGuestIdScan(id);
+        break;
     }
   };
 
@@ -328,9 +335,7 @@ const RegisterSpare: React.VFC = () => {
       {/* 直接入力ボタン */}
       <DirectInputFab
         onClick={() => {
-          ({ rsv: setOpensRsvInputModal, guest: setOpensGuestInputModal }[
-            activeScanner
-          ](true));
+          setDirectInputModalOpen(true);
         }}
         disabled={
           { rsv: rsvScanStatus, guest: registerStatus }[activeScanner] ===
@@ -340,18 +345,11 @@ const RegisterSpare: React.VFC = () => {
 
       {/* 直接入力モーダル */}
       <DirectInputModal
-        open={opensRsvInputModal}
-        setOpen={setOpensRsvInputModal}
-        onIdChange={handleRsvIdScan}
-        currentId={latestRsvId}
-        type="rsv"
-      />
-      <DirectInputModal
-        open={opensGuestInputModal}
-        setOpen={setOpensGuestInputModal}
-        onIdChange={handleGuestIdScan}
-        currentId={latestGuestId}
-        type="guest"
+        open={directInputModalOpen}
+        setOpen={setDirectInputModalOpen}
+        onIdChange={handleDirectInput}
+        currentId={{ rsv: latestRsvId, guest: latestGuestId }[activeScanner]}
+        type={activeScanner}
       />
     </div>
   );
