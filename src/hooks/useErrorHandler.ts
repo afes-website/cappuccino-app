@@ -1,10 +1,13 @@
 import { useCallback, useState } from "react";
 import axios from "axios";
 
+export type SetError = (e: unknown) => void;
+export type SetErrorCode = (code: string | ErrorCode | null) => void;
+
 const useErrorHandler = (): [
   readonly string[] | null,
-  (e: unknown) => void,
-  (code: string | ErrorCode | null) => void
+  SetError,
+  SetErrorCode
 ] => {
   const [errorMessage, setErrorMessage] = useState<readonly string[] | null>(
     null
@@ -76,6 +79,7 @@ const errorCodeList = [
   "SERVER_ERROR",
   // internal error
   "INTERNAL_ERROR",
+  "QR_SYNTAX_ERROR",
 ] as const;
 
 type ErrorCode = typeof errorCodeList[number];
@@ -132,4 +136,5 @@ const errorMessageList: { [code in ErrorCode]: readonly string[] } = {
   INTERNAL_ERROR: [
     "内部エラーが発生しました。至急、総務局にお問い合わせください。",
   ],
+  QR_SYNTAX_ERROR: ["QRコードの形式が間違っています。"],
 } as const;

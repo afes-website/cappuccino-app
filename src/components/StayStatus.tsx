@@ -1,12 +1,12 @@
 import React from "react";
+import { ExhibitionStatus, Terms } from "@afes-website/docs";
+import { Cell, Pie, PieChart } from "recharts";
 import { Divider, Theme, Typography, useTheme } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { PieChart, Pie, Cell } from "recharts";
 import { Skeleton } from "@material-ui/lab";
-import { useWristBandPaletteColor } from "libs/wristBandColor";
-import { getStringTime } from "libs/stringDate";
+import useWristBandPaletteColor from "hooks/useWristBandColor";
 import { compareTerm } from "libs/compare";
-import { ExhibitionStatus, Terms } from "@afes-website/docs";
+import { getStringTime } from "libs/stringDate";
 
 const useStyles = makeStyles(() =>
   createStyles({

@@ -1,8 +1,8 @@
 import React, { PropsWithChildren, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { Theme, ThemeProvider, useTheme } from "@material-ui/core";
 import { ThemeContextProvider, useThemeMode } from "libs/themeMode";
 import { TitleContextProvider } from "libs/title";
-import { useHistory } from "react-router-dom";
 
 const CustomThemeProvider: React.VFC<PropsWithChildren<unknown>> = ({
   children,

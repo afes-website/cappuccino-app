@@ -1,6 +1,6 @@
 import React from "react";
-import { Assignment, Room, Security, Settings } from "@material-ui/icons";
 import { SvgIconProps } from "@material-ui/core";
+import { Assignment, Room, Security, Settings } from "@material-ui/icons";
 
 const PermissionIcon: React.VFC<{ permName: string } & SvgIconProps> = ({
   permName,

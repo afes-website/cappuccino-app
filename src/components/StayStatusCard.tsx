@@ -4,11 +4,22 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { Card, CardContent, Typography } from "@material-ui/core";
-import { createStyles, makeStyles } from "@material-ui/core/styles";
-import StayStatus from "components/StayStatus";
-import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
 import api, { ExhibitionStatus, Terms } from "@afes-website/docs";
+import moment, { Moment } from "moment";
+import {
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+} from "@material-ui/core";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
+import { Skeleton } from "@material-ui/lab";
+import AccountIcon from "components/AccountIcon";
+import StayStatus from "components/StayStatus";
+import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -24,6 +35,7 @@ const useStyles = makeStyles((theme) =>
     paragraph: {
       marginBottom: theme.spacing(2),
     },
+    lastUpdated: { marginTop: 8, marginBottom: -8 },
   })
 );
 
@@ -45,10 +57,12 @@ const StatusCard: React.VFC<
 
   const [status, setStatus] = useState<Status | null>(null);
   const [terms, setTerms] = useState<Terms | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Moment | null>(null);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     getStatus().then((status) => {
       setStatus(status);
+      setLastUpdated(moment());
     });
     api(aspida)
       .terms.$get({
@@ -60,6 +74,12 @@ const StatusCard: React.VFC<
         setTerms(terms);
       });
   }, [aspida, currentUser?.token, getStatus]);
+
+  useEffect(() => {
+    load();
+    const intervalId = setInterval(load, 20000);
+    return () => clearInterval(intervalId);
+  }, [load]);
 
   return (
     <Card>
@@ -85,6 +105,16 @@ const StatusCard: React.VFC<
           terms={terms || null}
           hideStudent={hideStudent}
         />
+        {lastUpdated && (
+          <Typography
+            align="right"
+            variant="body2"
+            color="textSecondary"
+            className={classes.lastUpdated}
+          >
+            最終更新: {lastUpdated.format("M/D HH:mm:ss")}
+          </Typography>
+        )}
       </CardContent>
     </Card>
   );
@@ -110,9 +140,7 @@ export const GeneralStatusCard: React.VFC<PropsWithChildren<unknown>> = ({
   );
 };
 
-export const ExhStatusCard: React.VFC<PropsWithChildren<unknown>> = ({
-  children,
-}) => {
+export const ExhStatusCard: React.VFC = () => {
   const { currentUser } = useAuthState();
   const aspida = useAspidaClient();
 
@@ -126,7 +154,44 @@ export const ExhStatusCard: React.VFC<PropsWithChildren<unknown>> = ({
 
   return (
     <StatusCard getStatus={getStatus} showCountLimit={true}>
-      {children}
+      <CardExhInfo />
     </StatusCard>
+  );
+};
+
+const CardExhInfo: React.VFC = () => {
+  const { currentUser } = useAuthState();
+  const aspida = useAspidaClient();
+
+  const [exhInfo, setExhInfo] = useState<ExhibitionStatus | null>(null);
+
+  useEffect(() => {
+    if (!currentUser || !currentUser.permissions.exhibition) return;
+    api(aspida)
+      .exhibitions._id(currentUser.id)
+      .$get()
+      .then((_exhInfo) => {
+        setExhInfo(_exhInfo);
+      });
+  }, [aspida, currentUser]);
+
+  return (
+    <List dense={true} style={{ marginBottom: -16 }}>
+      <ListItem>
+        <ListItemIcon>
+          <AccountIcon account={currentUser} />
+        </ListItemIcon>
+        <ListItemText
+          primary={exhInfo ? exhInfo.info.name : <Skeleton />}
+          secondary={
+            exhInfo ? (
+              `${exhInfo.info.room_id} ･ @${currentUser?.id}`
+            ) : (
+              <Skeleton />
+            )
+          }
+        />
+      </ListItem>
+    </List>
   );
 };

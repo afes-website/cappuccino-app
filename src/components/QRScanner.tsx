@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import QrReader from "react-qr-reader";
+import clsx from "clsx";
 import { CircularProgress, Fade, IconButton } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { Settings } from "@material-ui/icons";
-import { CameraOff } from "components/MaterialSvgIcons";
 import ErrorDialog from "components/ErrorDialog";
+import { CameraOff } from "components/MaterialSvgIcons";
 import VideoDeviceSelectModal from "components/VideoDeviceSelectModal";
 import { getDeviceIdFromStorage } from "libs/videoDeviceId";
 import { StatusColor } from "types/statusColor";
-import clsx from "clsx";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -104,9 +104,14 @@ export interface QRScannerProps {
   onScanFunc: (data: string) => void;
   videoStop: boolean;
   color?: StatusColor;
+  resetKey?: number;
 }
 
-const QRScanner: React.VFC<QRScannerProps> = ({ onScanFunc, color }) => {
+const QRScanner: React.VFC<QRScannerProps> = ({
+  onScanFunc,
+  color,
+  resetKey,
+}) => {
   const classes = useStyles();
 
   const [lastRead, setLastRead] = useState<string | null>(null);
@@ -121,6 +126,7 @@ const QRScanner: React.VFC<QRScannerProps> = ({ onScanFunc, color }) => {
     "loading" | "waiting" | "error"
   >("loading");
   const [showQrReader, setShowQrReader] = useState(true);
+  const [timeoutId, setTimeoutId] = useState<number | null>(null);
 
   useEffect(() => {
     if (!showQrReader) {
@@ -128,6 +134,10 @@ const QRScanner: React.VFC<QRScannerProps> = ({ onScanFunc, color }) => {
       setScannerStatus("loading");
     }
   }, [showQrReader]);
+
+  useEffect(() => {
+    setLastRead(null);
+  }, [resetKey]);
 
   const getBorderClassName = (color: StatusColor | undefined): string => {
     switch (color) {
@@ -139,6 +149,20 @@ const QRScanner: React.VFC<QRScannerProps> = ({ onScanFunc, color }) => {
         return classes.borderLoading;
       default:
         return classes.borderSearching;
+    }
+  };
+
+  const onScan = (data: string | null) => {
+    if (data !== null && data !== lastRead) {
+      setLastRead(data);
+      onScanFunc(data);
+
+      if (timeoutId !== null) window.clearTimeout(timeoutId);
+      setTimeoutId(
+        window.setTimeout(() => {
+          setLastRead(null);
+        }, 10000)
+      );
     }
   };
 
@@ -188,12 +212,7 @@ const QRScanner: React.VFC<QRScannerProps> = ({ onScanFunc, color }) => {
         )}
         {showQrReader && (
           <QrReader
-            onScan={(data) => {
-              if (data !== null && data !== lastRead) {
-                setLastRead(data);
-                onScanFunc(data);
-              }
-            }}
+            onScan={onScan}
             onError={errorHandler}
             onLoad={() => {
               setScannerStatus("waiting");

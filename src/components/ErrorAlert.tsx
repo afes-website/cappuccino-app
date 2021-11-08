@@ -1,6 +1,6 @@
 import React from "react";
-import { Alert } from "@material-ui/lab";
 import { Typography } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 
 interface Props {
   errorMessage: readonly string[] | null;

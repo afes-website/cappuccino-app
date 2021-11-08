@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
+import api, { AllStatus, ExhibitionStatus, Terms } from "@afes-website/docs";
+import moment, { Moment } from "moment";
 import {
   Avatar,
   Button,
@@ -15,13 +17,11 @@ import {
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import ReloadButton from "components/ReloadButton";
-import { useWristBandPaletteColor } from "libs/wristBandColor";
-import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
-import { useRequirePermission } from "libs/auth/useRequirePermission";
-import { useTitleSet } from "libs/title";
+import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
+import { useRequirePermission } from "hooks/auth/useRequirePermission";
+import useWristBandPaletteColor from "hooks/useWristBandColor";
 import { compareTerm } from "libs/compare";
-import api, { AllStatus, ExhibitionStatus, Terms } from "@afes-website/docs";
-import moment, { Moment } from "moment";
+import { useTitleSet } from "libs/title";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -118,7 +118,7 @@ const AllExhStatus: React.VFC = () => {
 
   const maxLimit = Object.values(status.exhibition)
     .map((exh) => exh.capacity)
-    .reduce((a, b) => Math.max(a, b));
+    .reduce((a, b) => Math.max(a, b), 0);
 
   const onSortKeyChange = (e: React.MouseEvent<HTMLButtonElement>) => {
     const val: string = e.currentTarget.value;

@@ -1,12 +1,12 @@
 import { PaletteType } from "@material-ui/core";
 import {
+  grey,
+  lightBlue,
+  lightGreen,
+  orange,
+  purple,
   red,
   yellow,
-  purple,
-  orange,
-  grey,
-  lightGreen,
-  lightBlue,
 } from "@material-ui/core/colors";
 import { PaletteColor } from "@material-ui/core/styles/createPalette";
 import {

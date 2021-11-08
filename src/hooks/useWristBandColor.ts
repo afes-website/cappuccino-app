@@ -1,13 +1,20 @@
 import { GuestType } from "@afes-website/docs";
-import { Theme, useTheme, PaletteType } from "@material-ui/core";
-import { PaletteColor } from "@material-ui/core/styles/createPalette";
-import { blue, red, yellow, purple, grey } from "@material-ui/core/colors";
+import { PaletteType, Theme, useTheme } from "@material-ui/core";
 import {
-  generateLightPaletteColor,
+  blue,
+  green,
+  grey,
+  pink,
+  purple,
+  yellow,
+} from "@material-ui/core/colors";
+import { PaletteColor } from "@material-ui/core/styles/createPalette";
+import {
   generateDarkPaletteColor,
+  generateLightPaletteColor,
 } from "libs/paletteColor";
 
-export const wristBandPaletteColor = (
+const wristBandPaletteColor = (
   prefix: GuestType,
   type: PaletteType
 ): PaletteColor => {
@@ -19,10 +26,12 @@ export const wristBandPaletteColor = (
       return generatePaletteColor(blue);
     case "GuestRed":
     case "TestRed":
-      return generatePaletteColor(red);
+      return generatePaletteColor(pink);
     case "GuestYellow":
     case "TestYellow":
       return generatePaletteColor(yellow);
+    case "GuestGreen":
+      return generatePaletteColor(green);
     case "ParentPurple":
       return generatePaletteColor(purple);
     case "GuestWhite":
@@ -37,9 +46,11 @@ export const wristBandPaletteColor = (
   }
 };
 
-export const useWristBandPaletteColor = (): ((
+const useWristBandPaletteColor = (): ((
   guestType: GuestType
 ) => PaletteColor) => {
   const theme = useTheme<Theme>();
   return (guestType) => wristBandPaletteColor(guestType, theme.palette.type);
 };
+
+export default useWristBandPaletteColor;

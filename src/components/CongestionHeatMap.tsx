@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
+import api, { AllStatus } from "@afes-website/docs";
+import aspida from "@aspida/axios";
+import clsx from "clsx";
 import {
-  createStyles,
   Grid,
-  makeStyles,
   Theme,
   Typography,
+  createStyles,
+  makeStyles,
   useTheme,
 } from "@material-ui/core";
 import congestionColor from "libs/congestionColor";
-import clsx from "clsx";
-import api, { AllStatus } from "@afes-website/docs";
-import aspida from "@aspida/axios";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -308,35 +308,45 @@ const rooms: {
 } = {
   "1F": {
     ...arrToObj(_lowerNormalClassrooms, "1"),
-    "113": scienceRoom,
+    "S1-1": scienceRoom,
     // 講堂
-    "114": {
-      x: 320,
-      y: 64,
-      width: 256,
-      height: 128,
-    },
+    "114": { x: 320, y: 64, width: 256, height: 128 },
+    // train
+    "106-107": { x: 384, y: 576, width: 128, height: 64 },
+    // eating
+    "109-112": { x: 224, y: 320, width: 96, height: 256 },
   },
   "2F": {
     ...arrToObj(_lowerNormalClassrooms, "2"),
-    "213": scienceRoom,
+    "S2-1": scienceRoom,
     // 芸術棟
-    "214": { x: 192, y: 64 },
-    "215": { x: 128, y: 64 },
+    "S2-2": { x: 192, y: 64 },
+    "S2-3": { x: 128, y: 64 },
   },
   "3F": {
-    "301": { x: 576, y: 96, width: 64, height: 96 },
-    ...arrToObj(_lowerNormalClassrooms, "3", 2),
-    ...arrToObj(_upperNormalClassrooms, "3", 16),
-    "314": scienceRoom,
-    // 芸術棟
-    "315": { x: 128, y: 64, width: 128, height: 64 },
+    ...arrToObj(_lowerNormalClassrooms, "3", 1),
+    ...arrToObj(_upperNormalClassrooms, "3", 13),
+    "S3-1": scienceRoom,
+    // 一音
+    "S3-2": { x: 128, y: 64, width: 128, height: 64 },
+    // 二音
+    "S3-3": { x: 576, y: 96, width: 64, height: 96 },
+    // frontierH1
+    "F-301-304": { x: 576, y: 320, width: 96, height: 256 },
+    // frontierH3
+    "F-313-315": { x: 384, y: 224, width: 192, height: 96 },
   },
   "4F": {
     // 大会議室
-    "401": { x: 672, y: 64, width: 64, height: 128 },
-    ...arrToObj(_upperNormalClassrooms.reverse(), "4", 2),
-    "406": scienceRoom,
+    "S4-3": { x: 672, y: 64, width: 64, height: 128 },
+    ...arrToObj(_upperNormalClassrooms.reverse(), "4", 0),
+    // 化大
+    "S4-1": scienceRoom,
+    // 化小
+    "S4-2": {
+      x: 160,
+      y: 160,
+    },
   },
 };
 
@@ -347,7 +357,8 @@ const lines: {
     "224 256 256 256",
     "288 256 320 256 320 320",
     "608 256 576 256 576 320",
-    "640 256 672 256 672 608 608 608 608 672 288 672 288 640 256 640 256 608 224 608 224 320",
+    "640 256 672 256 672 608 608 608 608 672 288 672 288 640 ",
+    "256 608 224 608 224 320",
   ],
   "2F": [
     "128 128 128 160 224 160 224 608 256 608 256 640 288 640 288 672 608 672 608 608 672 608 672 256 576 256 576 320",

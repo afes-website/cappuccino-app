@@ -1,8 +1,8 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Button,
   Card,
-  createStyles,
   Dialog,
   DialogActions,
   DialogContent,
@@ -13,17 +13,17 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  makeStyles,
   Theme,
   Typography,
+  createStyles,
+  makeStyles,
 } from "@material-ui/core";
 import { AddCircleOutline, RemoveCircleOutline } from "@material-ui/icons";
 import AccountIcon from "components/AccountIcon";
 import PermissionList from "components/PermissionList";
-import { useTitleSet } from "libs/title";
+import { useAuthDispatch, useAuthState } from "hooks/auth/useAuth";
 import routes from "libs/routes";
-import { Link } from "react-router-dom";
-import { useAuthDispatch, useAuthState } from "libs/auth/useAuth";
+import { useTitleSet } from "libs/title";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

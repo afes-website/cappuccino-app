@@ -1,7 +1,7 @@
-import createCtx from "libs/createCtx";
-import { AuthDispatch, AuthState } from "libs/auth/@types";
 import { AspidaClient } from "aspida";
 import { AxiosRequestConfig } from "axios";
+import { AuthDispatch, AuthState } from "hooks/auth/@types";
+import createCtx from "libs/createCtx";
 
 const [useAuthState, AuthStateContextProvider] = createCtx<AuthState>();
 const [useAuthDispatch, AuthDispatchContextProvider] =

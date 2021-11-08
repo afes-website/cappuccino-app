@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import api, { Term } from "@afes-website/docs";
+import clsx from "clsx";
 import {
   Button,
   Card,
@@ -12,25 +14,26 @@ import {
   ListItemText,
   Typography,
 } from "@material-ui/core";
-import { CheckCircle, Face, Replay } from "@material-ui/icons";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { ReservationTicket } from "components/MaterialSvgIcons";
+import { CheckCircle, Face, Replay } from "@material-ui/icons";
 import CardList from "components/CardList";
-import QRScanner from "components/QRScanner";
-import DirectInputModal from "components/DirectInputModal";
 import DirectInputFab from "components/DirectInputFab";
+import DirectInputModal from "components/DirectInputModal";
+import ErrorAlert from "components/ErrorAlert";
+import { ReservationTicket } from "components/MaterialSvgIcons";
+import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import ResultPopup, { ResultPopupRefs } from "components/ResultPopup";
-import { useTitleSet } from "libs/title";
-import { useAspidaClient, useAuthState } from "libs/auth/useAuth";
-import { useRequirePermission } from "libs/auth/useRequirePermission";
-import useErrorHandler from "libs/useErrorHandler";
+import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
+import { useRequirePermission } from "hooks/auth/useRequirePermission";
+import useCheckRsv from "hooks/useCheckRsv";
+import useErrorHandler from "hooks/useErrorHandler";
+import useHandleRsvInput from "hooks/useHandleRsvInput";
+import useReset from "hooks/useReset";
+import useWristBandPaletteColor from "hooks/useWristBandColor";
 import { getStringDateTimeBrief, getStringTime } from "libs/stringDate";
-import { useWristBandPaletteColor } from "libs/wristBandColor";
+import { useTitleSet } from "libs/title";
 import { StatusColor } from "types/statusColor";
-import api, { Reservation, Term } from "@afes-website/docs";
-import clsx from "clsx";
-import ErrorAlert from "components/ErrorAlert";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -99,62 +102,66 @@ const CheckInScan: React.VFC = () => {
 
   // ==== state ====
 
-  // 最後に読み込んだ予約ID・ゲストID
-  const [latestRsvId, setLatestRsvId] = useState("");
-  const [latestRsv, setLatestRsv] = useState<Reservation | null>(null);
   const [latestGuestId, setLatestGuestId] = useState("");
-  // 入場済みゲストID
   const [checkedInGuestIds, setCheckedInGuestIds] = useState<string[]>([]);
-  // 直接入力モーダルの開閉状態
-  const [opensRsvInputModal, setOpensRsvInputModal] = useState(false);
-  const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
-  // ステップ管理
+  const [directInputModalOpen, setDirectInputModalOpen] = useState(false);
   const [activeScanner, setActiveScanner] = useState<"rsv" | "guest">("rsv");
-  // 予約ID・ゲストIDそれぞれのチェック結果
   const [rsvCheckStatus, setRsvCheckStatus] = useState<StatusColor | null>(
     null
   );
   const [guestCheckStatus, setGuestCheckStatus] = useState<StatusColor | null>(
     null
   );
-  // 予約IDチェック・ゲストIDチェックをマージした全体のチェック結果
-  // useEffect で自動更新
-  const [totalCheckStatus, setTotalCheckStatus] = useState<StatusColor | null>(
-    null
-  );
-  // エラー処理
   const [errorMessage, setError, setErrorCode] = useErrorHandler();
+  const [resetKey, reset] = useReset();
 
-  // 全体のチェック結果の更新処理
-  useEffect(() => {
+  const {
+    latestRsvId,
+    handleRsvScan,
+    handleRsvIdDirectInput,
+    init: initHandleRsvScan,
+  } = useHandleRsvInput(setErrorCode, setRsvCheckStatus);
+
+  const {
+    latestRsv,
+    checkRsv,
+    init: initCheckRsv,
+  } = useCheckRsv(setError, setErrorCode, setRsvCheckStatus);
+
+  const totalCheckStatus: StatusColor | null = (() => {
     if (rsvCheckStatus === "success" && guestCheckStatus === "success")
-      setTotalCheckStatus("success");
+      return "success";
     else if (rsvCheckStatus === "loading" || guestCheckStatus === "loading")
-      setTotalCheckStatus("loading");
+      return "loading";
     else if (rsvCheckStatus === "error" || guestCheckStatus === "error")
-      setTotalCheckStatus("error");
-    else setTotalCheckStatus(null);
-  }, [rsvCheckStatus, guestCheckStatus]);
+      return "error";
+    else return null;
+  })();
 
   // 全リセット
   const clearAll = () => {
-    setLatestRsvId("");
-    setLatestRsv(null);
     setLatestGuestId("");
     setCheckedInGuestIds([]);
-    setOpensRsvInputModal(false);
-    setOpensGuestInputModal(false);
+    setDirectInputModalOpen(false);
     setActiveScanner("rsv");
     setError(null);
     setRsvCheckStatus(null);
     setGuestCheckStatus(null);
+    initHandleRsvScan();
+    initCheckRsv();
+    reset();
     if (resultChipRef.current) resultChipRef.current.close();
   };
 
   const handleScan = (data: string) => {
     switch (activeScanner) {
       case "rsv":
-        handleRsvIdScan(data);
+        if (rsvCheckStatus === null || rsvCheckStatus === "error")
+          handleRsvScan(data, (rsvId) => {
+            checkRsv(rsvId, () => {
+              setActiveScanner("guest");
+            });
+          });
         break;
       case "guest":
         handleGuestIdScan(data);
@@ -162,28 +169,19 @@ const CheckInScan: React.VFC = () => {
     }
   };
 
-  const handleRsvIdScan = (rsvId: string) => {
-    if (rsvCheckStatus === null || rsvCheckStatus === "error") {
-      setLatestRsvId(rsvId);
-      checkRsv(rsvId);
-    }
-  };
-
-  const checkRsv = async (rsvId: string) => {
-    setRsvCheckStatus("loading");
-    try {
-      const res = await api(aspida).reservations._id(rsvId).check.$get();
-      setLatestRsv(res.reservation);
-      if (res.valid) {
-        setRsvCheckStatus("success");
-        setActiveScanner("guest");
-      } else {
-        setRsvCheckStatus("error");
-        if (res.error_code) setErrorCode(res.error_code);
-      }
-    } catch (e) {
-      setRsvCheckStatus("error");
-      setError(e);
+  const handleDirectInput = (id: string) => {
+    switch (activeScanner) {
+      case "rsv":
+        if (rsvCheckStatus === null || rsvCheckStatus === "error")
+          handleRsvIdDirectInput(id, (rsvId) => {
+            checkRsv(rsvId, () => {
+              setActiveScanner("guest");
+            });
+          });
+        break;
+      case "guest":
+        handleGuestIdScan(id);
+        break;
     }
   };
 
@@ -191,7 +189,7 @@ const CheckInScan: React.VFC = () => {
     switch (rsvCheckStatus) {
       case "loading":
         setError(null);
-        setLatestRsv(null);
+        initCheckRsv();
         if (resultChipRef.current) resultChipRef.current.close();
         break;
       case "success":
@@ -210,7 +208,7 @@ const CheckInScan: React.VFC = () => {
           );
         break;
     }
-  }, [rsvCheckStatus, latestRsvId, setError]);
+  }, [rsvCheckStatus, latestRsvId, setError, initCheckRsv]);
 
   const handleGuestIdScan = (guestId: string) => {
     if (guestCheckStatus === null || guestCheckStatus === "error") {
@@ -238,8 +236,14 @@ const CheckInScan: React.VFC = () => {
   };
 
   const handleSuccess = () => {
-    if (latestRsv && latestRsv.member_checked_in + 1 < latestRsv.member_all) {
-      checkRsv(latestRsvId);
+    if (
+      latestRsv &&
+      latestRsv.member_checked_in + 1 < latestRsv.member_all &&
+      latestRsv.term.class !== "Parent"
+    ) {
+      checkRsv(latestRsvId, () => {
+        setActiveScanner("guest");
+      });
       setGuestCheckStatus(null);
       setCheckedInGuestIds((prev) => [latestGuestId, ...prev]);
       setLatestGuestId("");
@@ -290,6 +294,7 @@ const CheckInScan: React.VFC = () => {
                       activeScanner
                     ] ?? undefined
                   }
+                  resetKey={resetKey}
                 />
                 {/* Result Chip */}
                 <ResultChip
@@ -430,9 +435,7 @@ const CheckInScan: React.VFC = () => {
       {/* 直接入力ボタン */}
       <DirectInputFab
         onClick={() => {
-          ({ rsv: setOpensRsvInputModal, guest: setOpensGuestInputModal }[
-            activeScanner
-          ](true));
+          setDirectInputModalOpen(true);
         }}
         disabled={
           { rsv: rsvCheckStatus, guest: guestCheckStatus }[activeScanner] ===
@@ -442,18 +445,11 @@ const CheckInScan: React.VFC = () => {
 
       {/* 直接入力モーダル */}
       <DirectInputModal
-        open={opensRsvInputModal}
-        setOpen={setOpensRsvInputModal}
-        onIdChange={handleRsvIdScan}
-        currentId={latestRsvId}
-        type="rsv"
-      />
-      <DirectInputModal
-        open={opensGuestInputModal}
-        setOpen={setOpensGuestInputModal}
-        onIdChange={handleGuestIdScan}
-        currentId={latestGuestId}
-        type="guest"
+        open={directInputModalOpen}
+        setOpen={setDirectInputModalOpen}
+        onIdChange={handleDirectInput}
+        currentId={{ rsv: latestRsvId, guest: latestGuestId }[activeScanner]}
+        type={activeScanner}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 {
   "name": "cappuccino-app",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "private": true,
   "license": "MIT",
   "scripts": {
@@ -44,10 +44,12 @@
     "recharts": "^2.1.4",
     "sass": "^1.42.1",
     "typesafe-react-router": "^2.3.0",
+    "typescanner": "^0.3.4",
     "ua-parser-js": "^0.7.28",
     "zenn-content-css": "^0.1.98"
   },
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^3.1.0",
     "@types/chroma-js": "^2.1.3",
     "@types/gtag.js": "^0.0.7",
     "@types/markdown-it": "^12.2.1",

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { useAuthState } from "libs/auth/useAuth";
-import { StorageUserInfo } from "libs/auth/@types";
+import { StorageUserInfo } from "hooks/auth/@types";
+import { useAuthState } from "hooks/auth/useAuth";
 import routes from "libs/routes";
 
 /**

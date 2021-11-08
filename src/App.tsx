@@ -5,16 +5,16 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useHistory } from "react-router-dom";
+import { createBrowserHistory } from "history";
 import { Theme, useMediaQuery, useTheme } from "@material-ui/core";
-import TypesafeRouter from "components/TypesafeRouter";
-import LayoutWrapper from "components/LayoutWrapper";
 import MainLayout from "layouts/Main";
 import TabletLayout from "layouts/Tablet";
 import NotFound from "pages/NotFound";
-import { createBrowserHistory } from "history";
-import routes from "libs/routes";
 import AuthContext from "components/AuthContext";
-import { useHistory } from "react-router-dom";
+import LayoutWrapper from "components/LayoutWrapper";
+import TypesafeRouter from "components/TypesafeRouter";
+import routes from "libs/routes";
 
 const App: React.VFC = () => {
   const [history] = useState(createBrowserHistory());

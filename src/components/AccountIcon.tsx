@@ -1,17 +1,17 @@
 import React from "react";
+import clsx from "clsx";
 import { Avatar, SvgIconProps } from "@material-ui/core";
-import { Person } from "@material-ui/icons";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
+import { Person } from "@material-ui/icons";
 import {
-  PersonSetting,
-  PersonSecurity,
   PersonAssignment,
   PersonRoom,
+  PersonSecurity,
+  PersonSetting,
   PersonTeacher,
 } from "components/MaterialSvgIcons";
-import { StorageUserInfo } from "libs/auth/@types";
-import useExhibitionImageUrl from "libs/useExhibitionImageUrl";
-import clsx from "clsx";
+import { StorageUserInfo } from "hooks/auth/@types";
+import useExhibitionImageUrl from "hooks/useExhibitionImageUrl";
 
 const useStyles = makeStyles((theme) =>
   createStyles({

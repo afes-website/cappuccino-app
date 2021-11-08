@@ -1,9 +1,9 @@
 import React, { PropsWithChildren } from "react";
-import { createStyles, makeStyles, Paper } from "@material-ui/core";
-import TopBar from "components/TopBar";
+import { Paper, createStyles, makeStyles } from "@material-ui/core";
 import BottomNav from "components/BottomNav";
+import TopBar from "components/TopBar";
+import { useAuthState } from "hooks/auth/useAuth";
 import { useTitleContext } from "libs/title";
-import { useAuthState } from "libs/auth/useAuth";
 
 const useStyles = makeStyles(() =>
   createStyles({

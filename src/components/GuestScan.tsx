@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Guest } from "@afes-website/docs";
+import clsx from "clsx";
 import {
   Card,
   CardContent,
@@ -9,19 +11,17 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@material-ui/core";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { CheckCircle, Face } from "@material-ui/icons";
-import { makeStyles, createStyles } from "@material-ui/core/styles";
 import CardList from "components/CardList";
-import QRScanner from "components/QRScanner";
-import DirectInputModal from "components/DirectInputModal";
 import DirectInputFab from "components/DirectInputFab";
-import ResultChip, { ResultChipRefs } from "components/ResultChip";
-import ExhInfoCard from "components/ExhInfoCard";
+import DirectInputModal from "components/DirectInputModal";
 import ErrorAlert from "components/ErrorAlert";
-import useErrorHandler from "libs/useErrorHandler";
+import QRScanner from "components/QRScanner";
+import ResultChip, { ResultChipRefs } from "components/ResultChip";
+import { ExhStatusCard } from "components/StayStatusCard";
+import useErrorHandler from "hooks/useErrorHandler";
 import { StatusColor } from "types/statusColor";
-import clsx from "clsx";
-import { Guest } from "@afes-website/docs";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -192,8 +192,7 @@ const GuestScan: React.VFC<Props> = ({ handleScan, page }) => {
                 </List>
               </CardContent>
             </Card>
-
-            {isExh && <ExhInfoCard />}
+            {isExh && <ExhStatusCard />}
           </CardList>
         </Grid>
       </Grid>

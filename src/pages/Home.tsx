@@ -1,16 +1,15 @@
 import React from "react";
 import { Card, Typography } from "@material-ui/core";
 import { History, Map, NotListedLocation, Room } from "@material-ui/icons";
-import { Login, Logout, QRScannerIcon } from "components/MaterialSvgIcons";
 import CardList from "components/CardList";
 import CardMenu from "components/CardMenu";
+import { Login, Logout, QRScannerIcon } from "components/MaterialSvgIcons";
 import PwaAlertCard from "components/PwaAlertCard";
-import ExhInfoCard from "components/ExhInfoCard";
-import { GeneralStatusCard, ExhStatusCard } from "components/StayStatusCard";
+import { ExhStatusCard, GeneralStatusCard } from "components/StayStatusCard";
+import { useAuthState } from "hooks/auth/useAuth";
+import { verifyPermission } from "hooks/auth/useRequirePermission";
 import routes from "libs/routes";
 import { useTitleSet } from "libs/title";
-import { useAuthState } from "libs/auth/useAuth";
-import { verifyPermission } from "libs/auth/useRequirePermission";
 
 const Home: React.VFC = () => {
   useTitleSet("CAPPUCCINO");
@@ -37,6 +36,12 @@ const Home: React.VFC = () => {
                     secondary: "文化祭からの退場処理",
                     to: routes.CheckOutScan.route.create({}),
                     icon: <Logout />,
+                  },
+                  {
+                    primary: "入場待機列 予約確認スキャン",
+                    secondary: "来場者の予約を事前に確認",
+                    to: routes.GuestInfo.route.create({}),
+                    icon: <QRScannerIcon />,
                   },
                 ]}
               />
@@ -69,8 +74,8 @@ const Home: React.VFC = () => {
               <CardMenu
                 items={[
                   {
-                    primary: "来場者・予約情報照会",
-                    secondary: "行動履歴・登録情報を表示",
+                    primary: "予約・来場者情報照会",
+                    secondary: "登録情報・行動履歴を表示",
                     to: routes.GuestInfo.route.create({}),
                     icon: <QRScannerIcon />,
                   },
@@ -88,7 +93,6 @@ const Home: React.VFC = () => {
       )}
       {verifyPermission("exhibition", currentUser) && (
         <>
-          <ExhInfoCard />
           <div>
             <Typography variant="overline">展示内の滞在状況</Typography>
             <ExhStatusCard />
