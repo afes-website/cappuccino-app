@@ -5,6 +5,7 @@ import React, {
   useState,
 } from "react";
 import api, { ExhibitionStatus, Terms } from "@afes-website/docs";
+import moment, { Moment } from "moment";
 import {
   Card,
   CardContent,
@@ -34,6 +35,7 @@ const useStyles = makeStyles((theme) =>
     paragraph: {
       marginBottom: theme.spacing(2),
     },
+    lastUpdated: { marginTop: 8, marginBottom: -8 },
   })
 );
 
@@ -55,10 +57,12 @@ const StatusCard: React.VFC<
 
   const [status, setStatus] = useState<Status | null>(null);
   const [terms, setTerms] = useState<Terms | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Moment | null>(null);
 
   const load = useCallback(() => {
     getStatus().then((status) => {
       setStatus(status);
+      setLastUpdated(moment());
     });
     api(aspida)
       .terms.$get({
@@ -101,6 +105,16 @@ const StatusCard: React.VFC<
           terms={terms || null}
           hideStudent={hideStudent}
         />
+        {lastUpdated && (
+          <Typography
+            align="right"
+            variant="body2"
+            color="textSecondary"
+            className={classes.lastUpdated}
+          >
+            最終更新: {lastUpdated.format("M/D HH:mm:ss")}
+          </Typography>
+        )}
       </CardContent>
     </Card>
   );
