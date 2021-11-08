@@ -236,7 +236,11 @@ const CheckInScan: React.VFC = () => {
   };
 
   const handleSuccess = () => {
-    if (latestRsv && latestRsv.member_checked_in + 1 < latestRsv.member_all) {
+    if (
+      latestRsv &&
+      latestRsv.member_checked_in + 1 < latestRsv.member_all &&
+      latestRsv.term.class !== "Parent"
+    ) {
       checkRsv(latestRsvId, () => {
         setActiveScanner("guest");
       });
