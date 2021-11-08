@@ -38,6 +38,12 @@ const Home: React.VFC = () => {
                     to: routes.CheckOutScan.route.create({}),
                     icon: <Logout />,
                   },
+                  {
+                    primary: "入場待機列 予約確認スキャン",
+                    secondary: "来場者の予約を事前に確認",
+                    to: routes.GuestInfo.route.create({}),
+                    icon: <QRScannerIcon />,
+                  },
                 ]}
               />
             </Card>
@@ -69,8 +75,8 @@ const Home: React.VFC = () => {
               <CardMenu
                 items={[
                   {
-                    primary: "来場者・予約情報照会",
-                    secondary: "行動履歴・登録情報を表示",
+                    primary: "予約・来場者情報照会",
+                    secondary: "登録情報・行動履歴を表示",
                     to: routes.GuestInfo.route.create({}),
                     icon: <QRScannerIcon />,
                   },

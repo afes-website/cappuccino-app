@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import api, {
   ActivityLog,
   AllStatus,
@@ -20,7 +20,8 @@ import {
   Typography,
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
-import { AccessTime, Face } from "@material-ui/icons";
+import { AccessTime, Face, People, Person } from "@material-ui/icons";
+import { Alert } from "@material-ui/lab";
 import ActivityLogTimeline from "components/ActivityLogTimeline";
 import CardList from "components/CardList";
 import DirectInputFab from "components/DirectInputFab";
@@ -31,10 +32,11 @@ import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 import { useRequirePermission } from "hooks/auth/useRequirePermission";
+import useCheckRsv from "hooks/useCheckRsv";
 import useErrorHandler from "hooks/useErrorHandler";
+import useHandleRsvInput from "hooks/useHandleRsvInput";
 import useReset from "hooks/useReset";
 import useWristBandPaletteColor from "hooks/useWristBandColor";
-import { isReservation } from "libs/isReservation";
 import { getStringDateTimeBrief } from "libs/stringDate";
 import { useTitleSet } from "libs/title";
 import { StatusColor } from "types/statusColor";
@@ -72,11 +74,14 @@ const useStyles = makeStyles((theme) =>
       marginBottom: -1,
       marginRight: theme.spacing(0.75),
     },
+    tabDisabled: {
+      textDecoration: "line-through",
+    },
   })
 );
 
 const GuestInfo: React.VFC = () => {
-  useTitleSet("来場者・予約情報照会");
+  useTitleSet("予約・来場者情報照会");
   useRequirePermission(["executive", "reservation"]);
 
   const classes = useStyles();
@@ -86,8 +91,8 @@ const GuestInfo: React.VFC = () => {
 
   const wristBandPaletteColor = useWristBandPaletteColor();
 
-  const [mode, setMode] = useState<"guest" | "rsv">(
-    currentUser?.permissions.executive ? "guest" : "rsv"
+  const [mode, setMode] = useState<"rsv" | "guest">(
+    currentUser?.permissions.reservation ? "rsv" : "guest"
   );
 
   // guest
@@ -96,13 +101,8 @@ const GuestInfo: React.VFC = () => {
   const [activityLogs, setActivityLogs] = useState<ActivityLog[] | null>(null);
   const [exhStatus, setExhStatus] = useState<AllStatus | null>(null);
 
-  // reservation
-  const [rsvId, setRsvId] = useState<string>("");
-  const [rsvInfo, setRsvInfo] = useState<Reservation | null>(null);
-
   // 直接入力モーダルの開閉状態
-  const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
-  const [opensRsvInputModal, setOpensRsvInputModal] = useState(false);
+  const [directInputModalOpen, setDirectInputModalOpen] = useState(false);
 
   const [status, setStatus] = useState<StatusColor | null>(null);
 
@@ -111,20 +111,32 @@ const GuestInfo: React.VFC = () => {
 
   const [resetKey, reset] = useReset();
 
-  const clearInfo = () => {
+  const {
+    latestRsvId: rsvId,
+    handleRsvScan,
+    handleRsvIdDirectInput,
+    init: initHandleRsvScan,
+  } = useHandleRsvInput(setErrorCode, setStatus);
+
+  const {
+    latestRsv: rsvInfo,
+    checkRsv,
+    init: initCheckRsv,
+  } = useCheckRsv(setError, setErrorCode, setStatus);
+
+  const clearInfo = useCallback(() => {
+    // rsv
+    initHandleRsvScan();
+    initCheckRsv();
     // guest
     setGuestInfo(null);
     setActivityLogs(null);
     setExhStatus(null);
-
-    // rsv
-    setRsvInfo(null);
-  };
+  }, [initCheckRsv, initHandleRsvScan]);
 
   // モード切り替え時の初期化
   useEffect(() => {
     setGuestId("");
-    setRsvId("");
     clearInfo();
     reset();
 
@@ -132,15 +144,32 @@ const GuestInfo: React.VFC = () => {
     setStatus(null);
     setError(null);
     if (resultChipRef.current) resultChipRef.current.close();
-  }, [mode, reset, setError]);
+  }, [clearInfo, mode, reset, setError]);
 
   const handleScan = (value: string) => {
+    clearInfo();
     switch (mode) {
+      case "rsv":
+        handleRsvScan(value, (rsvId) => {
+          checkRsv(rsvId);
+        });
+        break;
       case "guest":
         handleGuestIdScan(value);
         break;
+    }
+  };
+
+  const handleDirectInput = (id: string) => {
+    clearInfo();
+    switch (mode) {
       case "rsv":
-        handleRsvIdScan(value);
+        handleRsvIdDirectInput(id, (rsvId) => {
+          checkRsv(rsvId);
+        });
+        break;
+      case "guest":
+        handleGuestIdScan(id);
         break;
     }
   };
@@ -182,37 +211,11 @@ const GuestInfo: React.VFC = () => {
     }
   };
 
-  const handleRsvIdScan = async (_rsvJson: string) => {
-    setStatus("loading");
-    try {
-      const _rsv = JSON.parse(_rsvJson);
-      if (isReservation(_rsv)) {
-        setRsvId(_rsv.id);
-        try {
-          const _rsvInfo = await api(aspida).reservations._id(_rsv.id).$get();
-          setStatus("success");
-          setRsvInfo(_rsvInfo);
-        } catch (e) {
-          setStatus("error");
-          setError(e);
-        }
-      } else {
-        throw new Error("The given json is not valid Reservation");
-      }
-    } catch {
-      setRsvId("");
-      setStatus("error");
-      setErrorCode("QR_SYNTAX_ERROR");
-      return;
-    }
-  };
-
   useEffect(() => {
-    const name = { guest: "ゲスト", rsv: "予約" };
-    const id = { guest: guestId, rsv: rsvId };
+    const name = { rsv: "予約", guest: "ゲスト" };
+    const id = { rsv: rsvId, guest: guestId };
     switch (status) {
       case "loading":
-        clearInfo();
         setError(null);
         if (resultChipRef.current) resultChipRef.current.close();
         break;
@@ -232,29 +235,30 @@ const GuestInfo: React.VFC = () => {
           );
         break;
     }
-  }, [mode, status, guestId, rsvId, setError]);
+  }, [mode, status, guestId, rsvId, setError, clearInfo]);
 
   return (
     <>
       <Paper square className={classes.tabs}>
         <Tabs
           value={mode}
-          onChange={(e, newValue: "guest" | "rsv") => {
+          onChange={(e, newValue: "rsv" | "guest") => {
             setMode(newValue);
           }}
           variant="fullWidth"
           color="secondary"
         >
           <Tab
-            label="来場者 行動履歴一覧"
-            value="guest"
-            disabled={!currentUser?.permissions.executive}
-          />
-
-          <Tab
             label="予約 登録情報一覧"
             value="rsv"
             disabled={!currentUser?.permissions.reservation}
+            classes={{ disabled: classes.tabDisabled }}
+          />
+          <Tab
+            label="来場者 行動履歴一覧"
+            value="guest"
+            disabled={!currentUser?.permissions.executive}
+            classes={{ disabled: classes.tabDisabled }}
           />
         </Tabs>
       </Paper>
@@ -284,6 +288,40 @@ const GuestInfo: React.VFC = () => {
         </Grid>
         <Grid xs={12} md={6}>
           <CardList>
+            {mode === "rsv" && (
+              <>
+                {status === "success" && rsvInfo && (
+                  <Card>
+                    <Alert severity="success">{`あと ${
+                      rsvInfo.term.class === "Parent"
+                        ? 1
+                        : rsvInfo.member_all - rsvInfo.member_checked_in
+                    } 人入場可能`}</Alert>
+                  </Card>
+                )}
+                <Card>
+                  <CardContent
+                    className={clsx({
+                      [classes.cardTitle]: rsvId,
+                    })}
+                  >
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      gutterBottom={true}
+                    >
+                      予約情報
+                    </Typography>
+                    {!rsvId && (
+                      <Typography variant="caption" align="center">
+                        まだ予約QRコードをスキャンしていません。
+                      </Typography>
+                    )}
+                  </CardContent>
+                  {rsvId && <PrivateInfoList rsvId={rsvId} info={rsvInfo} />}
+                </Card>
+              </>
+            )}
             {mode === "guest" && (
               <>
                 <Card>
@@ -376,29 +414,6 @@ const GuestInfo: React.VFC = () => {
                 </Card>
               </>
             )}
-            {mode === "rsv" && (
-              <Card>
-                <CardContent
-                  className={clsx({
-                    [classes.cardTitle]: rsvId,
-                  })}
-                >
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                    gutterBottom={true}
-                  >
-                    予約情報
-                  </Typography>
-                  {!rsvId && (
-                    <Typography variant="caption" align="center">
-                      まだ予約QRコードをスキャンしていません。
-                    </Typography>
-                  )}
-                </CardContent>
-                {rsvId && <PrivateInfoList rsvId={rsvId} info={rsvInfo} />}
-              </Card>
-            )}
             <Typography
               variant="body2"
               color="textSecondary"
@@ -414,27 +429,18 @@ const GuestInfo: React.VFC = () => {
       {/* 直接入力ボタン */}
       <DirectInputFab
         onClick={() => {
-          ({ guest: setOpensGuestInputModal, rsv: setOpensRsvInputModal }[mode](
-            true
-          ));
+          setDirectInputModalOpen(true);
         }}
         disabled={status === "loading"}
       />
 
       {/* 直接入力モーダル */}
       <DirectInputModal
-        open={opensGuestInputModal}
-        setOpen={setOpensGuestInputModal}
-        onIdChange={handleGuestIdScan}
-        currentId={guestId}
-        type="guest"
-      />
-      <DirectInputModal
-        open={opensRsvInputModal}
-        setOpen={setOpensRsvInputModal}
-        onIdChange={handleRsvIdScan}
-        currentId={rsvId}
-        type="rsv"
+        open={directInputModalOpen}
+        setOpen={setDirectInputModalOpen}
+        onIdChange={handleDirectInput}
+        currentId={{ rsv: rsvId, guest: guestId }[mode]}
+        type={mode}
       />
     </>
   );
@@ -471,28 +477,60 @@ const PrivateInfoList: React.VFC<{
         <ListItemText primary={rsvId} secondary="予約 ID" />
       </ListItem>
       {info && (
-        <ListItem>
-          <ListItemIcon>
-            <AccessTime />
-          </ListItemIcon>
-          <ListItemText
-            primary={
-              <>
-                <span
-                  className={classes.termColorBadge}
-                  style={{
-                    background: wristBandPaletteColor(info.term.guest_type)
-                      .main,
-                  }}
-                />
-                {`${getStringDateTimeBrief(
-                  info.term.enter_scheduled_time
-                )} - ${getStringDateTimeBrief(info.term.exit_scheduled_time)}`}
-              </>
-            }
-            secondary="予約時間帯"
-          />
-        </ListItem>
+        <>
+          <ListItem>
+            <ListItemIcon>
+              <AccessTime />
+            </ListItemIcon>
+            <ListItemText
+              primary={
+                <>
+                  <span
+                    className={classes.termColorBadge}
+                    style={{
+                      background: wristBandPaletteColor(info.term.guest_type)
+                        .main,
+                    }}
+                  />
+                  {`${getStringDateTimeBrief(
+                    info.term.enter_scheduled_time
+                  )} - ${getStringDateTimeBrief(
+                    info.term.exit_scheduled_time
+                  )}`}
+                </>
+              }
+              secondary="予約時間帯"
+            />
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              {info.member_all === 1 ? <Person /> : <People />}
+            </ListItemIcon>
+            <ListItemText
+              primary={
+                info.term.class === "Parent"
+                  ? "保護者枠（在校生の保護者１名）"
+                  : info.member_all === 1
+                  ? "一般枠（中学生以上 1 名）"
+                  : "児童枠（小学生とその保護者 計 2 名）"
+              }
+              secondary="予約枠"
+            />
+          </ListItem>
+          {info.term.class !== "Parent" && (
+            <ListItem>
+              <ListItemIcon>
+                <Face />
+              </ListItemIcon>
+              <ListItemText
+                primary={`${info.member_checked_in} 人（あと ${
+                  info.member_all - info.member_checked_in
+                } 人入場可能）`}
+                secondary="入場済み人数"
+              />
+            </ListItem>
+          )}
+        </>
       )}
     </List>
   );
