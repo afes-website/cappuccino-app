@@ -26,6 +26,7 @@ import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 import { useRequirePermission } from "hooks/auth/useRequirePermission";
 import useErrorHandler from "hooks/useErrorHandler";
 import useHandleRsvInput from "hooks/useHandleRsvInput";
+import useReset from "hooks/useReset";
 import { useTitleSet } from "libs/title";
 import { StatusColor } from "types/statusColor";
 
@@ -111,6 +112,7 @@ const RegisterSpare: React.VFC = () => {
   const [totalStatus, setTotalStatus] = useState<StatusColor | null>(null);
   // エラー処理
   const [errorMessage, setError, setErrorCode] = useErrorHandler();
+  const [resetKey, reset] = useReset();
 
   const {
     latestRsvId,
@@ -139,6 +141,7 @@ const RegisterSpare: React.VFC = () => {
     setRsvScanStatus(null);
     setRegisterStatus(null);
     initHandleRsvScan();
+    reset();
     if (resultChipRef.current) resultChipRef.current.close();
   };
 
@@ -253,6 +256,7 @@ const RegisterSpare: React.VFC = () => {
                       activeScanner
                     ] ?? undefined
                   }
+                  resetKey={resetKey}
                 />
                 {/* Result Chip */}
                 <ResultChip
