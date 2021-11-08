@@ -46,7 +46,7 @@ const StatusCard: React.VFC<
   const [status, setStatus] = useState<Status | null>(null);
   const [terms, setTerms] = useState<Terms | null>(null);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     getStatus().then((status) => {
       setStatus(status);
     });
@@ -60,6 +60,12 @@ const StatusCard: React.VFC<
         setTerms(terms);
       });
   }, [aspida, currentUser?.token, getStatus]);
+
+  useEffect(() => {
+    load();
+    const intervalId = setInterval(load, 20000);
+    return () => clearInterval(intervalId);
+  }, [load]);
 
   return (
     <Card>
