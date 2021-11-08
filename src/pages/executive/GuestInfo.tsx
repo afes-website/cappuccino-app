@@ -293,7 +293,9 @@ const GuestInfo: React.VFC = () => {
                 {status === "success" && rsvInfo && (
                   <Card>
                     <Alert severity="success">{`あと ${
-                      rsvInfo.member_all - rsvInfo.member_checked_in
+                      rsvInfo.term.class === "Parent"
+                        ? 1
+                        : rsvInfo.member_all - rsvInfo.member_checked_in
                     } 人入場可能`}</Alert>
                   </Card>
                 )}
@@ -506,24 +508,28 @@ const PrivateInfoList: React.VFC<{
             </ListItemIcon>
             <ListItemText
               primary={
-                info.member_all === 1
+                info.term.class === "Parent"
+                  ? "保護者枠（在校生の保護者１名）"
+                  : info.member_all === 1
                   ? "一般枠（中学生以上 1 名）"
                   : "児童枠（小学生とその保護者 計 2 名）"
               }
               secondary="予約枠"
             />
           </ListItem>
-          <ListItem>
-            <ListItemIcon>
-              <Face />
-            </ListItemIcon>
-            <ListItemText
-              primary={`${info.member_checked_in} 人（あと ${
-                info.member_all - info.member_checked_in
-              } 人入場可能）`}
-              secondary="入場済み人数"
-            />
-          </ListItem>
+          {info.term.class !== "Parent" && (
+            <ListItem>
+              <ListItemIcon>
+                <Face />
+              </ListItemIcon>
+              <ListItemText
+                primary={`${info.member_checked_in} 人（あと ${
+                  info.member_all - info.member_checked_in
+                } 人入場可能）`}
+                secondary="入場済み人数"
+              />
+            </ListItem>
+          )}
         </>
       )}
     </List>
