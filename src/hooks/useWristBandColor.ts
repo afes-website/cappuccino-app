@@ -14,7 +14,7 @@ import {
   generateLightPaletteColor,
 } from "libs/paletteColor";
 
-const wristBandPaletteColor = (
+export const wristBandPaletteColor = (
   prefix: GuestType,
   type: PaletteType
 ): PaletteColor => {

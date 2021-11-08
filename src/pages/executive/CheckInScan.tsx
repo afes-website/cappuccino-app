@@ -24,6 +24,7 @@ import { ReservationTicket } from "components/MaterialSvgIcons";
 import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import ResultPopup, { ResultPopupRefs } from "components/ResultPopup";
+import TicketHeader from "components/TicketHeader";
 import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 import { useRequirePermission } from "hooks/auth/useRequirePermission";
 import useCheckRsv from "hooks/useCheckRsv";
@@ -319,6 +320,7 @@ const CheckInScan: React.VFC = () => {
           <CardList>
             {/* ID List */}
             <Card>
+              <TicketHeader rsv={latestRsv} />
               <CardContent className={classes.noPadding}>
                 <List>
                   <ListItem disabled={activeScanner !== "rsv"}>
