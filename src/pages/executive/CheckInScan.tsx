@@ -16,6 +16,7 @@ import {
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { CheckCircle, Face, Replay } from "@material-ui/icons";
+import { Alert, AlertTitle } from "@material-ui/lab";
 import CardList from "components/CardList";
 import DirectInputFab from "components/DirectInputFab";
 import DirectInputModal from "components/DirectInputModal";
@@ -311,6 +312,18 @@ const CheckInScan: React.VFC = () => {
                 <CardContent className={classes.noPadding}>
                   <ErrorAlert errorMessage={errorMessage} />
                 </CardContent>
+              </Card>
+            )}
+
+            {/* Parent Alert */}
+            {latestRsv && latestRsv.term.class === "Parent" && (
+              <Card elevation={4}>
+                <Alert severity="warning">
+                  <AlertTitle>保護者予約は目視チェック！</AlertTitle>
+                  <Typography>
+                    時間帯アルファベットを確認し、入場券を回収してください。
+                  </Typography>
+                </Alert>
               </Card>
             )}
           </CardList>
