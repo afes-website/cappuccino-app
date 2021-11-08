@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import api, { Term } from "@afes-website/docs";
+import api from "@afes-website/docs";
 import clsx from "clsx";
 import {
   Button,
@@ -421,7 +421,9 @@ const CheckInScan: React.VFC = () => {
                 startIcon={<Replay />}
                 onClick={clearAll}
               >
-                中断して最初からやり直す
+                {activeScanner === "rsv"
+                  ? "最初からやり直す"
+                  : "処理を終了し予約スキャンに戻る"}
               </Button>
             )}
           </CardList>
