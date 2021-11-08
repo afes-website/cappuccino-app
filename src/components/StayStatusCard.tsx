@@ -5,8 +5,18 @@ import React, {
   useState,
 } from "react";
 import api, { ExhibitionStatus, Terms } from "@afes-website/docs";
-import { Card, CardContent, Typography } from "@material-ui/core";
+import {
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+} from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
+import { Skeleton } from "@material-ui/lab";
+import AccountIcon from "components/AccountIcon";
 import StayStatus from "components/StayStatus";
 import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 
@@ -116,9 +126,7 @@ export const GeneralStatusCard: React.VFC<PropsWithChildren<unknown>> = ({
   );
 };
 
-export const ExhStatusCard: React.VFC<PropsWithChildren<unknown>> = ({
-  children,
-}) => {
+export const ExhStatusCard: React.VFC = () => {
   const { currentUser } = useAuthState();
   const aspida = useAspidaClient();
 
@@ -132,7 +140,44 @@ export const ExhStatusCard: React.VFC<PropsWithChildren<unknown>> = ({
 
   return (
     <StatusCard getStatus={getStatus} showCountLimit={true}>
-      {children}
+      <CardExhInfo />
     </StatusCard>
+  );
+};
+
+const CardExhInfo: React.VFC = () => {
+  const { currentUser } = useAuthState();
+  const aspida = useAspidaClient();
+
+  const [exhInfo, setExhInfo] = useState<ExhibitionStatus | null>(null);
+
+  useEffect(() => {
+    if (!currentUser || !currentUser.permissions.exhibition) return;
+    api(aspida)
+      .exhibitions._id(currentUser.id)
+      .$get()
+      .then((_exhInfo) => {
+        setExhInfo(_exhInfo);
+      });
+  }, [aspida, currentUser]);
+
+  return (
+    <List dense={true} style={{ marginBottom: -16 }}>
+      <ListItem>
+        <ListItemIcon>
+          <AccountIcon account={currentUser} />
+        </ListItemIcon>
+        <ListItemText
+          primary={exhInfo ? exhInfo.info.name : <Skeleton />}
+          secondary={
+            exhInfo ? (
+              `${exhInfo.info.room_id} ･ @${currentUser?.id}`
+            ) : (
+              <Skeleton />
+            )
+          }
+        />
+      </ListItem>
+    </List>
   );
 };
