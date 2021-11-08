@@ -145,7 +145,10 @@ const RegisterSpare: React.VFC = () => {
   const handleScan = (data: string) => {
     switch (activeScanner) {
       case "rsv":
-        handleRsvScan(data);
+        handleRsvScan(data, () => {
+          setRsvScanStatus("success");
+          setActiveScanner("guest");
+        });
         break;
       case "guest":
         handleGuestIdScan(data);
