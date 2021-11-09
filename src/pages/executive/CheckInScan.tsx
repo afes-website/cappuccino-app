@@ -212,6 +212,10 @@ const CheckInScan: React.VFC = () => {
 
   const handleGuestIdScan = (guestId: string) => {
     if (guestCheckStatus === null || guestCheckStatus === "error") {
+      if (guestId.length > 32) {
+        setErrorCode("ID_IS_TOO_LONG");
+        return;
+      }
       setLatestGuestId(guestId);
       setGuestCheckStatus("loading");
       // guest id 検証 (rsv id は有効性を確認済)
