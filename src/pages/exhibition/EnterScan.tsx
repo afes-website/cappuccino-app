@@ -18,9 +18,10 @@ const EnterScan: React.VFC = () => {
     const status = await api(aspida)
       .exhibitions._id(currentUser?.id || "")
       .$get();
-    const sum = Object.entries(status.count)
-      .map(([, value]) => value)
-      .reduce((prev, curr) => prev + curr, 0);
+    const sum = Object.values(status.count).reduce(
+      (prev, curr) => prev + curr,
+      0
+    );
 
     setIsFull(sum >= status.capacity);
   }, [aspida, currentUser?.id]);
