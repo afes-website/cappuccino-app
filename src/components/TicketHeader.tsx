@@ -1,7 +1,7 @@
 import React from "react";
 import { Reservation } from "@afes-website/docs";
 import clsx from "clsx";
-import { makeStyles } from "@material-ui/core";
+import { Theme, makeStyles } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import { wristBandPaletteColor } from "hooks/useWristBandColor";
 import { getStringDateJp, getStringTimeJp } from "libs/stringDateJp";
@@ -9,7 +9,7 @@ import { ReactComponent as Child } from "assets/child.svg";
 import { ReactComponent as LogoWhite } from "assets/logo.svg";
 import { ReactComponent as Person } from "assets/person.svg";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme: Theme) => ({
   ticketHeader: {
     padding: "64px 24px 24px 24px",
     color: "#fff",
@@ -57,8 +57,11 @@ const useStyles = makeStyles({
   cutLine: {
     position: "relative",
     "&::after": {
-      background:
-        "radial-gradient(circle farthest-side, #d5d5d5, #d5d5d5 60%, transparent 60%, transparent);",
+      background: `radial-gradient(circle farthest-side, ${
+        { light: "#ccc", dark: "#000" }[theme.palette.type]
+      }, ${
+        { light: "#ccc", dark: "#000" }[theme.palette.type]
+      } 60%, transparent 60%, transparent);`,
       backgroundSize: "12px 12px",
       backgroundPosition: "center",
       content: "''",
@@ -70,7 +73,7 @@ const useStyles = makeStyles({
       bottom: -6,
     },
   },
-});
+}));
 
 interface Props {
   rsv: Reservation | null;
