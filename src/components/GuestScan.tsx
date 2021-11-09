@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { CheckCircle, Face } from "@material-ui/icons";
+import { Alert } from "@material-ui/lab";
 import CardList from "components/CardList";
 import DirectInputFab from "components/DirectInputFab";
 import DirectInputModal from "components/DirectInputModal";
@@ -22,7 +23,6 @@ import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import { ExhStatusCard } from "components/StayStatusCard";
 import useErrorHandler from "hooks/useErrorHandler";
 import { StatusColor } from "types/statusColor";
-import { Alert } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
