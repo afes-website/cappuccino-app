@@ -505,7 +505,7 @@ const PrivateInfoList: React.VFC<{
           </ListItem>
           <ListItem>
             <ListItemIcon>
-              {info.member_all === 1 ? <Person /> : <People />}
+              {info.member_all === 2 ? <People /> : <Person />}
             </ListItemIcon>
             <ListItemText
               primary={
