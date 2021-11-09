@@ -97,10 +97,8 @@ const GuestScan: React.VFC<Props> = ({ handleScan, page }) => {
       setLatestGuestId(guestId);
       try {
         await handleScan(guestId);
-        checkIsFull().then((v) => {
-          if (v) setCheckStatus("warning");
-          else setCheckStatus("success");
-        });
+        checkIsFull();
+        setCheckStatus("success");
       } catch (e) {
         setCheckStatus("error");
         setError(e);
@@ -111,28 +109,16 @@ const GuestScan: React.VFC<Props> = ({ handleScan, page }) => {
   const { currentUser } = useAuthState();
   const aspida = useAspidaClient();
 
-  const checkIsFull = useCallback(
-    () =>
-      api(aspida)
-        .exhibitions._id(currentUser?.id || "")
-        .$get()
-        .then((status) => {
-          const sum = Object.entries(status.count)
-            .map(([, value]) => value)
-            .reduce((prev, curr) => prev + curr, 0);
+  const checkIsFull = useCallback(async () => {
+    const status = await api(aspida)
+      .exhibitions._id(currentUser?.id || "")
+      .$get();
+    const sum = Object.entries(status.count)
+      .map(([, value]) => value)
+      .reduce((prev, curr) => prev + curr, 0);
 
-          if (sum >= status.capacity) {
-            setIsFull(true);
-            if (checkStatus === null) setCheckStatus("warning");
-            return true;
-          } else {
-            if (checkStatus === "warning") setCheckStatus(null);
-            setIsFull(false);
-            return false;
-          }
-        }),
-    [aspida, checkStatus, currentUser?.id]
-  );
+    setIsFull(sum >= status.capacity);
+  }, [aspida, currentUser?.id]);
 
   useEffect(() => {
     if (!isExh) return;
@@ -193,7 +179,7 @@ const GuestScan: React.VFC<Props> = ({ handleScan, page }) => {
                 <QRScanner
                   onScanFunc={handleGuestIdScan}
                   videoStop={false}
-                  color={checkStatus ?? undefined}
+                  color={checkStatus ?? (isFull ? "warning" : undefined)}
                 />
                 {/* Result Chip */}
                 <ResultChip
