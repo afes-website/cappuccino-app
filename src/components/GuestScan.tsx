@@ -62,17 +62,11 @@ type Page = `exhibition/${"enter" | "exit"}` | "executive/check-out";
 
 interface Props {
   handleScan: (guestId: string) => Promise<Guest>;
-  handleSuccess?: () => void;
   isFull?: boolean;
   page: Page;
 }
 
-const GuestScan: React.VFC<Props> = ({
-  handleScan,
-  page,
-  handleSuccess,
-  isFull,
-}) => {
+const GuestScan: React.VFC<Props> = ({ handleScan, page, isFull }) => {
   const classes = useStyles();
   const resultChipRef = useRef<ResultChipRefs>(null);
 
@@ -102,7 +96,6 @@ const GuestScan: React.VFC<Props> = ({
       setLatestGuestId(guestId);
       try {
         await handleScan(guestId);
-        if (handleSuccess) handleSuccess();
         setCheckStatus("success");
       } catch (e) {
         setCheckStatus("error");

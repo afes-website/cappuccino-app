@@ -45,8 +45,11 @@ const EnterScan: React.VFC = () => {
               exhibition_id: currentUserId ?? "",
             },
           })
+          .then((guest) => {
+            checkIsFull();
+            return guest;
+          })
       }
-      handleSuccess={checkIsFull}
       page="exhibition/enter"
       isFull={isFull}
     />
