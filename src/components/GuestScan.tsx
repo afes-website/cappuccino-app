@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import api, { Guest } from "@afes-website/docs";
+import React, { useEffect, useRef, useState } from "react";
+import { Guest } from "@afes-website/docs";
 import clsx from "clsx";
 import {
   Card,
@@ -22,7 +22,6 @@ import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import { ExhStatusCard } from "components/StayStatusCard";
 import useErrorHandler from "hooks/useErrorHandler";
 import { StatusColor } from "types/statusColor";
-import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 import { Alert } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme) =>
@@ -63,17 +62,23 @@ type Page = `exhibition/${"enter" | "exit"}` | "executive/check-out";
 
 interface Props {
   handleScan: (guestId: string) => Promise<Guest>;
+  handleSuccess?: () => void;
+  isFull?: boolean;
   page: Page;
 }
 
-const GuestScan: React.VFC<Props> = ({ handleScan, page }) => {
+const GuestScan: React.VFC<Props> = ({
+  handleScan,
+  page,
+  handleSuccess,
+  isFull,
+}) => {
   const classes = useStyles();
   const resultChipRef = useRef<ResultChipRefs>(null);
 
   const [latestGuestId, setLatestGuestId] = useState("");
   const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
   const [checkStatus, setCheckStatus] = useState<StatusColor | null>(null);
-  const [isFull, setIsFull] = useState<boolean>(false);
 
   // エラー処理
   const [errorMessage, setError] = useErrorHandler();
@@ -97,7 +102,7 @@ const GuestScan: React.VFC<Props> = ({ handleScan, page }) => {
       setLatestGuestId(guestId);
       try {
         await handleScan(guestId);
-        checkIsFull();
+        if (handleSuccess) handleSuccess();
         setCheckStatus("success");
       } catch (e) {
         setCheckStatus("error");
@@ -105,27 +110,6 @@ const GuestScan: React.VFC<Props> = ({ handleScan, page }) => {
       }
     }
   };
-
-  const { currentUser } = useAuthState();
-  const aspida = useAspidaClient();
-
-  const checkIsFull = useCallback(async () => {
-    const status = await api(aspida)
-      .exhibitions._id(currentUser?.id || "")
-      .$get();
-    const sum = Object.entries(status.count)
-      .map(([, value]) => value)
-      .reduce((prev, curr) => prev + curr, 0);
-
-    setIsFull(sum >= status.capacity);
-  }, [aspida, currentUser?.id]);
-
-  useEffect(() => {
-    if (!isExh) return;
-    checkIsFull();
-    const intervalId = setInterval(checkIsFull, 15000);
-    return () => clearInterval(intervalId);
-  }, [isExh, checkIsFull]);
 
   useEffect(() => {
     switch (checkStatus) {

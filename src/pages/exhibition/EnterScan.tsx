@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import api from "@afes-website/docs";
 import GuestScan from "components/GuestScan";
 import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
@@ -11,6 +11,25 @@ const EnterScan: React.VFC = () => {
 
   const aspida = useAspidaClient();
   const { currentUser, currentUserId } = useAuthState();
+
+  const [isFull, setIsFull] = useState<boolean>(false);
+
+  const checkIsFull = useCallback(async () => {
+    const status = await api(aspida)
+      .exhibitions._id(currentUser?.id || "")
+      .$get();
+    const sum = Object.entries(status.count)
+      .map(([, value]) => value)
+      .reduce((prev, curr) => prev + curr, 0);
+
+    setIsFull(sum >= status.capacity);
+  }, [aspida, currentUser?.id]);
+
+  useEffect(() => {
+    checkIsFull();
+    const intervalId = setInterval(checkIsFull, 15000);
+    return () => clearInterval(intervalId);
+  }, [checkIsFull]);
 
   return (
     <GuestScan
@@ -26,7 +45,9 @@ const EnterScan: React.VFC = () => {
             },
           })
       }
+      handleSuccess={checkIsFull}
       page="exhibition/enter"
+      isFull={isFull}
     />
   );
 };
