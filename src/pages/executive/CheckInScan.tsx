@@ -12,6 +12,7 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
+  Theme,
   Typography,
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
@@ -36,7 +37,7 @@ import useWristBandPaletteColor from "hooks/useWristBandColor";
 import { useTitleSet } from "libs/title";
 import { StatusColor } from "types/statusColor";
 
-const useStyles = makeStyles((theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     list: {
       marginBottom: theme.spacing(2) + 48,
@@ -87,6 +88,22 @@ const useStyles = makeStyles((theme) =>
       borderRadius: 6,
       marginBottom: -1,
       marginRight: theme.spacing(0.75),
+    },
+    currentItem: {
+      position: "relative",
+      "&::before": {
+        content: '""',
+        display: "block",
+        position: "absolute",
+        background: {
+          light: theme.palette.primary.main,
+          dark: theme.palette.secondary.main,
+        }[theme.palette.type],
+        height: 30,
+        width: 6,
+        left: 0,
+        borderRadius: "0 4px 4px 0",
+      },
     },
   })
 );
@@ -336,7 +353,12 @@ const CheckInScan: React.VFC = () => {
               <TicketHeader rsv={latestRsv} />
               <CardContent className={classes.noPadding}>
                 <List>
-                  <ListItem disabled={activeScanner !== "rsv"}>
+                  <ListItem
+                    disabled={activeScanner !== "rsv"}
+                    className={clsx({
+                      [classes.currentItem]: activeScanner === "rsv",
+                    })}
+                  >
                     <ListItemIcon className={classes.progressWrapper}>
                       {rsvCheckStatus === "success" ? (
                         <CheckCircle className={classes.successIcon} />
@@ -355,7 +377,12 @@ const CheckInScan: React.VFC = () => {
                       secondary="予約 ID"
                     />
                   </ListItem>
-                  <ListItem disabled={activeScanner !== "guest"}>
+                  <ListItem
+                    disabled={activeScanner !== "guest"}
+                    className={clsx({
+                      [classes.currentItem]: activeScanner === "guest",
+                    })}
+                  >
                     <ListItemIcon>
                       <Face />
                     </ListItemIcon>
