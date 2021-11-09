@@ -164,11 +164,11 @@ const GuestScan: React.VFC<Props> = ({ handleScan, page, isFull }) => {
               </Card>
             )}
 
-            {/* Warning */}
+            {/* Exhibition Full Alert */}
             {isFull && (
               <Card>
                 <CardContent className={classes.noPadding}>
-                  <Alert severity="warning">展示内は満員です。</Alert>
+                  <Alert severity="warning">滞在人数の上限に達しました。</Alert>
                 </CardContent>
               </Card>
             )}
