@@ -14,16 +14,20 @@ const EnterScan: React.VFC = () => {
 
   const [isFull, setIsFull] = useState<boolean>(false);
 
-  const checkIsFull = useCallback(async () => {
-    const status = await api(aspida)
+  const checkIsFull = useCallback(() => {
+    api(aspida)
       .exhibitions._id(currentUser?.id || "")
-      .$get();
-    const sum = Object.values(status.count).reduce(
-      (prev, curr) => prev + curr,
-      0
-    );
-
-    setIsFull(sum >= status.capacity);
+      .$get()
+      .then((status) => {
+        const sum = Object.values(status.count).reduce(
+          (prev, curr) => prev + curr,
+          0
+        );
+        setIsFull(sum >= status.capacity);
+      })
+      .catch(() => {
+        setIsFull(false);
+      });
   }, [aspida, currentUser?.id]);
 
   useEffect(() => {
