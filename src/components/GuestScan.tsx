@@ -129,17 +129,6 @@ const GuestScan: React.VFC<Props> = ({
             3000
           );
         break;
-      case "warning":
-        setTimeout(() => {
-          setLatestGuestId("");
-        }, 3000);
-        if (resultChipRef.current && latestGuestId)
-          resultChipRef.current.open(
-            "success",
-            `${actionName}成功 / ゲスト ID: ${latestGuestId}`,
-            3000
-          );
-        break;
       case "error":
         if (resultChipRef.current)
           resultChipRef.current.open(
