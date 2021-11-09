@@ -1,8 +1,7 @@
 import React from "react";
 import { Reservation } from "@afes-website/docs";
 import clsx from "clsx";
-import { Theme, makeStyles } from "@material-ui/core";
-import { Skeleton } from "@material-ui/lab";
+import { Theme, Typography, makeStyles } from "@material-ui/core";
 import { wristBandPaletteColor } from "hooks/useWristBandColor";
 import { getStringDateJp, getStringTimeJp } from "libs/stringDateJp";
 import { ReactComponent as Child } from "assets/child.svg";
@@ -73,6 +72,13 @@ const useStyles = makeStyles((theme: Theme) => ({
       bottom: -6,
     },
   },
+  description: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    lineHeight: 2,
+  },
 }));
 
 interface Props {
@@ -92,9 +98,9 @@ const TicketHeader: React.VFC<Props> = ({ rsv }) => {
       }}
     >
       <div className={classes.ticketLogo}>
-        <LogoWhite />
+        {rsv && <LogoWhite />}
         <span>
-          {rsv && rsv.member_all <= 2 ? "デジタルチケット" : "文化祭入場券"}
+          {rsv && (rsv.member_all <= 2 ? "デジタルチケット" : "文化祭入場券")}
           {rsv &&
             ({ 1: "（一般枠）", 2: "（児童枠）" }[rsv.member_all] ??
               "（保護者枠）")}
@@ -104,23 +110,26 @@ const TicketHeader: React.VFC<Props> = ({ rsv }) => {
         {rsv && (rsv.member_all === 2 ? <Child /> : <Person />)}
       </span>
       <div className={classes.ticketHeaderContent}>
+        <span>{rsv && getStringDateJp(rsv.term.enter_scheduled_time)}</span>
         <span>
-          {rsv ? (
-            getStringDateJp(rsv.term.enter_scheduled_time)
-          ) : (
-            <Skeleton width={180} height={36} />
-          )}
-        </span>
-        <span>
-          {rsv ? (
+          {rsv &&
             `${getStringTimeJp(
               rsv.term.enter_scheduled_time
-            )} ～ ${getStringTimeJp(rsv.term.exit_scheduled_time)}`
-          ) : (
-            <Skeleton width={180} height={36} />
-          )}
+            )} ～ ${getStringTimeJp(rsv.term.exit_scheduled_time)}`}
         </span>
       </div>
+      {!rsv && (
+        <Typography
+          align="center"
+          variant="body2"
+          color="textSecondary"
+          className={classes.description}
+        >
+          予約をスキャンすると
+          <br />
+          情報が表示されます
+        </Typography>
+      )}
     </div>
   );
 };
