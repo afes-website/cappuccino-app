@@ -48,7 +48,7 @@ const ReloadButton: React.VFC<Props> = ({
         variant="text"
         color="secondary"
         size="small"
-        disabled={isLoading}
+        disabled={!lastUpdated || isLoading}
         onClick={() => {
           setIsLoading(true);
           onClick().finally(() => {
@@ -56,7 +56,7 @@ const ReloadButton: React.VFC<Props> = ({
           });
         }}
         startIcon={
-          isLoading ? (
+          !lastUpdated || isLoading ? (
             <CircularProgress color="inherit" size={12} thickness={5} />
           ) : (
             <Refresh />
