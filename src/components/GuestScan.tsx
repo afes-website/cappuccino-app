@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Guest } from "@afes-website/docs";
 import clsx from "clsx";
+import moment from "moment";
 import {
   Card,
   CardContent,
@@ -20,6 +21,11 @@ import ErrorAlert from "components/ErrorAlert";
 import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import { ExhStatusCard } from "components/StayStatusCard";
+import { useAuthState } from "hooks/auth/useAuth";
+import {
+  useBulkUpdateDispatch,
+  useBulkUpdateState,
+} from "hooks/bulkUpdate/useBulkUpdate";
 import useErrorHandler from "hooks/useErrorHandler";
 import { StatusColor } from "types/statusColor";
 
@@ -74,6 +80,9 @@ const GuestScan: React.VFC<Props> = ({
 }) => {
   const classes = useStyles();
   const resultChipRef = useRef<ResultChipRefs>(null);
+  const { currentUserId } = useAuthState();
+  const { onLine } = useBulkUpdateState();
+  const { push } = useBulkUpdateDispatch();
 
   const [latestGuestId, setLatestGuestId] = useState("");
   const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
@@ -95,16 +104,36 @@ const GuestScan: React.VFC<Props> = ({
     }
   })();
 
+  const commandName = (() => {
+    switch (page) {
+      case "exhibition/enter":
+        return "enter";
+      case "exhibition/exit":
+        return "exit";
+      case "executive/check-out":
+        return "check-out";
+    }
+  })();
+
   const handleGuestIdScan = async (guestId: string) => {
     if (checkStatus !== "loading") {
       setCheckStatus("loading");
       setLatestGuestId(guestId);
-      try {
-        await handleScan(guestId);
-        setCheckStatus("success");
-      } catch (e) {
-        setCheckStatus("error");
-        setError(e);
+      if (onLine) {
+        try {
+          await handleScan(guestId);
+          setCheckStatus("success");
+        } catch (e) {
+          setCheckStatus("error");
+          setError(e);
+        }
+      } else {
+        push({
+          command: commandName,
+          guest_id: guestId,
+          userId: currentUserId ?? "",
+          timestamp: moment().toISOString(),
+        });
       }
     }
   };
