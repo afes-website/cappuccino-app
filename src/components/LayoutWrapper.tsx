@@ -1,5 +1,5 @@
 import React, { PropsWithChildren, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { Theme, ThemeProvider, useTheme } from "@material-ui/core";
 import { ThemeContextProvider, useThemeMode } from "libs/themeMode";
 import { TitleContextProvider } from "libs/title";
@@ -57,11 +57,11 @@ const SyncBackgroundColor: React.VFC<PropsWithChildren<unknown>> = ({
 };
 
 const ScrollTop: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
-  const history = useHistory();
+  const location = useLocation();
 
   useEffect(() => {
     document.documentElement.scrollTo(0, 0);
-  }, [history.location]);
+  }, [location]);
 
   // eslint-disable-next-line react/jsx-no-useless-fragment
   return <>{children}</>;
