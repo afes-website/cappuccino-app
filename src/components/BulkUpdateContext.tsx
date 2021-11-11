@@ -1,14 +1,104 @@
-import React, { PropsWithChildren, useEffect, useState } from "react";
+import React, {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import api, { BulkQuery, BulkResult } from "@afes-website/docs";
+import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
+import { BulkQueryResult, BulkQueryWithUser } from "hooks/bulkUpdate/@types";
 import {
   BulkUpdateDispatchContextProvider,
   BulkUpdateStateContextProvider,
 } from "hooks/bulkUpdate/useBulkUpdate";
 
+const ls_key_query = "bulk_update_queries";
+
 const BulkUpdateContext: React.VFC<PropsWithChildren<unknown>> = ({
   children,
 }) => {
-  const [onLine, setOnLine] = useState<boolean>(navigator.onLine);
+  const aspida = useAspidaClient();
+  const { allUsers } = useAuthState();
 
+  const [onLine, setOnLine] = useState<boolean>(navigator.onLine);
+  const [queries, setQueries] = useState<BulkQueryWithUser[]>(
+    JSON.parse(localStorage.getItem(ls_key_query) ?? "[]")
+  );
+  const [results, setResults] = useState<BulkQueryResult[]>([]);
+
+  // push
+  const push = useCallback((_query: BulkQueryWithUser): void => {
+    setQueries((prev) => [...prev, _query]);
+  }, []);
+
+  const _bulkUpdate = useCallback(async () => {
+    type UserQueryRecord = Record<string, (BulkQuery & { index: number })[]>;
+    type UserQueryResultRecord = Record<
+      string,
+      (BulkQuery & BulkResult & { index: number })[]
+    >;
+
+    // query をユーザーごとに分類
+    const userQueries: UserQueryRecord = queries.reduce<UserQueryRecord>(
+      (obj, query, index) => {
+        const { userId, ...bulkQuery } = query;
+        obj[userId].push({ ...bulkQuery, index });
+        return obj;
+      },
+      {}
+    );
+
+    // ユーザーごとに bulk_update を POST
+    const userQueryResult: UserQueryResultRecord = (
+      await Promise.all(
+        Object.entries(userQueries).map(([userId, bulkQueryWithIndex]) =>
+          api(aspida)
+            .guests.bulk_update.$post({
+              headers: {
+                Authorization: "bearer " + allUsers[userId].token,
+              },
+              body: bulkQueryWithIndex,
+            })
+            .then((res) => ({
+              userId,
+              queryResults: res.map((bulkResult, indexInUser) => ({
+                ...bulkQueryWithIndex[indexInUser],
+                ...bulkResult,
+              })),
+            }))
+        )
+      )
+    ).reduce<UserQueryResultRecord>((obj, queryResultWithIndex) => {
+      const { userId, queryResults } = queryResultWithIndex;
+      obj[userId] = queryResults;
+      return obj;
+    }, {});
+
+    // 更新後の state を用意
+    const nextResultsWithIndex: (BulkQueryResult & { index: number })[] =
+      Object.entries(userQueryResult).flatMap(([userId, queryResults]) =>
+        queryResults
+          .flatMap((queryResult) => ({ userId, ...queryResult }))
+          .sort((a, b) => a.index - b.index)
+      );
+    const nextQueries: BulkQueryWithUser[] = queries.filter((query, index) =>
+      nextResultsWithIndex.every((queryResult) => index !== queryResult.index)
+    );
+
+    // setState
+    setResults(nextResultsWithIndex);
+    setQueries(nextQueries);
+  }, [allUsers, aspida, queries]);
+
+  useEffect(() => {
+    if (onLine) _bulkUpdate();
+    // 設計が悪いので、deps に _bulkUpdate を入れると無限ループする…
+    // と思ったけど [] -> [] が変更されちゃうのが悪いよ
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onLine]);
+
+  // offline / online 検知
   useEffect(() => {
     const onOnLine = () => setOnLine(true);
     const onOffLine = () => setOnLine(false);
@@ -22,15 +112,25 @@ const BulkUpdateContext: React.VFC<PropsWithChildren<unknown>> = ({
     };
   }, []);
 
+  const bulkUpdateState = useMemo(
+    () => ({
+      onLine,
+      queries,
+      results,
+    }),
+    [onLine, queries, results]
+  );
+
+  const bulkUpdateDispatch = useMemo(
+    () => ({
+      push,
+    }),
+    [push]
+  );
+
   return (
-    <BulkUpdateStateContextProvider value={{ onLine }}>
-      <BulkUpdateDispatchContextProvider
-        value={{
-          push: () => {
-            console.log("Hi");
-          },
-        }}
-      >
+    <BulkUpdateStateContextProvider value={bulkUpdateState}>
+      <BulkUpdateDispatchContextProvider value={bulkUpdateDispatch}>
         {children}
       </BulkUpdateDispatchContextProvider>
     </BulkUpdateStateContextProvider>
