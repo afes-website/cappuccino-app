@@ -7,12 +7,14 @@ import {
   BottomNavigationAction,
   Paper,
   Theme,
+  Typography,
   createStyles,
   makeStyles,
 } from "@material-ui/core";
-import { Home, Map, Room } from "@material-ui/icons";
+import { AirplanemodeActive, Home, Map, Room } from "@material-ui/icons";
 import { Login, Logout, QRScannerIcon } from "components/MaterialSvgIcons";
 import { useAuthState } from "hooks/auth/useAuth";
+import { useBulkUpdateState } from "hooks/bulkUpdate/useBulkUpdate";
 import routes from "libs/routes";
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -27,6 +29,27 @@ const useStyles = makeStyles((theme: Theme) =>
     button: {
       boxSizing: "border-box",
     },
+    navOffline: {
+      marginBottom: -24,
+      zIndex: 10,
+      transform: "translateY(-24px)",
+      transition: "transform 0.5s",
+    },
+    offlineBanner: {
+      background: theme.palette.warning.main,
+      color: "#fff",
+      bottom: 0,
+      textAlign: "center",
+      lineHeight: 1,
+      padding: 2,
+      zIndex: 0,
+      "& svg": {
+        height: 16,
+        width: 16,
+        marginRight: 4,
+        marginBottom: -3,
+      },
+    },
   })
 );
 
@@ -35,6 +58,7 @@ const BottomNav: React.VFC<{ className?: string }> = ({ className }) => {
   const classes = useStyles();
   const [value, setValue] = useState(history.location.pathname);
   const { currentUser } = useAuthState();
+  const { onLine } = useBulkUpdateState();
 
   const get_menus = () => {
     const menus: MenuItem[] = [];
@@ -60,6 +84,7 @@ const BottomNav: React.VFC<{ className?: string }> = ({ className }) => {
           setValue(newValue);
         }}
         showLabels={true}
+        className={clsx({ [classes.navOffline]: !onLine })}
       >
         {get_menus().map(([label, route, Component]) => {
           return (
@@ -78,6 +103,14 @@ const BottomNav: React.VFC<{ className?: string }> = ({ className }) => {
           );
         })}
       </BottomNavigation>
+      {!onLine && (
+        <div className={classes.offlineBanner}>
+          <Typography variant="caption">
+            <AirplanemodeActive />
+            インターネットに接続できません
+          </Typography>
+        </div>
+      )}
     </Paper>
   );
 };
