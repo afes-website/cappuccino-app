@@ -12,6 +12,7 @@ import MainLayout from "layouts/Main";
 import TabletLayout from "layouts/Tablet";
 import NotFound from "pages/NotFound";
 import AuthContext from "components/AuthContext";
+import BulkUpdateContext from "components/BulkUpdateContext";
 import LayoutWrapper from "components/LayoutWrapper";
 import TypesafeRouter from "components/TypesafeRouter";
 import routes from "libs/routes";
@@ -73,9 +74,11 @@ const LayoutWithProviders: React.VFC<PropsWithChildren<unknown>> = ({
 
   return (
     <Auth>
-      <LayoutWrapper>
-        <Layout>{children}</Layout>
-      </LayoutWrapper>
+      <BulkUpdateContext>
+        <LayoutWrapper>
+          <Layout>{children}</Layout>
+        </LayoutWrapper>
+      </BulkUpdateContext>
     </Auth>
   );
 };
