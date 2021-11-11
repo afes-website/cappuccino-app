@@ -23,7 +23,7 @@ const useStyles = makeStyles(() =>
       minHeight: "var(--100vh)",
       width: "100%",
       paddingTop: "calc(env(safe-area-inset-top) + 56px)",
-      paddingBottom: "calc(env(safe-area-inset-bottom) + 56px)",
+      paddingBottom: "calc(env(safe-area-inset-bottom) + 80px)",
     },
     bottomNav: {
       position: "fixed",
