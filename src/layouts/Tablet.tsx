@@ -1,9 +1,10 @@
 import React, { PropsWithChildren, useState } from "react";
 import clsx from "clsx";
-import { Paper, createStyles, makeStyles } from "@material-ui/core";
-import { Menu } from "@material-ui/icons";
+import { Paper, Typography, createStyles, makeStyles } from "@material-ui/core";
+import { AirplanemodeActive, Menu } from "@material-ui/icons";
 import SideNav from "components/SideNav";
 import TopBar from "components/TopBar";
+import { useBulkUpdateState } from "hooks/bulkUpdate/useBulkUpdate";
 import { useTitleContext } from "libs/title";
 
 const useStyles = makeStyles((theme) =>
@@ -46,7 +47,7 @@ const useStyles = makeStyles((theme) =>
       boxSizing: "border-box",
       padding: theme.spacing(8),
       paddingTop: 64,
-      paddingBottom: "env(safe-area-inset-bottom)",
+      paddingBottom: "calc(env(safe-area-inset-bottom) + 24px)",
       transition: "all 0.3s ease",
     },
     mainFullScreen: {
@@ -68,9 +69,32 @@ const useStyles = makeStyles((theme) =>
       transform: "translateX(-150%)",
       transition: "all 0.3s ease 0.3s",
       cursor: "pointer",
+      zIndex: 10,
     },
     openButtonClosed: {
       transform: "translateX(0)",
+    },
+    offlineBanner: {
+      position: "fixed",
+      right: 0,
+      bottom: 0,
+      width: "calc(100% - 300px)",
+      padding: 2,
+      lineHeight: 1,
+      background: theme.palette.warning.main,
+      color: "#fff",
+      textAlign: "center",
+      zIndex: 0,
+      transition: "all 0.3s ease",
+      "& svg": {
+        height: 16,
+        width: 16,
+        marginRight: 4,
+        marginBottom: -3,
+      },
+    },
+    offlineBannerFullScreen: {
+      width: "100%",
     },
   })
 );
@@ -78,6 +102,7 @@ const useStyles = makeStyles((theme) =>
 const TabletLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
   const classes = useStyles();
   const titleCtx = useTitleContext();
+  const { onLine } = useBulkUpdateState();
 
   const [navOpen, setNavOpen] = useState(true);
 
@@ -112,6 +137,18 @@ const TabletLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
       >
         {children}
       </main>
+      {!onLine && (
+        <div
+          className={clsx(classes.offlineBanner, {
+            [classes.offlineBannerFullScreen]: !navOpen,
+          })}
+        >
+          <Typography variant="caption">
+            <AirplanemodeActive />
+            インターネットに接続できません
+          </Typography>
+        </div>
+      )}
     </Paper>
   );
 };
