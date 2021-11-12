@@ -45,7 +45,7 @@ const useStyles = makeStyles(() =>
       display: "inline",
       fontSize: 22,
     },
-    countLimit: {
+    largeNumber: {
       display: "inline",
       fontSize: 14,
     },
@@ -96,7 +96,7 @@ const StayStatus: React.VFC<StayStatusCardProps> = ({
           <div className={classes.countSumBoxWrapper}>
             <span>
               <Typography className={classes.countSum}>{sum}</Typography>
-              <Typography className={classes.countLimit}>
+              <Typography className={classes.largeNumber}>
                 {limit && `/${limit}`}人
               </Typography>
             </span>

@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) =>
     previousGuestInfoTitle: {
       paddingBottom: 0,
     },
-    countLimit: {
+    largeNumber: {
       marginLeft: 4,
     },
     limitOver: {

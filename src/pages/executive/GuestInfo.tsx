@@ -30,6 +30,7 @@ import ErrorAlert from "components/ErrorAlert";
 import { ReservationTicket } from "components/MaterialSvgIcons";
 import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
+import TicketHeader from "components/TicketHeader";
 import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 import { useRequirePermission } from "hooks/auth/useRequirePermission";
 import useCheckRsv from "hooks/useCheckRsv";
@@ -284,43 +285,43 @@ const GuestInfo: React.VFC = () => {
                 <ErrorAlert errorMessage={errorMessage} />
               </Card>
             )}
+
+            {mode === "rsv" && status === "success" && rsvInfo && (
+              <Card>
+                <Alert severity="success">{`あと ${
+                  rsvInfo.term.class === "Parent"
+                    ? 1
+                    : rsvInfo.member_all - rsvInfo.member_checked_in
+                } 人入場可能`}</Alert>
+              </Card>
+            )}
           </CardList>
         </Grid>
         <Grid xs={12} md={6}>
           <CardList>
             {mode === "rsv" && (
-              <>
-                {status === "success" && rsvInfo && (
-                  <Card>
-                    <Alert severity="success">{`あと ${
-                      rsvInfo.term.class === "Parent"
-                        ? 1
-                        : rsvInfo.member_all - rsvInfo.member_checked_in
-                    } 人入場可能`}</Alert>
-                  </Card>
-                )}
-                <Card>
-                  <CardContent
-                    className={clsx({
-                      [classes.cardTitle]: rsvId,
-                    })}
+              <Card>
+                <TicketHeader rsv={rsvInfo} />
+                <CardContent
+                  className={clsx({
+                    [classes.cardTitle]: rsvId,
+                  })}
+                >
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    gutterBottom={true}
                   >
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      gutterBottom={true}
-                    >
-                      予約情報
+                    予約情報
+                  </Typography>
+                  {!rsvId && (
+                    <Typography variant="caption" align="center">
+                      まだ予約QRコードをスキャンしていません。
                     </Typography>
-                    {!rsvId && (
-                      <Typography variant="caption" align="center">
-                        まだ予約QRコードをスキャンしていません。
-                      </Typography>
-                    )}
-                  </CardContent>
-                  {rsvId && <PrivateInfoList rsvId={rsvId} info={rsvInfo} />}
-                </Card>
-              </>
+                  )}
+                </CardContent>
+                {rsvId && <PrivateInfoList rsvId={rsvId} info={rsvInfo} />}
+              </Card>
             )}
             {mode === "guest" && (
               <>
@@ -504,7 +505,7 @@ const PrivateInfoList: React.VFC<{
           </ListItem>
           <ListItem>
             <ListItemIcon>
-              {info.member_all === 1 ? <Person /> : <People />}
+              {info.member_all === 2 ? <People /> : <Person />}
             </ListItemIcon>
             <ListItemText
               primary={

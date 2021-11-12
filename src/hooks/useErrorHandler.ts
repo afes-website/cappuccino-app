@@ -80,6 +80,7 @@ const errorCodeList = [
   // internal error
   "INTERNAL_ERROR",
   "QR_SYNTAX_ERROR",
+  "ID_IS_TOO_LONG",
 ] as const;
 
 type ErrorCode = typeof errorCodeList[number];
@@ -136,5 +137,12 @@ const errorMessageList: { [code in ErrorCode]: readonly string[] } = {
   INTERNAL_ERROR: [
     "内部エラーが発生しました。至急、総務局にお問い合わせください。",
   ],
-  QR_SYNTAX_ERROR: ["QRコードの形式が間違っています。"],
+  QR_SYNTAX_ERROR: [
+    "予約QRコードの形式が間違っています。",
+    "リストバンドをスキャンしていませんか？",
+  ],
+  ID_IS_TOO_LONG: [
+    "リストバンドQRコードの形式が間違っています。",
+    "予約をスキャンする場合は、「処理を終了し予約スキャンに戻る」を押してください。",
+  ],
 } as const;

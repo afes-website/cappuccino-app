@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme) =>
     },
     main: {
       height: "100%",
+      minHeight: "var(--100vh)",
       width: "calc(100% - 300px)",
       marginLeft: 300,
       boxSizing: "border-box",

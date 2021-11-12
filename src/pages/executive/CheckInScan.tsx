@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import api, { Term } from "@afes-website/docs";
+import api from "@afes-website/docs";
 import clsx from "clsx";
 import {
   Button,
@@ -12,10 +12,12 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
+  Theme,
   Typography,
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { CheckCircle, Face, Replay } from "@material-ui/icons";
+import { Alert, AlertTitle } from "@material-ui/lab";
 import CardList from "components/CardList";
 import DirectInputFab from "components/DirectInputFab";
 import DirectInputModal from "components/DirectInputModal";
@@ -24,6 +26,7 @@ import { ReservationTicket } from "components/MaterialSvgIcons";
 import QRScanner from "components/QRScanner";
 import ResultChip, { ResultChipRefs } from "components/ResultChip";
 import ResultPopup, { ResultPopupRefs } from "components/ResultPopup";
+import TicketHeader from "components/TicketHeader";
 import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 import { useRequirePermission } from "hooks/auth/useRequirePermission";
 import useCheckRsv from "hooks/useCheckRsv";
@@ -31,11 +34,10 @@ import useErrorHandler from "hooks/useErrorHandler";
 import useHandleRsvInput from "hooks/useHandleRsvInput";
 import useReset from "hooks/useReset";
 import useWristBandPaletteColor from "hooks/useWristBandColor";
-import { getStringDateTimeBrief, getStringTime } from "libs/stringDate";
 import { useTitleSet } from "libs/title";
 import { StatusColor } from "types/statusColor";
 
-const useStyles = makeStyles((theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     list: {
       marginBottom: theme.spacing(2) + 48,
@@ -72,7 +74,8 @@ const useStyles = makeStyles((theme) =>
     previousGuestInfoTitle: {
       paddingBottom: 0,
     },
-    countLimit: {
+    largeNumber: {
+      fontSize: 24,
       marginLeft: 4,
     },
     limitOver: {
@@ -85,6 +88,22 @@ const useStyles = makeStyles((theme) =>
       borderRadius: 6,
       marginBottom: -1,
       marginRight: theme.spacing(0.75),
+    },
+    currentItem: {
+      position: "relative",
+      "&::before": {
+        content: '""',
+        display: "block",
+        position: "absolute",
+        background: {
+          light: theme.palette.primary.main,
+          dark: theme.palette.secondary.main,
+        }[theme.palette.type],
+        height: 30,
+        width: 6,
+        left: 0,
+        borderRadius: "0 4px 4px 0",
+      },
     },
   })
 );
@@ -212,6 +231,10 @@ const CheckInScan: React.VFC = () => {
 
   const handleGuestIdScan = (guestId: string) => {
     if (guestCheckStatus === null || guestCheckStatus === "error") {
+      if (guestId.length > 32) {
+        setErrorCode("ID_IS_TOO_LONG");
+        return;
+      }
       setLatestGuestId(guestId);
       setGuestCheckStatus("loading");
       // guest id 検証 (rsv id は有効性を確認済)
@@ -312,6 +335,18 @@ const CheckInScan: React.VFC = () => {
                 </CardContent>
               </Card>
             )}
+
+            {/* Parent Alert */}
+            {latestRsv && latestRsv.term.class === "Parent" && (
+              <Card elevation={4}>
+                <Alert severity="warning">
+                  <AlertTitle>保護者予約は目視チェック！</AlertTitle>
+                  <Typography>
+                    時間帯アルファベットを確認し、入場券を回収してください。
+                  </Typography>
+                </Alert>
+              </Card>
+            )}
           </CardList>
         </Grid>
 
@@ -319,9 +354,15 @@ const CheckInScan: React.VFC = () => {
           <CardList>
             {/* ID List */}
             <Card>
+              <TicketHeader rsv={latestRsv} />
               <CardContent className={classes.noPadding}>
                 <List>
-                  <ListItem disabled={activeScanner !== "rsv"}>
+                  <ListItem
+                    disabled={activeScanner !== "rsv"}
+                    className={clsx({
+                      [classes.currentItem]: activeScanner === "rsv",
+                    })}
+                  >
                     <ListItemIcon className={classes.progressWrapper}>
                       {rsvCheckStatus === "success" ? (
                         <CheckCircle className={classes.successIcon} />
@@ -337,46 +378,53 @@ const CheckInScan: React.VFC = () => {
                     </ListItemIcon>
                     <ListItemText
                       primary={latestRsvId ? latestRsvId : "-"}
-                      secondary={
-                        <>
-                          予約 ID
-                          {latestRsv && (
-                            <>
-                              {" • "}
-                              <ReservationTermInfo term={latestRsv.term} />
-                            </>
-                          )}
-                        </>
-                      }
+                      secondary="予約 ID"
                     />
                   </ListItem>
-                  <ListItem disabled={activeScanner !== "guest"}>
+                  <ListItem
+                    disabled={activeScanner !== "guest"}
+                    className={clsx({
+                      [classes.currentItem]: activeScanner === "guest",
+                    })}
+                  >
                     <ListItemIcon>
                       <Face />
                     </ListItemIcon>
                     <ListItemText
                       primary={latestGuestId ? latestGuestId : "-"}
-                      secondary="ゲスト ID (リストバンド ID)"
+                      secondary="リストバンド ID"
                     />
                     {latestRsv && (
                       <ListItemSecondaryAction>
                         <Typography
                           display="inline"
-                          className={clsx({
-                            [classes.limitOver]:
-                              latestRsv.member_checked_in >=
-                              latestRsv.member_all,
-                          })}
+                          className={clsx(
+                            {
+                              [classes.limitOver]:
+                                latestRsv.member_checked_in >=
+                                latestRsv.member_all,
+                            },
+                            classes.largeNumber
+                          )}
                         >
-                          {`${latestRsv.member_checked_in + 1}人目`}
+                          {`${
+                            latestRsv.term.class === "Parent"
+                              ? 1
+                              : latestRsv.member_checked_in + 1
+                          } `}
                         </Typography>
+                        <Typography display="inline">人目</Typography>
                         <Typography
                           display="inline"
-                          variant="caption"
-                          className={classes.countLimit}
+                          className={classes.largeNumber}
                         >
-                          {`/${latestRsv.member_all}人`}
+                          {`/ ${
+                            latestRsv.term.class === "Parent"
+                              ? 1
+                              : latestRsv.member_all
+                          } `}
                         </Typography>
+                        <Typography display="inline">人</Typography>
                       </ListItemSecondaryAction>
                     )}
                   </ListItem>
@@ -417,7 +465,9 @@ const CheckInScan: React.VFC = () => {
                 startIcon={<Replay />}
                 onClick={clearAll}
               >
-                中断して最初からやり直す
+                {activeScanner === "rsv"
+                  ? "最初からやり直す"
+                  : "処理を終了し予約スキャンに戻る"}
               </Button>
             )}
           </CardList>
@@ -452,18 +502,6 @@ const CheckInScan: React.VFC = () => {
         type={activeScanner}
       />
     </div>
-  );
-};
-
-const ReservationTermInfo: React.VFC<{ term: Term }> = (props) => {
-  const wristBandColor = useWristBandPaletteColor();
-  return (
-    <span style={{ color: wristBandColor(props.term.guest_type).main }}>
-      {props.term.guest_type + " "}
-      {`(${getStringDateTimeBrief(props.term.enter_scheduled_time)}
-      -
-      ${getStringTime(props.term.exit_scheduled_time)})`}
-    </span>
   );
 };
 

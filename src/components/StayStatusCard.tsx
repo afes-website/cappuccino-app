@@ -35,7 +35,16 @@ const useStyles = makeStyles((theme) =>
     paragraph: {
       marginBottom: theme.spacing(2),
     },
-    lastUpdated: { marginTop: 8, marginBottom: -8 },
+    lastUpdated: {
+      marginTop: 8,
+      marginBottom: -8,
+      display: "block",
+      minWidth: 150,
+      "& > *": {
+        marginLeft: "auto",
+        marginRight: 0,
+      },
+    },
   })
 );
 
@@ -105,16 +114,18 @@ const StatusCard: React.VFC<
           terms={terms || null}
           hideStudent={hideStudent}
         />
-        {lastUpdated && (
-          <Typography
-            align="right"
-            variant="body2"
-            color="textSecondary"
-            className={classes.lastUpdated}
-          >
-            最終更新: {lastUpdated.format("M/D HH:mm:ss")}
-          </Typography>
-        )}
+        <Typography
+          align="right"
+          variant="body2"
+          color="textSecondary"
+          className={classes.lastUpdated}
+        >
+          {lastUpdated ? (
+            `最終更新: ${lastUpdated.format("M/D HH:mm:ss")}`
+          ) : (
+            <Skeleton width={150} />
+          )}
+        </Typography>
       </CardContent>
     </Card>
   );

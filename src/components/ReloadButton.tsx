@@ -11,6 +11,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { Refresh } from "@material-ui/icons";
+import { Skeleton } from "@material-ui/lab";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,6 +22,8 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     lastUpdated: {
       marginRight: theme.spacing(0.5),
+      display: "block",
+      minWidth: 150,
     },
   })
 );
@@ -45,7 +48,7 @@ const ReloadButton: React.VFC<Props> = ({
         variant="text"
         color="secondary"
         size="small"
-        disabled={isLoading}
+        disabled={!lastUpdated || isLoading}
         onClick={() => {
           setIsLoading(true);
           onClick().finally(() => {
@@ -53,7 +56,7 @@ const ReloadButton: React.VFC<Props> = ({
           });
         }}
         startIcon={
-          isLoading ? (
+          !lastUpdated || isLoading ? (
             <CircularProgress color="inherit" size={12} thickness={5} />
           ) : (
             <Refresh />
@@ -62,16 +65,18 @@ const ReloadButton: React.VFC<Props> = ({
       >
         再読み込み
       </Button>
-      {lastUpdated && (
-        <Typography
-          align="right"
-          variant="body2"
-          color="textSecondary"
-          className={classes.lastUpdated}
-        >
-          最終更新: {lastUpdated.format("M/D HH:mm:ss")}
-        </Typography>
-      )}
+      <Typography
+        align="right"
+        variant="body2"
+        color="textSecondary"
+        className={classes.lastUpdated}
+      >
+        {lastUpdated ? (
+          `最終更新: ${lastUpdated.format("M/D HH:mm:ss")}`
+        ) : (
+          <Skeleton />
+        )}
+      </Typography>
     </Box>
   );
 };
