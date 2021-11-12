@@ -1,13 +1,27 @@
 import React, { useCallback, useEffect, useState } from "react";
 import api from "@afes-website/docs";
+import { Card, CardContent } from "@material-ui/core";
+import { createStyles, makeStyles } from "@material-ui/core/styles";
+import { Alert } from "@material-ui/lab";
 import GuestScan from "components/GuestScan";
 import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 import { useRequirePermission } from "hooks/auth/useRequirePermission";
 import { useTitleSet } from "libs/title";
 
+const useStyles = makeStyles(() =>
+  createStyles({
+    noPadding: {
+      padding: "0 !important",
+      objectFit: "cover",
+    },
+  })
+);
+
 const EnterScan: React.VFC = () => {
   useTitleSet("展示教室 入室スキャン");
   useRequirePermission("exhibition");
+
+  const classes = useStyles();
 
   const aspida = useAspidaClient();
   const { currentUser, currentUserId } = useAuthState();
@@ -55,7 +69,16 @@ const EnterScan: React.VFC = () => {
           })
       }
       page="exhibition/enter"
-      isFull={isFull}
+      extraStatus={isFull ? "warning" : undefined}
+      additionalContent={
+        isFull && (
+          <Card>
+            <CardContent className={classes.noPadding}>
+              <Alert severity="warning">滞在人数の上限に達しました。</Alert>
+            </CardContent>
+          </Card>
+        )
+      }
     />
   );
 };

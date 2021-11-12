@@ -13,7 +13,6 @@ import {
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { CheckCircle, Face } from "@material-ui/icons";
-import { Alert } from "@material-ui/lab";
 import CardList from "components/CardList";
 import DirectInputFab from "components/DirectInputFab";
 import DirectInputModal from "components/DirectInputModal";
@@ -62,11 +61,17 @@ type Page = `exhibition/${"enter" | "exit"}` | "executive/check-out";
 
 interface Props {
   handleScan: (guestId: string) => Promise<Guest>;
-  isFull?: boolean;
+  extraStatus?: StatusColor;
+  additionalContent?: React.ReactNode;
   page: Page;
 }
 
-const GuestScan: React.VFC<Props> = ({ handleScan, page, isFull }) => {
+const GuestScan: React.VFC<Props> = ({
+  handleScan,
+  page,
+  extraStatus,
+  additionalContent,
+}) => {
   const classes = useStyles();
   const resultChipRef = useRef<ResultChipRefs>(null);
 
@@ -145,7 +150,7 @@ const GuestScan: React.VFC<Props> = ({ handleScan, page, isFull }) => {
                 <QRScanner
                   onScanFunc={handleGuestIdScan}
                   videoStop={false}
-                  color={checkStatus ?? (isFull ? "warning" : undefined)}
+                  color={checkStatus ?? extraStatus ?? undefined}
                 />
                 {/* Result Chip */}
                 <ResultChip
@@ -164,14 +169,7 @@ const GuestScan: React.VFC<Props> = ({ handleScan, page, isFull }) => {
               </Card>
             )}
 
-            {/* Exhibition Full Alert */}
-            {isFull && (
-              <Card>
-                <CardContent className={classes.noPadding}>
-                  <Alert severity="warning">滞在人数の上限に達しました。</Alert>
-                </CardContent>
-              </Card>
-            )}
+            {additionalContent}
           </CardList>
         </Grid>
 
