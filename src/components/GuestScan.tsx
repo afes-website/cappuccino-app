@@ -11,9 +11,11 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Typography,
 } from "@material-ui/core";
 import { createStyles, makeStyles } from "@material-ui/core/styles";
 import { CheckCircle, Face } from "@material-ui/icons";
+import { Alert } from "@material-ui/lab";
 import CardList from "components/CardList";
 import DirectInputFab from "components/DirectInputFab";
 import DirectInputModal from "components/DirectInputModal";
@@ -194,6 +196,21 @@ const GuestScan: React.VFC<Props> = ({
                 />
               </CardContent>
             </Card>
+
+            {!onLine && (
+              <Card>
+                <CardContent className={classes.noPadding}>
+                  <Alert severity="warning">
+                    <Typography variant="body2" key={0}>
+                      スキャン情報はアプリに記録され、オンラインになった際にまとめて送信されます。
+                    </Typography>
+                    <Typography variant="body2" key={1}>
+                      展示内の混雑状況を自分で確認しながらスキャンしてください。
+                    </Typography>
+                  </Alert>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Error Alert */}
             {errorMessage && (
