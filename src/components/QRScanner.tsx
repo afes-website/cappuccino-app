@@ -41,6 +41,20 @@ const useStyles = makeStyles((theme) =>
     borderSuccess: {
       borderColor: theme.palette.success.main,
     },
+    borderWarning: {
+      animation: "$searching-animation-in-warning 1000ms infinite ease-out",
+    },
+    "@keyframes searching-animation-in-warning": {
+      "0%": {
+        borderColor: theme.palette.warning.main,
+      },
+      "50%": {
+        borderColor: theme.palette.warning.light,
+      },
+      "100%": {
+        borderColor: theme.palette.warning.main,
+      },
+    },
     borderError: {
       animation: "$searching-animation-in-error 1000ms infinite ease-out",
     },
@@ -143,6 +157,8 @@ const QRScanner: React.VFC<QRScannerProps> = ({
     switch (color) {
       case "success":
         return classes.borderSuccess;
+      case "warning":
+        return classes.borderWarning;
       case "error":
         return classes.borderError;
       case "loading":

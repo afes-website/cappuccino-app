@@ -86,7 +86,7 @@ const StatusCard: React.VFC<
 
   useEffect(() => {
     load();
-    const intervalId = setInterval(load, 20000);
+    const intervalId = setInterval(load, 15000);
     return () => clearInterval(intervalId);
   }, [load]);
 

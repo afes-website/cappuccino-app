@@ -61,10 +61,17 @@ type Page = `exhibition/${"enter" | "exit"}` | "executive/check-out";
 
 interface Props {
   handleScan: (guestId: string) => Promise<Guest>;
+  extraStatus?: StatusColor;
+  additionalContent?: React.ReactNode;
   page: Page;
 }
 
-const GuestScan: React.VFC<Props> = ({ handleScan, page }) => {
+const GuestScan: React.VFC<Props> = ({
+  handleScan,
+  page,
+  extraStatus,
+  additionalContent,
+}) => {
   const classes = useStyles();
   const resultChipRef = useRef<ResultChipRefs>(null);
 
@@ -143,7 +150,7 @@ const GuestScan: React.VFC<Props> = ({ handleScan, page }) => {
                 <QRScanner
                   onScanFunc={handleGuestIdScan}
                   videoStop={false}
-                  color={checkStatus ?? undefined}
+                  color={checkStatus ?? extraStatus ?? undefined}
                 />
                 {/* Result Chip */}
                 <ResultChip
@@ -161,6 +168,8 @@ const GuestScan: React.VFC<Props> = ({ handleScan, page }) => {
                 </CardContent>
               </Card>
             )}
+
+            {additionalContent}
           </CardList>
         </Grid>
 
