@@ -6,6 +6,7 @@ import { Alert } from "@material-ui/lab";
 import GuestScan from "components/GuestScan";
 import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 import { useRequirePermission } from "hooks/auth/useRequirePermission";
+import useDots from "hooks/useDots";
 import { useTitleSet } from "libs/title";
 
 const useStyles = makeStyles(() =>
@@ -50,6 +51,8 @@ const EnterScan: React.VFC = () => {
     return () => clearInterval(intervalId);
   }, [checkIsFull]);
 
+  const dots = useDots(400);
+
   return (
     <GuestScan
       handleScan={(guestId) =>
@@ -74,7 +77,7 @@ const EnterScan: React.VFC = () => {
         isFull && (
           <Card>
             <CardContent className={classes.noPadding}>
-              <Alert severity="warning">滞在人数の上限に達しました。</Alert>
+              <Alert severity="warning">展示内は現在満員です{dots}</Alert>
             </CardContent>
           </Card>
         )
