@@ -27,8 +27,8 @@ const BulkUpdateContext: React.VFC<PropsWithChildren<unknown>> = ({
   );
   const [results, setResults] = useState<BulkQueryResult[]>([]);
 
-  // push
-  const push = useCallback((_query: BulkQueryWithUser): void => {
+  // push query
+  const pushQuery = useCallback((_query: BulkQueryWithUser): void => {
     setQueries((prev) => [...prev, _query]);
   }, []);
 
@@ -123,9 +123,9 @@ const BulkUpdateContext: React.VFC<PropsWithChildren<unknown>> = ({
 
   const bulkUpdateDispatch = useMemo(
     () => ({
-      push,
+      pushQuery,
     }),
-    [push]
+    [pushQuery]
   );
 
   return (

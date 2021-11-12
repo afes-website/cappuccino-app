@@ -10,5 +10,5 @@ export type BulkUpdateState = {
 };
 
 export type BulkUpdateDispatch = {
-  push: (query: BulkQueryWithUser) => void;
+  pushQuery: (query: BulkQueryWithUser) => void;
 };
