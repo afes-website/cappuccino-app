@@ -233,7 +233,7 @@ const GuestScan: React.VFC<Props> = ({
             {errorMessage && (
               <Card>
                 <CardContent className={classes.noPadding}>
-                  <ErrorAlert errorMessage={errorMessage} />
+                  <ErrorAlert warning={!onLine} errorMessage={errorMessage} />
                 </CardContent>
               </Card>
             )}
