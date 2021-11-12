@@ -31,7 +31,6 @@ const App: React.VFC = () => {
 
   // easter egg to get successors
   useEffect(() => {
-    console.log("%cWe are hiring!", "font-size: large; color: red;");
     console.log(
       `%cWe are hiring!
 %c
