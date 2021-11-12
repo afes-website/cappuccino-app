@@ -43,7 +43,7 @@ const App: React.VFC = () => {
 %c文化祭実行委員会はあなたをお待ちしています！%c
 ＊問い合わせ先: 総務局 / contact@afes.info
 `,
-      "font-size: 3em; font-weight: bold; color: red;",
+      "font-size: 3em; font-weight: bold; color: #457fb3; text-shadow: rgba(255,255,255,0.8) 1px 1px 1px;",
       "",
       "font-weight: bold;",
       ""
