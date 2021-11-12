@@ -21,13 +21,19 @@ const useStyles = makeStyles((theme) =>
     success: {
       backgroundColor: theme.palette.success.main,
     },
+    warning: {
+      backgroundColor: theme.palette.warning.main,
+    },
     error: {
       backgroundColor: theme.palette.error.main,
     },
   })
 );
 
-export type ResultChipColors = Extract<StatusColor, "success" | "error">;
+export type ResultChipColors = Extract<
+  StatusColor,
+  "success" | "warning" | "error"
+>;
 
 export interface ResultChipRefs {
   open: (
@@ -110,7 +116,11 @@ const ResultChipRenderFunction: React.ForwardRefRenderFunction<
           label={message}
           className={clsx(
             classes.root,
-            color === "success" ? classes.success : classes.error,
+            color === "success"
+              ? classes.success
+              : color === "warning"
+              ? classes.warning
+              : classes.error,
             props.className
           )}
         />
