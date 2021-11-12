@@ -135,12 +135,17 @@ const GuestScan: React.VFC<Props> = ({
           await handleScan(guestId);
           setCheckStatus("success");
         } catch (e) {
-          setCheckStatus("error");
           setError(e);
-          if (isConnectionError(e)) pushBulkQuery(guestId);
+          if (isConnectionError(e)) {
+            setCheckStatus("warning");
+            pushBulkQuery(guestId);
+          } else {
+            setCheckStatus("error");
+          }
         }
       } else {
-        setCheckStatus("error");
+        setCheckStatus("warning");
+        setError("OFFLINE");
         pushBulkQuery(guestId);
       }
     }
@@ -161,6 +166,18 @@ const GuestScan: React.VFC<Props> = ({
           resultChipRef.current.open(
             "success",
             `${actionName}成功 / ゲスト ID: ${latestGuestId}`,
+            3000
+          );
+        break;
+      case "warning":
+        setTimeout(() => {
+          setCheckStatus(null);
+          setLatestGuestId("");
+        }, 3000);
+        if (resultChipRef.current)
+          resultChipRef.current.open(
+            "warning",
+            `${actionName}記録 / ゲスト ID: ${latestGuestId}`,
             3000
           );
         break;
