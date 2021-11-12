@@ -27,6 +27,10 @@ const BulkUpdateContext: React.VFC<PropsWithChildren<unknown>> = ({
   );
   const [results, setResults] = useState<BulkQueryResult[]>([]);
 
+  useEffect(() => {
+    localStorage.setItem(ls_key_query, JSON.stringify(queries));
+  }, [queries]);
+
   // push query
   const pushQuery = useCallback((_query: BulkQueryWithUser): void => {
     setQueries((prev) => [...prev, _query]);
