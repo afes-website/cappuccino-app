@@ -138,6 +138,7 @@ const GuestScan: React.VFC<Props> = ({
           if (isConnectionError(e)) pushBulkQuery(guestId);
         }
       } else {
+        setCheckStatus("error");
         pushBulkQuery(guestId);
       }
     }

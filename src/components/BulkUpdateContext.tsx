@@ -43,6 +43,7 @@ const BulkUpdateContext: React.VFC<PropsWithChildren<unknown>> = ({
     const userQueries: UserQueryRecord = queries.reduce<UserQueryRecord>(
       (obj, query, index) => {
         const { userId, ...bulkQuery } = query;
+        if (obj[userId] === undefined) obj[userId] = [];
         obj[userId].push({ ...bulkQuery, index });
         return obj;
       },
