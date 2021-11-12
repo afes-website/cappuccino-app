@@ -11,7 +11,7 @@ import {
   createStyles,
   makeStyles,
 } from "@material-ui/core";
-import { AirplanemodeActive, Home, Map, Room } from "@material-ui/icons";
+import { CloudOff, Home, Map, Room } from "@material-ui/icons";
 import { Login, Logout, QRScannerIcon } from "components/MaterialSvgIcons";
 import { useAuthState } from "hooks/auth/useAuth";
 import { useBulkUpdateState } from "hooks/bulkUpdate/useBulkUpdate";
@@ -46,8 +46,8 @@ const useStyles = makeStyles((theme: Theme) =>
       "& svg": {
         height: 16,
         width: 16,
-        marginRight: 4,
-        marginBottom: -3,
+        marginRight: 8,
+        marginBottom: -4,
       },
     },
   })
@@ -106,8 +106,8 @@ const BottomNav: React.VFC<{ className?: string }> = ({ className }) => {
       {!onLine && (
         <div className={classes.offlineBanner}>
           <Typography variant="caption">
-            <AirplanemodeActive />
-            インターネットに接続できません
+            <CloudOff />
+            インターネットに接続していません
           </Typography>
         </div>
       )}

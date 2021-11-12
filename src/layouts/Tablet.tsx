@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, useState } from "react";
 import clsx from "clsx";
 import { Paper, Typography, createStyles, makeStyles } from "@material-ui/core";
-import { AirplanemodeActive, Menu } from "@material-ui/icons";
+import { CloudOff, Menu } from "@material-ui/icons";
 import SideNav from "components/SideNav";
 import TopBar from "components/TopBar";
 import { useBulkUpdateState } from "hooks/bulkUpdate/useBulkUpdate";
@@ -89,8 +89,8 @@ const useStyles = makeStyles((theme) =>
       "& svg": {
         height: 16,
         width: 16,
-        marginRight: 4,
-        marginBottom: -3,
+        marginRight: 8,
+        marginBottom: -4,
       },
     },
     offlineBannerFullScreen: {
@@ -144,8 +144,8 @@ const TabletLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
           })}
         >
           <Typography variant="caption">
-            <AirplanemodeActive />
-            インターネットに接続できません
+            <CloudOff />
+            インターネットに接続していません
           </Typography>
         </div>
       )}
