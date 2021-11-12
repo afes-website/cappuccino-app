@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import api from "@afes-website/docs";
 import clsx from "clsx";
+import moment from "moment";
 import {
   Button,
   Card,
@@ -29,8 +30,12 @@ import ResultPopup, { ResultPopupRefs } from "components/ResultPopup";
 import TicketHeader from "components/TicketHeader";
 import { useAspidaClient, useAuthState } from "hooks/auth/useAuth";
 import { useRequirePermission } from "hooks/auth/useRequirePermission";
+import {
+  useBulkUpdateDispatch,
+  useBulkUpdateState,
+} from "hooks/bulkUpdate/useBulkUpdate";
 import useCheckRsv from "hooks/useCheckRsv";
-import useErrorHandler from "hooks/useErrorHandler";
+import useErrorHandler, { isConnectionError } from "hooks/useErrorHandler";
 import useHandleRsvInput from "hooks/useHandleRsvInput";
 import useReset from "hooks/useReset";
 import useWristBandPaletteColor from "hooks/useWristBandColor";
@@ -114,6 +119,8 @@ const CheckInScan: React.VFC = () => {
   const classes = useStyles();
   const aspida = useAspidaClient();
   const { currentUser } = useAuthState();
+  const { onLine } = useBulkUpdateState();
+  const { pushQuery } = useBulkUpdateDispatch();
 
   const wristBandPaletteColor = useWristBandPaletteColor();
   const resultPopupRef = useRef<ResultPopupRefs>(null);
@@ -143,6 +150,7 @@ const CheckInScan: React.VFC = () => {
 
   const {
     latestRsv,
+    setRsv,
     checkRsv,
     init: initCheckRsv,
   } = useCheckRsv(setError, setErrorCode, setRsvCheckStatus);
@@ -150,6 +158,7 @@ const CheckInScan: React.VFC = () => {
   const totalCheckStatus: StatusColor | null = (() => {
     if (rsvCheckStatus === "success" && guestCheckStatus === "success")
       return "success";
+    else if (guestCheckStatus === "warning") return "warning";
     else if (rsvCheckStatus === "loading" || guestCheckStatus === "loading")
       return "loading";
     else if (rsvCheckStatus === "error" || guestCheckStatus === "error")
@@ -172,15 +181,33 @@ const CheckInScan: React.VFC = () => {
     if (resultChipRef.current) resultChipRef.current.close();
   };
 
+  const pushBulkQuery = (guestId: string, reservationId: string) => {
+    pushQuery({
+      command: "check-in",
+      guest_id: guestId,
+      reservation_id: reservationId,
+      userId: currentUser?.id ?? "",
+      timestamp: moment().toISOString(),
+    });
+  };
+
   const handleScan = (data: string) => {
     switch (activeScanner) {
       case "rsv":
-        if (rsvCheckStatus === null || rsvCheckStatus === "error")
-          handleRsvScan(data, (rsvId) => {
-            checkRsv(rsvId, () => {
+        if (rsvCheckStatus === null || rsvCheckStatus === "error") {
+          if (onLine) {
+            handleRsvScan(data, (rsvId) => {
+              checkRsv(rsvId, () => {
+                setActiveScanner("guest");
+              });
+            });
+          } else {
+            handleRsvScan(data);
+            setRsv(data, () => {
               setActiveScanner("guest");
             });
-          });
+          }
+        }
         break;
       case "guest":
         handleGuestIdScan(data);
@@ -219,6 +246,14 @@ const CheckInScan: React.VFC = () => {
             3000
           );
         break;
+      case "warning":
+        if (resultChipRef.current)
+          resultChipRef.current.open(
+            "warning",
+            `確認できませんでした / 予約 ID: ${latestRsvId}`,
+            3000
+          );
+        break;
       case "error":
         if (resultChipRef.current)
           resultChipRef.current.open(
@@ -238,23 +273,34 @@ const CheckInScan: React.VFC = () => {
       setLatestGuestId(guestId);
       setGuestCheckStatus("loading");
       // guest id 検証 (rsv id は有効性を確認済)
-      api(aspida)
-        .guests.check_in.$post({
-          body: {
-            reservation_id: latestRsvId,
-            guest_id: guestId,
-          },
-          headers: {
-            Authorization: "bearer " + currentUser?.token,
-          },
-        })
-        .then(() => {
-          setGuestCheckStatus("success");
-        })
-        .catch((e) => {
-          setGuestCheckStatus("error");
-          setError(e);
-        });
+      if (onLine) {
+        api(aspida)
+          .guests.check_in.$post({
+            body: {
+              reservation_id: latestRsvId,
+              guest_id: guestId,
+            },
+            headers: {
+              Authorization: "bearer " + currentUser?.token,
+            },
+          })
+          .then(() => {
+            setGuestCheckStatus("success");
+          })
+          .catch((e) => {
+            setError(e);
+            if (isConnectionError(e)) {
+              setGuestCheckStatus("warning");
+              pushBulkQuery(guestId, latestRsvId);
+            } else {
+              setGuestCheckStatus("error");
+            }
+          });
+      } else {
+        setGuestCheckStatus("warning");
+        setError("OFFLINE");
+        pushBulkQuery(guestId, latestRsvId);
+      }
     }
   };
 
@@ -287,6 +333,13 @@ const CheckInScan: React.VFC = () => {
           resultChipRef.current.open(
             "success",
             `入場成功 / ゲスト ID: ${latestGuestId}`
+          );
+        break;
+      case "warning":
+        if (resultChipRef.current)
+          resultChipRef.current.open(
+            "warning",
+            `入場記録 / ゲスト ID: ${latestGuestId}`
           );
         break;
       case "error":
