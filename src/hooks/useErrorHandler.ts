@@ -86,6 +86,7 @@ const errorCodeList = [
   // network error
   "NETWORK_ERROR",
   "SERVER_ERROR",
+  "OFFLINE",
   // internal error
   "INTERNAL_ERROR",
   "QR_SYNTAX_ERROR",
@@ -140,6 +141,7 @@ const errorMessageList: { [code in ErrorCode]: readonly string[] } = {
     "通信エラーが発生しました。通信環境を確認し、はじめからやり直してください。",
     "状況が改善しない場合は、総務局にお問い合わせください。",
   ],
+  OFFLINE: ["現在アプリはオフラインです。"],
   SERVER_ERROR: ["サーバーエラーが発生しました。"],
   INTERNAL_ERROR: [
     "内部エラーが発生しました。至急、総務局にお問い合わせください。",
