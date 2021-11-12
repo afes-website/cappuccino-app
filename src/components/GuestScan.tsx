@@ -26,7 +26,7 @@ import {
   useBulkUpdateDispatch,
   useBulkUpdateState,
 } from "hooks/bulkUpdate/useBulkUpdate";
-import useErrorHandler from "hooks/useErrorHandler";
+import useErrorHandler, { isConnectionError } from "hooks/useErrorHandler";
 import { StatusColor } from "types/statusColor";
 
 const useStyles = makeStyles((theme) =>
@@ -82,7 +82,7 @@ const GuestScan: React.VFC<Props> = ({
   const resultChipRef = useRef<ResultChipRefs>(null);
   const { currentUserId } = useAuthState();
   const { onLine } = useBulkUpdateState();
-  const { push } = useBulkUpdateDispatch();
+  const { pushQuery } = useBulkUpdateDispatch();
 
   const [latestGuestId, setLatestGuestId] = useState("");
   const [opensGuestInputModal, setOpensGuestInputModal] = useState(false);
@@ -115,6 +115,15 @@ const GuestScan: React.VFC<Props> = ({
     }
   })();
 
+  const pushBulkQuery = (guestId: string) => {
+    pushQuery({
+      command: commandName,
+      guest_id: guestId,
+      userId: currentUserId ?? "",
+      timestamp: moment().toISOString(),
+    });
+  };
+
   const handleGuestIdScan = async (guestId: string) => {
     if (checkStatus !== "loading") {
       setCheckStatus("loading");
@@ -126,14 +135,10 @@ const GuestScan: React.VFC<Props> = ({
         } catch (e) {
           setCheckStatus("error");
           setError(e);
+          if (isConnectionError(e)) pushBulkQuery(guestId);
         }
       } else {
-        push({
-          command: commandName,
-          guest_id: guestId,
-          userId: currentUserId ?? "",
-          timestamp: moment().toISOString(),
-        });
+        pushBulkQuery(guestId);
       }
     }
   };

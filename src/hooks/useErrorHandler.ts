@@ -56,6 +56,15 @@ const useErrorHandler = (): [
   return [errorMessage, setError, setErrorCode];
 };
 
+export const isConnectionError = (e: unknown): boolean => {
+  if (e === null) return false;
+  if (axios.isAxiosError(e)) {
+    const errorCode: unknown = e.response?.data.error_code;
+    return !(typeof errorCode === "string" && errorCode !== "");
+  }
+  return true;
+};
+
 const errorCodeList = [
   // check in
   "INVALID_WRISTBAND_CODE",

@@ -60,13 +60,18 @@ const BulkUpdateContext: React.VFC<PropsWithChildren<unknown>> = ({
               },
               body: bulkQueryWithIndex,
             })
-            .then((res) => ({
-              userId,
-              queryResults: res.map((bulkResult, indexInUser) => ({
-                ...bulkQueryWithIndex[indexInUser],
-                ...bulkResult,
-              })),
-            }))
+            .then((res) => {
+              console.log(
+                `[bulk update] user: @${userId} / count: ${res.length}`
+              );
+              return {
+                userId,
+                queryResults: res.map((bulkResult, indexInUser) => ({
+                  ...bulkQueryWithIndex[indexInUser],
+                  ...bulkResult,
+                })),
+              };
+            })
         )
       )
     ).reduce<UserQueryResultRecord>((obj, queryResultWithIndex) => {
@@ -91,12 +96,11 @@ const BulkUpdateContext: React.VFC<PropsWithChildren<unknown>> = ({
     setQueries(nextQueries);
   }, [allUsers, aspida, queries]);
 
+  // 1分ごとに _bulkUpdate を実行する
   useEffect(() => {
-    if (onLine) _bulkUpdate();
-    // 設計が悪いので、deps に _bulkUpdate を入れると無限ループする…
-    // と思ったけど [] -> [] が変更されちゃうのが悪いよ
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onLine]);
+    const intervalId = window.setInterval(_bulkUpdate, 60000);
+    return () => window.clearInterval(intervalId);
+  }, [_bulkUpdate]);
 
   // offline / online 検知
   useEffect(() => {
