@@ -41,6 +41,20 @@ const useStyles = makeStyles((theme) =>
     borderSuccess: {
       borderColor: theme.palette.success.main,
     },
+    borderWarning: {
+      animation: "$searching-animation-in-warning 1000ms infinite ease-out",
+    },
+    "@keyframes searching-animation-in-warning": {
+      "0%": {
+        borderColor: theme.palette.warning.main,
+      },
+      "50%": {
+        borderColor: theme.palette.warning.light,
+      },
+      "100%": {
+        borderColor: theme.palette.warning.main,
+      },
+    },
     borderError: {
       animation: "$searching-animation-in-error 1000ms infinite ease-out",
     },
@@ -127,6 +141,7 @@ const QRScanner: React.VFC<QRScannerProps> = ({
   >("loading");
   const [showQrReader, setShowQrReader] = useState(true);
   const [timeoutId, setTimeoutId] = useState<number | null>(null);
+  const [qrReaderMount, setQrReaderMount] = useState(false);
 
   useEffect(() => {
     if (!showQrReader) {
@@ -139,10 +154,27 @@ const QRScanner: React.VFC<QRScannerProps> = ({
     setLastRead(null);
   }, [resetKey]);
 
+  // out of memory の対策として、5 分ごとに react-qr-reader を unmount して、直後に mount している
+  // Chrome: out of memory due to web worker. Chrome not kicking off GC · Issue #205 · JodusNodus/react-qr-reader
+  // https://github.com/JodusNodus/react-qr-reader/issues/205
+  useEffect(() => {
+    const unmountQrReader = () => {
+      setQrReaderMount(false);
+      setScannerStatus("loading");
+    };
+    const intervalId = window.setInterval(unmountQrReader, 5 * 60 * 1000);
+    return () => window.clearInterval(intervalId);
+  }, []);
+  useEffect(() => {
+    if (!qrReaderMount) setQrReaderMount(true);
+  }, [qrReaderMount]);
+
   const getBorderClassName = (color: StatusColor | undefined): string => {
     switch (color) {
       case "success":
         return classes.borderSuccess;
+      case "warning":
+        return classes.borderWarning;
       case "error":
         return classes.borderError;
       case "loading":
@@ -210,7 +242,7 @@ const QRScanner: React.VFC<QRScannerProps> = ({
             )}
           </div>
         )}
-        {showQrReader && (
+        {showQrReader && qrReaderMount && (
           <QrReader
             onScan={onScan}
             onError={errorHandler}

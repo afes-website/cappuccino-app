@@ -32,6 +32,9 @@ const useStyles = makeStyles((theme) =>
     success: {
       color: theme.palette.success.main,
     },
+    warning: {
+      color: theme.palette.warning.main,
+    },
     error: {
       color: theme.palette.error.main,
     },
@@ -138,6 +141,12 @@ const StatusIcon: React.VFC<{ status: StatusColor }> = ({ status }) => {
       return (
         <Fade in={true} timeout={{ enter: 300, exit: 0 }}>
           <CheckCircleOutline className={clsx(classes.icon, classes.success)} />
+        </Fade>
+      );
+    case "warning":
+      return (
+        <Fade in={true} timeout={{ enter: 300, exit: 0 }}>
+          <CheckCircleOutline className={clsx(classes.icon, classes.warning)} />
         </Fade>
       );
     case "error":

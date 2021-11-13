@@ -1,6 +1,6 @@
 {
   "name": "cappuccino-app",
-  "version": "3.3.2",
+  "version": "3.3.3",
   "private": true,
   "license": "MIT",
   "scripts": {
