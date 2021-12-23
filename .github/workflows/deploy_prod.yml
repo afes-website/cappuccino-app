@@ -15,7 +15,7 @@ jobs:
       - name: ssh key generate
         run: echo "$SSH_PRIVATE_KEY" > .ssh/id_ed25519 && chmod 600 .ssh/id_ed25519
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSHKEY }}
       - name: Cache packages in node_modules
         uses: actions/cache@v1
         with:
