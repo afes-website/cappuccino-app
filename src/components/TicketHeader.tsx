@@ -12,8 +12,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   ticketHeader: {
     padding: "64px 24px 24px 24px",
     color: "#fff",
-    fontWeight: 700,
-    fontSize: 20,
     position: "relative",
     transition: "background 0.5s",
   },
@@ -32,6 +30,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     "& > span": {
       fontSize: 16,
       paddingLeft: 8,
+      fontWeight: 500,
     },
   },
   ticketHeaderContent: {
@@ -42,6 +41,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     "& > *": {
       height: 29,
+      fontSize: 22,
+      fontWeight: 700,
     },
   },
   ticketMemberAll: {
@@ -99,24 +100,26 @@ const TicketHeader: React.VFC<Props> = ({ rsv }) => {
     >
       <div className={classes.ticketLogo}>
         {rsv && <LogoWhite />}
-        <span>
+        <Typography component="span">
           {rsv && (rsv.member_all <= 2 ? "デジタルチケット" : "文化祭入場券")}
           {rsv &&
             ({ 1: "（一般枠）", 2: "（児童枠）" }[rsv.member_all] ??
               "（保護者枠）")}
-        </span>
+        </Typography>
       </div>
       <span className={classes.ticketMemberAll}>
         {rsv && (rsv.member_all === 2 ? <Child /> : <Person />)}
       </span>
       <div className={classes.ticketHeaderContent}>
-        <span>{rsv && getStringDateJp(rsv.term.enter_scheduled_time)}</span>
-        <span>
+        <Typography component="span">
+          {rsv && getStringDateJp(rsv.term.enter_scheduled_time)}
+        </Typography>
+        <Typography component="span">
           {rsv &&
             `${getStringTimeJp(
               rsv.term.enter_scheduled_time
             )} ～ ${getStringTimeJp(rsv.term.exit_scheduled_time)}`}
-        </span>
+        </Typography>
       </div>
       {!rsv && (
         <Typography
