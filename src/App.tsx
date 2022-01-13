@@ -29,6 +29,27 @@ const App: React.VFC = () => {
     };
   }, []);
 
+  // easter egg to get successors
+  useEffect(() => {
+    console.log(
+      `%cWe are hiring!
+%c
+CAPPUCCINO開発チームです。コンソールを覗いていただきありがとうございます。
+実は我々は昨年から開発を続けているしがない高3です。
+今、ウェブサイト班は深刻な後継技術者不足に悩まされています。
+スマホアプリとして紹介したサイトのコンソールを見ているあたり、Web技術に興味があるとお見受けします。
+あなたの技術力をぜひ来年以降の文化祭運営に役立てていただきたいのです。
+興味のある方は連絡をください。
+%c文化祭実行委員会はあなたをお待ちしています！%c
+＊問い合わせ先: 総務局 / contact@afes.info
+`,
+      "font-size: 3em; font-weight: bold; color: #457fb3; text-shadow: rgba(255,255,255,0.8) 1px 1px 1px;",
+      "",
+      "font-weight: bold;",
+      ""
+    );
+  }, []);
+
   return (
     <TypesafeRouter
       routes={routes}
